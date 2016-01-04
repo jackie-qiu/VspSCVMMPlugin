@@ -1,0 +1,38 @@
+﻿<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+     <VmmAdminConsolePath>E:\Program Files\Microsoft System Center 2012 R2\Virtual Machine Manager\bin</VmmAdminConsolePath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.SystemCenter.VirtualMachineManager, Version=1.0.523.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(VmmAdminConsolePath)\Microsoft.SystemCenter.VirtualMachineManager.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Errors">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(VmmAdminConsolePath)\Errors.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.SystemCenter.VirtualMachineManager.UIAddIns, Version=1.0.523.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(VmmAdminConsolePath)\AddInPipeline\AddInViews\Microsoft.SystemCenter.VirtualMachineManager.UIAddIns.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.SystemCenter.VirtualMachineManager.UIAddins.ContextTypes, Version=1.0.523.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(VmmAdminConsolePath)\Microsoft.SystemCenter.VirtualMachineManager.UIAddins.ContextTypes.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Remoting, Version=1.0.523.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(VmmAdminConsolePath)\Remoting.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.AddIn">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.AddIn.Contract">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+</Project>
