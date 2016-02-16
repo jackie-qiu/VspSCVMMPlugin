@@ -3,4 +3,7 @@
   <PropertyGroup>
     <ProjectView>ShowAllFiles</ProjectView>
   </PropertyGroup>
+  <PropertyGroup>
+    <ReferencePath>C:\Users\SDN_DEMO_001\Documents\Visual Studio 2012\Projects\VspSCVMMPlugin\VspSCVMMPlugin\..\lib\</ReferencePath>
+  </PropertyGroup>
 </Project>
