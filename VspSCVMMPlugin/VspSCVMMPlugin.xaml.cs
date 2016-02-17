@@ -12,6 +12,8 @@ using Microsoft.SystemCenter.VirtualMachineManager;
 using Microsoft.SystemCenter.VirtualMachineManager.UIAddIns.PowerShell;
 using Microsoft.SystemCenter.VirtualMachineManager.UIAddIns.ContextTypes;
 
+using Nuage.VSDClient;
+
 namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
 {
     /// <summary>
@@ -19,54 +21,54 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
     /// </summary>
     public partial class NuageVSPWindow : Window
     {
-        bool isContextual;
         private PowerShellContext powerShellContext;
+        private List<VMContext> VMList;
+        private List<VirtualNetworkAdapter> vNics;
 
         public NuageVSPWindow(PowerShellContext powerShellContext, IEnumerable<VMContext> selectedVMs)
         {
-            this.powerShellContext = powerShellContext;
-            this.isContextual = selectedVMs != null;
-
             InitializeComponent();
 
-            if (selectedVMs != null)
-            {
-                foreach (VMContext vm in selectedVMs)
-                {
-                    this.VMList.Items.Add(vm);
-                }
-            }
-            else
-            {
-                this.IsEnabled = false;
+            this.powerShellContext = powerShellContext;
 
-                // If the instance isn't contextual, change the title
-                this.titleText.Text = "Select the virtual machines to be checkpointed";
+            foreach (VMContext vm in selectedVMs)
+            {
+                this.VMList.Add(vm);
             }
-
+ 
             this.Loaded += new RoutedEventHandler(OnLoaded);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs args)
         {
-            // If this add-in is non-contextual, retrieve the list of VMs
-            if(!this.isContextual)
-            {
-                this.powerShellContext.ExecuteScript<VM>(
-                    "Get-SCVirtualMachine",
-                    (results, error) =>
+            // Get the vm nics
+            int vNicCount = GetVirtualMachineVnics();
+
+            //Draw the main windows according to the number of vNics
+
+        }
+
+        private int GetVirtualMachineVnics()
+        {
+            StringBuilder vNicScript = new StringBuilder();
+
+            vNicScript.AppendLine(
+                string.Format(
+                    "Get-SCVirtualMachine -ID {0} | Get-SCVirtualNetworkAdapter -VM",
+                    this.VMList[0].ID));
+
+            this.powerShellContext.ExecuteScript<VirtualNetworkAdapter>(
+                vNicScript.ToString(),
+                (results, error) =>
+                {
+                    foreach (VirtualNetworkAdapter nic in results)
                     {
-                        foreach (VM vm in results)
-                        {
-                            this.VMList.Items.Add(new VMContext(vm));
-                        }
+                        this.vNics.Add(nic);
+                    }
 
-                        this.IsEnabled = true;
-                    });
-            }
+                });
 
-            this.checkpointName.Text = String.Format("Checkpoint -- {0}", Convert.ToString(System.DateTime.Now));
-            this.checkpointName.Focus();
+            return vNics.Count();
         }
 
         private void cancelButton_Click(object sender, RoutedEventArgs e)
@@ -74,19 +76,36 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
             this.Close();
         }
 
-        private void startButton_Click(object sender, RoutedEventArgs e)
+        private void refreshButton_Click(object sender, RoutedEventArgs e)
         {
+            //Connect to VSD and reterive the metadata
+            Uri baseUrl = new Uri("https://192.168.239.12:8443/");
+            string username = "csproot";
+            string password = "csproot";
+
+
+            nuageVSDSession nuSession = new nuageVSDSession(username, password, "csp", baseUrl);
+            nuSession.start();
+
+            MessageBox.Show(nuSession.enterprise[0].name);
+            //update the WPF element
+        }
+
+        private void applyButton_Click(object sender, RoutedEventArgs e)
+        {
+            //Write the metadata to virtual machine's customer properties
+
             IEnumerable<Guid> checkpointVMIds = null;
             if (!this.isContextual)
             {
                 // Only checkpoint selected VMs
-                checkpointVMIds = 
+                checkpointVMIds =
                     this.VMList.SelectedItems.Cast<VMContext>().Select(vm => vm.ID);
             }
             else
             {
                 // Checkpoint all VMs in the list
-                checkpointVMIds = 
+                checkpointVMIds =
                     this.VMList.Items.Cast<VMContext>().Select(vm => vm.ID);
             }
 
@@ -98,7 +117,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                         "Get-SCVirtualMachine -ID {0} | New-SCVMCheckpoint -Name \"{0}\" -RunAsynchronous",
                         vmId, this.checkpointName.Text));
             }
-            
+
             this.powerShellContext.ExecuteScript(checkpointScript.ToString(),
                 (results, error) =>
                 {
