@@ -207,7 +207,7 @@ namespace Nuage.VSDClient
                 }
                 catch (HttpRequestException e)
                 {
-                    logger.ErrorFormat("Get metadaa from VSD {0} failed.", baseUrl);
+                    logger.ErrorFormat("Get metadaa from VSD {0} failed {1}.", baseUrl,e.Message);
                 }
 
 

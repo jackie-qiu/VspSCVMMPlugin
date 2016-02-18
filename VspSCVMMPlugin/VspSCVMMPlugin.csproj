@@ -11,7 +11,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>VspSCVMMPlugin</RootNamespace>
     <AssemblyName>VspSCVMMPlugin</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -30,6 +30,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -38,20 +39,18 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Errors">
       <HintPath>..\lib\Errors.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.SystemCenter.VirtualMachineManager">
-      <HintPath>..\lib\Microsoft.SystemCenter.VirtualMachineManager.dll</HintPath>
+    <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.SystemCenter.VirtualMachineManager.UIAddIns">
-      <HintPath>..\lib\Microsoft.SystemCenter.VirtualMachineManager.UIAddIns.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.SystemCenter.VirtualMachineManager.UIAddIns.ContextTypes">
-      <HintPath>..\lib\Microsoft.SystemCenter.VirtualMachineManager.UIAddIns.ContextTypes.dll</HintPath>
-    </Reference>
+    <Reference Include="Microsoft.SystemCenter.VirtualMachineManager, Version=1.0.523.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.SystemCenter.VirtualMachineManager.UIAddIns.ContextTypes, Version=1.0.523.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SystemCenter.VirtualMachineManger.PowerShell.CmdletWrappers">
       <HintPath>..\lib\Microsoft.SystemCenter.VirtualMachineManger.PowerShell.CmdletWrappers.dll</HintPath>
     </Reference>
@@ -63,12 +62,6 @@
     </Reference>
     <Reference Include="NativeMethods">
       <HintPath>..\lib\NativeMethods.dll</HintPath>
-    </Reference>
-    <Reference Include="Remoting">
-      <HintPath>..\lib\Remoting.dll</HintPath>
-    </Reference>
-    <Reference Include="Skuhelper">
-      <HintPath>..\lib\Skuhelper.dll</HintPath>
     </Reference>
     <Reference Include="SqmWrapper">
       <HintPath>..\lib\SqmWrapper.dll</HintPath>
@@ -87,9 +80,7 @@
     <Reference Include="TraceWrapper">
       <HintPath>..\lib\TraceWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="Utils">
-      <HintPath>..\lib\Utils.dll</HintPath>
-    </Reference>
+    <Reference Include="Utils, Version=1.0.523.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -116,6 +107,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -133,9 +125,6 @@
       <Project>{5c93d445-f17e-448d-b73b-badb1263f7b3}</Project>
       <Name>nuageVSDClient</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

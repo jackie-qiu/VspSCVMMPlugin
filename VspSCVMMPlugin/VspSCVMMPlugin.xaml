@@ -9,35 +9,42 @@ Copyright © 2016 Nuage. All rights reserved.
     Width="500"
     Height="400" 
     Background="WhiteSmoke">
-    
+
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <TextBlock
-            x:Name="titleText"
-            Grid.Row="0"
-            Margin="5,5,5,22"
-            Foreground="#003399"
-            FontSize="12pt"
-            Text="The following VMs will be checkpointed" />
-        <TextBlock
-            Grid.Row="3"
-            Margin="5,10,0,0"
-            Text="Choose a name for the checkpoint:" />
-        <TextBox 
-            Grid.Row="4"
-            Margin="5"
-            Height="23" 
-            Name="checkpointName" 
-            VerticalAlignment="Bottom" />
+        <GroupBox Grid.Row="0" Header="General" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Stretch" Width="456">
+            <StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="10,0,0,0" Background="Yellow" VerticalAlignment="Center">
+                    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="36" >Name</TextBlock>
+                    <TextBlock HorizontalAlignment="Left" Margin="30,0,0,0" Name="vmName"><Run Text="Name"/></TextBlock>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="10,0,0,0" Background="Red"  VerticalAlignment="Center">
+                    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="36">State</TextBlock>
+                    <TextBlock HorizontalAlignment="Left" Margin="30,0,0,0" Name="vmState"><Run Text="State"/></TextBlock>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="10,0,0,0" Background="Blue" VerticalAlignment="Center">
+                    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="36">UUID</TextBlock>
+                    <TextBlock HorizontalAlignment="Left" Margin="30,0,0,0" Name="vmUUID"><Run Text="UUID"/></TextBlock>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="10,0,0,0" Background="Green" VerticalAlignment="Center">
+                    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="36">Host</TextBlock>
+                    <TextBlock HorizontalAlignment="Left" Margin="30,0,0,0" Name="vmHost"><Run Text="Host"/></TextBlock>
+                </StackPanel>
+
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Grid.Row="1" Header="Network Adapters" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="456" Margin="10,0,0,0">
+
+        </GroupBox>
+
         <StackPanel
-            Grid.Row="5"
+            Grid.Row="2"
             Margin="5"
             Orientation="Horizontal"
             HorizontalAlignment="Right">
@@ -70,5 +77,5 @@ Copyright © 2016 Nuage. All rights reserved.
                 Content="_Cancel" />
         </StackPanel>
     </Grid>
-    
+
 </Window>
