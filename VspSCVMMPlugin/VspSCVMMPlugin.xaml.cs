@@ -36,50 +36,42 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
     {
         private PowerShellContext powerShellContext;
         private VM vm;
+        private VMContext vmContext;
         private List<VirtualNetworkAdapter> vNics = new List<VirtualNetworkAdapter>();
         private static readonly ILog logger = LogManager.GetLogger(typeof(NuageVSPWindow));
 
-        public NuageVSPWindow(PowerShellContext powerShellContext, IEnumerable<ContextObject> selectedVMs)
+        public NuageVSPWindow(PowerShellContext powerShellContext, IEnumerable<VMContext> selectedVMs)
         {
-            var contextObject = selectedVMs.First();
+            this.vmContext = selectedVMs.First();
 
             InitializeComponent();
 
             this.powerShellContext = powerShellContext;
 
-            this.vm = getVirtualMachine(contextObject.ID);
- 
             this.Loaded += new RoutedEventHandler(OnLoaded);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs args)
         {
+            //Get vm
+            getVirtualMachine(vmContext.ID);
             // Get the vm nics
-            int vNicCount = GetVirtualMachineVnics(this.vm.ID);
-
-            logger.InfoFormat("The number of vNic is {0} of virtual machine {1}", vNicCount, this.vm.Name);
-
-            //Draw the main windows according to the number of vNics
-            this.DrawMainWindows(vNicCount);
+            GetVirtualMachineVnics(vmContext.ID);
 
             return;
 
         }
 
         //Get the vm
-        private VM getVirtualMachine(Guid vmID)
+        private void getVirtualMachine(Guid vmID)
         {
             List<VM> vmList = new List<VM>();
-            
-            string GetVmScript = @"
-                Get-SCVirtualMachine -ID VMID
-            ";
+            StringBuilder GetVmScript = new StringBuilder();
 
-            string GetVmScriptFormatted =
-                    GetVmScript.Replace("VMID", vmID.ToString());
-
+            GetVmScript.AppendLine(string.Format("Get-SCVirtualMachine -ID {0}",vmID));
+           
             this.powerShellContext.ExecuteScript<VM>(
-                GetVmScriptFormatted,
+                GetVmScript.ToString(),
                 (results, error) =>
                 {
                     if (error != null)
@@ -92,30 +84,38 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                         {
                             vmList.Add(vm);
                         }
+                        this.vm = vmList.First();
+                        DrawMainWindows(vNics.Count());
                     }
 
                 });
 
-            return vmList[0];
+            return;
         }
 
         private void DrawMainWindows(int vNicCount)
         {
+            //Draw general information
             this.vmName.Text = vm.Name;
             this.vmUUID.Text = vm.ID.ToString();
-            this.vmState.Text = vm.StatusString;
+            this.vmState.Text = vm.VirtualMachineState.ToString();
             this.vmHost.Text = vm.HostName.ToString();
-            return;
+
+            if(vNicCount == 0)
+                return;
+
+            //Draw vNICs
+            
+
         }
 
-        private int GetVirtualMachineVnics(Guid vmID)
+        private void GetVirtualMachineVnics(Guid vmID)
         {
             StringBuilder vNicScript = new StringBuilder();
 
             vNicScript.AppendLine(
                 string.Format(
-                    "Get-SCVirtualMachine -ID {0} | Get-SCVirtualNetworkAdapter -VM",
-                    vmID.ToString()));
+                    "Get-SCVirtualMachine -ID {0} | Get-SCVirtualNetworkAdapter",vmID));
 
             this.powerShellContext.ExecuteScript<VirtualNetworkAdapter>(
                 vNicScript.ToString(),
@@ -132,11 +132,12 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                         {
                             this.vNics.Add(nic);
                         }
+                        logger.InfoFormat("The number of vNic is {0} of virtual machine {1}", vNics.Count(), vmContext.Name);
                     }
 
                 });
 
-            return vNics.Count();
+            return;
         }
 
         private void cancelButton_Click(object sender, RoutedEventArgs e)
