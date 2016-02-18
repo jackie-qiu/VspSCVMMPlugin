@@ -79,12 +79,19 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                     GetVmScript.Replace("VMID", vmID.ToString());
 
             this.powerShellContext.ExecuteScript<VM>(
-                GetVmScript.ToString(),
+                GetVmScriptFormatted,
                 (results, error) =>
                 {
-                    foreach (VM vm in results)
+                    if (error != null)
                     {
-                        vmList.Add(vm);
+                        MessageBox.Show(error.Problem);
+                    }
+                    else
+                    {
+                        foreach (VM vm in results)
+                        {
+                            vmList.Add(vm);
+                        }
                     }
 
                 });
@@ -114,9 +121,17 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                 vNicScript.ToString(),
                 (results, error) =>
                 {
-                    foreach (VirtualNetworkAdapter nic in results)
+                    if (error != null)
                     {
-                        this.vNics.Add(nic);
+                        MessageBox.Show(error.Problem);
+                    }
+                    else
+                    {
+
+                        foreach (VirtualNetworkAdapter nic in results)
+                        {
+                            this.vNics.Add(nic);
+                        }
                     }
 
                 });

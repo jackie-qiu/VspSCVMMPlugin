@@ -1,7 +1,7 @@
 ﻿<ConsoleAddIn 
   xmlns="urn:VMM-AddIns-v1" 
   Name="Nuage VSP Add-in" 
-  Version="1.0" 
+  Version="0.1" 
   Author="Alcatel-Lucent" 
   Description="An add-in that can config the virtual machines in Nuage VSP networks." 
   FolderName="VspSCVMMPlugin">
@@ -9,7 +9,7 @@
     Name="Config VSP Metadata" 
     Icon="VspSCVMMPlugin.ico" 
     Contexts="VM" 
-    AssemblyName="VspSCVMMPlugin" 
+    AssemblyName="Nuage.Vsp.SCVMMPlugin" 
     ActionType="Code">
     <ButtonLabel>
        Config VSP Metadata

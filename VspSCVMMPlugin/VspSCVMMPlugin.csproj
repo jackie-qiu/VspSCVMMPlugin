@@ -9,8 +9,8 @@
     <ProjectGuid>{2D1DA560-BDB8-4D74-806E-8DD744ADDF5F}</ProjectGuid>
     <OutputType>library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>VspSCVMMPlugin</RootNamespace>
-    <AssemblyName>VspSCVMMPlugin</AssemblyName>
+    <RootNamespace>Microsoft.VirtualManager.UI.AddIns.NuageVSP</RootNamespace>
+    <AssemblyName>Nuage.Vsp.SCVMMPlugin</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -49,10 +49,6 @@
       <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.SystemCenter.VirtualMachineManager, Version=1.0.523.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.SystemCenter.VirtualMachineManager.UIAddIns, Version=1.0.523.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.SystemCenter.VirtualMachineManager.UIAddIns.ContextTypes, Version=1.0.523.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.SystemCenter.VirtualMachineManger.PowerShell.CmdletWrappers, Version=1.0.523.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="NativeMethods">
       <HintPath>..\lib\NativeMethods.dll</HintPath>
     </Reference>
@@ -73,7 +69,6 @@
     <Reference Include="TraceWrapper">
       <HintPath>..\lib\TraceWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="Utils, Version=1.0.523.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />

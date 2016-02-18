@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace VspSCVMMPlugin.Properties {
+namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
