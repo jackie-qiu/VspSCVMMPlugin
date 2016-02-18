@@ -19,8 +19,10 @@ using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 
 using Microsoft.SystemCenter.VirtualMachineManager;
+using Microsoft.SystemCenter.VirtualMachineManager.Cmdlets;
 using Microsoft.SystemCenter.VirtualMachineManager.UIAddIns.PowerShell;
 using Microsoft.SystemCenter.VirtualMachineManager.UIAddIns.ContextTypes;
+using Microsoft.SystemCenter.VirtualMachineManager.Remoting;
 using log4net;
 using log4net.Config;
 using Nuage.VSDClient;
@@ -33,23 +35,19 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
     public partial class NuageVSPWindow : Window
     {
         private PowerShellContext powerShellContext;
-        private List<VMContext> vmList = new List<VMContext>();
-        private VMContext vmContext;
+        private VM vm;
         private List<VirtualNetworkAdapter> vNics = new List<VirtualNetworkAdapter>();
         private static readonly ILog logger = LogManager.GetLogger(typeof(NuageVSPWindow));
 
-        public NuageVSPWindow(PowerShellContext powerShellContext, IEnumerable<VMContext> selectedVMs)
+        public NuageVSPWindow(PowerShellContext powerShellContext, IEnumerable<ContextObject> selectedVMs)
         {
+            var contextObject = selectedVMs.First();
+
             InitializeComponent();
 
             this.powerShellContext = powerShellContext;
 
-            foreach (VMContext vm in selectedVMs)
-            {
-                this.vmList.Add(vm); 
-            }
-
-            this.vmContext = vmList[0];
+            this.vm = getVirtualMachine(contextObject.ID);
  
             this.Loaded += new RoutedEventHandler(OnLoaded);
         }
@@ -57,9 +55,9 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
         private void OnLoaded(object sender, RoutedEventArgs args)
         {
             // Get the vm nics
-            int vNicCount = GetVirtualMachineVnics();
+            int vNicCount = GetVirtualMachineVnics(this.vm.ID);
 
-            logger.InfoFormat("The number of vNic is {0} of virtual machine {1}", vNicCount, this.vmContext.Name);
+            logger.InfoFormat("The number of vNic is {0} of virtual machine {1}", vNicCount, this.vm.Name);
 
             //Draw the main windows according to the number of vNics
             this.DrawMainWindows(vNicCount);
@@ -68,22 +66,49 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
 
         }
 
+        //Get the vm
+        private VM getVirtualMachine(Guid vmID)
+        {
+            List<VM> vmList = new List<VM>();
+            
+            string GetVmScript = @"
+                Get-SCVirtualMachine -ID VMID
+            ";
+
+            string GetVmScriptFormatted =
+                    GetVmScript.Replace("VMID", vmID.ToString());
+
+            this.powerShellContext.ExecuteScript<VM>(
+                GetVmScript.ToString(),
+                (results, error) =>
+                {
+                    foreach (VM vm in results)
+                    {
+                        vmList.Add(vm);
+                    }
+
+                });
+
+            return vmList[0];
+        }
+
         private void DrawMainWindows(int vNicCount)
         {
-            this.vmName.Text = vmContext.Name;
-            this.vmUUID.Text = vmContext.ID.ToString();
-            this.vmState.Text = vmContext.Status.ToString();
+            this.vmName.Text = vm.Name;
+            this.vmUUID.Text = vm.ID.ToString();
+            this.vmState.Text = vm.StatusString;
+            this.vmHost.Text = vm.HostName.ToString();
             return;
         }
 
-        private int GetVirtualMachineVnics()
+        private int GetVirtualMachineVnics(Guid vmID)
         {
             StringBuilder vNicScript = new StringBuilder();
 
             vNicScript.AppendLine(
                 string.Format(
                     "Get-SCVirtualMachine -ID {0} | Get-SCVirtualNetworkAdapter -VM",
-                    this.vmContext.ID));
+                    vmID.ToString()));
 
             this.powerShellContext.ExecuteScript<VirtualNetworkAdapter>(
                 vNicScript.ToString(),

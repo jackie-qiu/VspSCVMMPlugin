@@ -50,16 +50,9 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.SystemCenter.VirtualMachineManager, Version=1.0.523.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.SystemCenter.VirtualMachineManager.UIAddIns, Version=1.0.523.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SystemCenter.VirtualMachineManager.UIAddIns.ContextTypes, Version=1.0.523.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.SystemCenter.VirtualMachineManger.PowerShell.CmdletWrappers">
-      <HintPath>..\lib\Microsoft.SystemCenter.VirtualMachineManger.PowerShell.CmdletWrappers.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VirtualManager.UI.Data">
-      <HintPath>..\lib\Microsoft.VirtualManager.UI.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VirtualManager.UI.ViewModel.Core">
-      <HintPath>..\lib\Microsoft.VirtualManager.UI.ViewModel.Core.dll</HintPath>
-    </Reference>
+    <Reference Include="Microsoft.SystemCenter.VirtualMachineManger.PowerShell.CmdletWrappers, Version=1.0.523.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="NativeMethods">
       <HintPath>..\lib\NativeMethods.dll</HintPath>
     </Reference>

@@ -16,30 +16,38 @@ Copyright © 2016 Nuage. All rights reserved.
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <GroupBox Grid.Row="0" Header="General" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Stretch" Width="456">
+        <GroupBox Grid.Row="0" Header="General" HorizontalAlignment="Stretch" Margin="10,10,0,0" VerticalAlignment="Stretch" Width="456">
             <StackPanel>
 
                 <StackPanel Orientation="Horizontal" Margin="10,0,0,0" Background="Yellow" VerticalAlignment="Center">
-                    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="36" >Name</TextBlock>
+                    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="60" >Name</TextBlock>
                     <TextBlock HorizontalAlignment="Left" Margin="30,0,0,0" Name="vmName"><Run Text="Name"/></TextBlock>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="10,0,0,0" Background="Red"  VerticalAlignment="Center">
-                    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="36">State</TextBlock>
+                    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="60">State</TextBlock>
                     <TextBlock HorizontalAlignment="Left" Margin="30,0,0,0" Name="vmState"><Run Text="State"/></TextBlock>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="10,0,0,0" Background="Blue" VerticalAlignment="Center">
-                    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="36">UUID</TextBlock>
+                    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="60">UUID</TextBlock>
                     <TextBlock HorizontalAlignment="Left" Margin="30,0,0,0" Name="vmUUID"><Run Text="UUID"/></TextBlock>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="10,0,0,0" Background="Green" VerticalAlignment="Center">
-                    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="36">Host</TextBlock>
+                    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="60">Host</TextBlock>
                     <TextBlock HorizontalAlignment="Left" Margin="30,0,0,0" Name="vmHost"><Run Text="Host"/></TextBlock>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="10,0,0,0" Background="Yellow" VerticalAlignment="Center">
+                    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="60">Enterprise</TextBlock>
+                    <ComboBox  HorizontalAlignment="Left" Margin="30,2,0,2" Name="vsdEneterprise" Width="200"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="10,0,0,0" Background="Blue" VerticalAlignment="Center">
+                    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="60">User</TextBlock>
+                    <ComboBox  HorizontalAlignment="Left" Margin="30,2,0,2" Name="vsdUser" Width="200"/>
                 </StackPanel>
 
             </StackPanel>
         </GroupBox>
 
-        <GroupBox Grid.Row="1" Header="Network Adapters" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="456" Margin="10,0,0,0">
+        <GroupBox Grid.Row="1" Header="Network Adapters" Name="vNicGroup" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="456" Margin="10,0,0,0">
 
         </GroupBox>
 
