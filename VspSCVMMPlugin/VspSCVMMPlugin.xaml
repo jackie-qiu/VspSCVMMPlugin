@@ -9,7 +9,7 @@ Copyright © 2016 Nuage. All rights reserved.
     Width="500"
     Height="700" 
     Background="WhiteSmoke">
-    
+    <ScrollViewer CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
     <Grid Margin="5" Name="RootGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -46,7 +46,7 @@ Copyright © 2016 Nuage. All rights reserved.
 
             </StackPanel>
         </GroupBox>
-
+        
         <GroupBox Grid.Row="1" Header="Network Adapters" Name="vNicGroupBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="456" Margin="10,0,0,0">
             <!--<StackPanel Orientation="Vertical" Margin="10,0,0,0" VerticalAlignment="Top">
                 <GroupBox Grid.Row="1" Header="Network Adapters1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0,0,0">
@@ -153,5 +153,5 @@ Copyright © 2016 Nuage. All rights reserved.
                 Content="_Cancel" />
         </StackPanel>
     </Grid>
-
+    </ScrollViewer>
 </Window>
