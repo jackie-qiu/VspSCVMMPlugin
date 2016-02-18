@@ -7,10 +7,10 @@ Copyright © 2016 Nuage. All rights reserved.
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Config Virtual Machines Metadata" 
     Width="500"
-    Height="600" 
+    Height="700" 
     Background="WhiteSmoke">
-
-    <Grid Margin="5">
+    
+    <Grid Margin="5" Name="RootGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -20,35 +20,103 @@ Copyright © 2016 Nuage. All rights reserved.
             <StackPanel>
 
                 <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
-                    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="60" >Name</TextBlock>
+                    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="140" >Name</TextBlock>
                     <TextBlock HorizontalAlignment="Left" Margin="30,0,0,0" Name="vmName"></TextBlock>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
-                    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="60">State</TextBlock>
+                    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="140">State</TextBlock>
                     <TextBlock HorizontalAlignment="Left" Margin="30,0,0,0" Name="vmState"></TextBlock>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
-                    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="60">UUID</TextBlock>
+                    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="140">UUID</TextBlock>
                     <TextBlock HorizontalAlignment="Left" Margin="30,0,0,0" Name="vmUUID"></TextBlock>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
-                    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="60">Host</TextBlock>
+                    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="140">Host</TextBlock>
                     <TextBlock HorizontalAlignment="Left" Margin="30,0,0,0" Name="vmHost"></TextBlock>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
-                    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="60">Enterprise</TextBlock>
+                    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="140">Enterprise</TextBlock>
                     <ComboBox  HorizontalAlignment="Left" Margin="30,2,0,2" Name="vsdEneterprise" Width="200"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
-                    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="60">User</TextBlock>
+                    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="140">User</TextBlock>
                     <ComboBox  HorizontalAlignment="Left" Margin="30,2,0,2" Name="vsdUser" Width="200"/>
                 </StackPanel>
 
             </StackPanel>
         </GroupBox>
 
-        <GroupBox Grid.Row="1" Header="Network Adapters" Name="vNicGroup" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="456" Margin="10,0,0,0">
-
+        <GroupBox Grid.Row="1" Header="Network Adapters" Name="vNicGroupBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="456" Margin="10,0,0,0">
+            <!--<StackPanel Orientation="Vertical" Margin="10,0,0,0" VerticalAlignment="Top">
+                <GroupBox Grid.Row="1" Header="Network Adapters1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0,0,0">
+                    <StackPanel Orientation="Vertical" Margin="10,0,0,0" VerticalAlignment="Top">
+                        <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" Width="110" Background="LightGray" >Logical Network</TextBlock>
+                            <TextBlock HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" Width="280" Background="LightGray" >Logical Network</TextBlock>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" Width="110" Background="LightGray" >Mac Address</TextBlock>
+                            <TextBlock HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" Width="280" Background="LightGray" >Mac Address</TextBlock>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Left" Margin="0" Width="110">Domain</TextBlock>
+                            <ComboBox  HorizontalAlignment="Left" Margin="30,2,0,2" Name="vsdDomain1" Width="200"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Left" Margin="0" Width="110">Zone</TextBlock>
+                            <ComboBox  HorizontalAlignment="Left" Margin="30,2,0,2" Name="vsdZone1" Width="200"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Left" Margin="0" Width="110">PolicyGroup</TextBlock>
+                            <ComboBox  HorizontalAlignment="Left" Margin="30,2,0,2" Name="vsdPolicyGroup1" Width="200"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Left" Margin="0" Width="110">RedirectionTarget</TextBlock>
+                            <ComboBox  HorizontalAlignment="Left" Margin="30,2,0,2" Name="vsdRedirectionTarget1" Width="200"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Left" Margin="0" Width="110">Network</TextBlock>
+                            <ComboBox  HorizontalAlignment="Left" Margin="30,2,0,2" Name="vsdNetwork1" Width="200"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Left" Margin="0" Width="110">Static IP Address</TextBlock>
+                            <TextBox  HorizontalAlignment="Left" Margin="30,2,0,2" Name="vsdStaticIp1" Width="200"/>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Grid.Row="1" Header="Network Adapters2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0,0,0">
+                    <StackPanel Orientation="Vertical" Margin="10,0,0,0" VerticalAlignment="Top">
+                        <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Width="416" Background="LightGray" >Port Group</TextBlock>
+                        <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Width="416" Background="LightGray" >Mac Address</TextBlock>
+                        <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Left" Margin="0" Width="110">Domain</TextBlock>
+                            <ComboBox  HorizontalAlignment="Left" Margin="30,2,0,2" Name="vsdDomain2" Width="200"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Left" Margin="0" Width="110">Zone</TextBlock>
+                            <ComboBox  HorizontalAlignment="Left" Margin="30,2,0,2" Name="vsdZone2" Width="200"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Left" Margin="0" Width="110">PolicyGroup</TextBlock>
+                            <ComboBox  HorizontalAlignment="Left" Margin="30,2,0,2" Name="vsdPolicyGroup2" Width="200"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Left" Margin="0" Width="110">RedirectionTarget</TextBlock>
+                            <ComboBox  HorizontalAlignment="Left" Margin="30,2,0,2" Name="vsdRedirectionTarget2" Width="200"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Left" Margin="0" Width="110">Network</TextBlock>
+                            <ComboBox  HorizontalAlignment="Left" Margin="30,2,0,2" Name="vsdNetwork2" Width="200"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Left" Margin="0" Width="110">Static IP Address</TextBlock>
+                            <TextBox  HorizontalAlignment="Left" Margin="30,2,0,2" Name="vsdStaticIp2" Width="200"/>
+                        </StackPanel>
+                    </StackPanel>
+                    
+                </GroupBox>
+            </StackPanel>-->
         </GroupBox>
 
         <StackPanel

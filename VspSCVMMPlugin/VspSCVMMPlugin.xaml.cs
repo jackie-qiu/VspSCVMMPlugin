@@ -40,6 +40,15 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
         private List<VirtualNetworkAdapter> vNics = new List<VirtualNetworkAdapter>();
         private static readonly ILog logger = LogManager.GetLogger(typeof(NuageVSPWindow));
 
+        private List<TextBlock> vmLogicalNetwork = new List<TextBlock>();
+        private List<TextBlock> vmMacAddress = new List<TextBlock>();
+        private List<ComboBox> vsdDomain = new List<ComboBox>();
+        private List<ComboBox> vsdZone = new List<ComboBox>();
+        private List<ComboBox> vsdPolicyGroup = new List<ComboBox>();
+        private List<ComboBox> vsdRedirectionTarget = new List<ComboBox>();
+        private List<ComboBox> vsdNetwork = new List<ComboBox>();
+        private List<TextBox> vmStaticIp = new List<TextBox>();
+
         public NuageVSPWindow(PowerShellContext powerShellContext, IEnumerable<VMContext> selectedVMs)
         {
             this.vmContext = selectedVMs.First();
@@ -105,8 +114,64 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                 return;
 
             //Draw vNICs
+            StackPanel TopSP = new StackPanel{Orientation = Orientation.Vertical, Margin = new Thickness(10,0,0,0),VerticalAlignment=VerticalAlignment.Top};
             
+            for (int i = 0; i < vNicCount;i++ )
+            {
+                StackPanel GroupBoxSP = new StackPanel { Orientation = Orientation.Vertical, Margin = new Thickness(10, 0, 0, 0), VerticalAlignment = VerticalAlignment.Top };
+                GroupBox gp = new GroupBox{  Header="Network Adapter" + i, HorizontalAlignment=HorizontalAlignment.Stretch,VerticalAlignment=VerticalAlignment.Stretch, Margin = new Thickness(10, 10, 0, 0) };
+                gp.Content = GroupBoxSP;
+                Grid.SetRow(gp, 1);
 
+                //logical network StackPanel
+                StackPanel LogicalNetworkSP = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(10, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
+                LogicalNetworkSP.Children.Add(new TextBlock { HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0), VerticalAlignment = VerticalAlignment.Top, Width = 110, Background = Brushes.LightGray, Text = "Logical Network" });
+                TextBlock tb = new TextBlock { HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0), VerticalAlignment = VerticalAlignment.Top, Width = 280, Background = Brushes.LightGray };
+                LogicalNetworkSP.Children.Add(tb);
+                vmLogicalNetwork.Add(tb);
+                GroupBoxSP.Children.Add(LogicalNetworkSP);
+
+                //Mac Address StackPanel
+                StackPanel MacAddressSP = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(10, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
+                MacAddressSP.Children.Add(new TextBlock { HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0), VerticalAlignment = VerticalAlignment.Top, Width = 110, Background = Brushes.LightGray, Text = "Mac Address" });
+                tb = new TextBlock { HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0), VerticalAlignment = VerticalAlignment.Top, Width = 280, Background = Brushes.LightGray };
+                MacAddressSP.Children.Add(tb);
+                vmMacAddress.Add(tb);
+                GroupBoxSP.Children.Add(MacAddressSP);
+
+                //VSP element
+                DrawVSPElement(GroupBoxSP, "Domain", vsdDomain);
+                DrawVSPElement(GroupBoxSP, "Zone", vsdZone);
+                DrawVSPElement(GroupBoxSP, "Policy Group",vsdPolicyGroup);
+                DrawVSPElement(GroupBoxSP, "Redirection Target",vsdRedirectionTarget);
+                DrawVSPElement(GroupBoxSP, "Network",vsdNetwork);
+
+                //Static IP
+                StackPanel StaticIpSP = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(10, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
+                StaticIpSP.Children.Add(new TextBlock { HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0), VerticalAlignment = VerticalAlignment.Top, Width = 110, Text = "Static IP Address" });
+                TextBox Tbox = new TextBox { HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(30, 2, 0, 2), VerticalAlignment = VerticalAlignment.Top, Width = 200 };
+                StaticIpSP.Children.Add(Tbox);
+                vmStaticIp.Add(Tbox);
+                GroupBoxSP.Children.Add(StaticIpSP);
+
+                TopSP.Children.Add(gp);
+
+            }
+
+            this.vNicGroupBox.Content = TopSP;
+            //this.RootGrid.Children.Add(TopSP);
+
+        }
+
+        private void DrawVSPElement(StackPanel GroupBoxSP,String name, List<ComboBox> VsdElement)
+        {
+            StackPanel vsdDomainSP = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(10, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
+            vsdDomainSP.Children.Add(new TextBlock { HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0), VerticalAlignment = VerticalAlignment.Top, Width = 110, Text = name });
+            ComboBox cb = new ComboBox { HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(30, 2, 0, 2), Width = 200 };
+            vsdDomainSP.Children.Add(cb);
+
+            VsdElement.Add(cb);
+            GroupBoxSP.Children.Add(vsdDomainSP);
         }
 
         private void GetVirtualMachineVnics(Guid vmID)
@@ -133,6 +198,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                             this.vNics.Add(nic);
                         }
                         logger.InfoFormat("The number of vNic is {0} of virtual machine {1}", vNics.Count(), vmContext.Name);
+                        DrawMainWindows(this.vNics.Count());
                     }
 
                 });
