@@ -74,6 +74,7 @@ namespace Nuage.VSDClient
                 client.DefaultRequestHeaders.Add("Authorization", "XREST " + authKey);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.Timeout = new TimeSpan(20);  //wait 2 sec
 
                 //Config SSL Certificate Validation
                 ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(ValidateServerCertificate);

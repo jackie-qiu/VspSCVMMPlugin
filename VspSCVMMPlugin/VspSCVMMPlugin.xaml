@@ -6,8 +6,8 @@ Copyright © 2016 Nuage. All rights reserved.
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Config Virtual Machines Metadata" 
-    Width="500"
-    Height="700" 
+    Width="520"
+    Height="650" 
     Background="WhiteSmoke">
     <ScrollViewer CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
     <Grid Margin="5" Name="RootGrid">

@@ -3,6 +3,7 @@ Copyright © 2012 Nuage. All rights reserved.
 */
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,6 +27,9 @@ using Microsoft.SystemCenter.VirtualMachineManager.Remoting;
 using log4net;
 using log4net.Config;
 using Nuage.VSDClient;
+
+using System.Management.Automation;
+using System.Management.Automation.Runspaces;
 
 namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
 {
@@ -52,6 +56,9 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
         public NuageVSPWindow(PowerShellContext powerShellContext, IEnumerable<VMContext> selectedVMs)
         {
             this.vmContext = selectedVMs.First();
+
+            FileInfo config = new FileInfo(".\\log.conf");
+            XmlConfigurator.Configure(config);
 
             InitializeComponent();
 
@@ -115,49 +122,131 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
 
             //Draw vNICs
             StackPanel TopSP = new StackPanel{Orientation = Orientation.Vertical, Margin = new Thickness(10,0,0,0),VerticalAlignment=VerticalAlignment.Top};
-            
-            for (int i = 0; i < vNicCount;i++ )
+            try
             {
-                StackPanel GroupBoxSP = new StackPanel { Orientation = Orientation.Vertical, Margin = new Thickness(10, 0, 0, 0), VerticalAlignment = VerticalAlignment.Top };
-                GroupBox gp = new GroupBox{  Header="Network Adapter" + i, HorizontalAlignment=HorizontalAlignment.Stretch,VerticalAlignment=VerticalAlignment.Stretch, Margin = new Thickness(10, 10, 0, 0) };
-                gp.Content = GroupBoxSP;
-                Grid.SetRow(gp, 1);
+                for (int i = 0; i < vNicCount; i++)
+                {
+                    StackPanel GroupBoxSP = new StackPanel
+                    {
+                        Orientation = Orientation.Vertical,
+                        Margin = new Thickness(10, 0, 0, 0),
+                        VerticalAlignment = VerticalAlignment.Top
+                    };
+                    GroupBox gp = new GroupBox
+                    {
+                        Header = "Network Adapter" + i,
+                        HorizontalAlignment = HorizontalAlignment.Stretch,
+                        VerticalAlignment = VerticalAlignment.Stretch,
+                        Margin = new Thickness(10, 10, 0, 0)
+                    };
+                    gp.Content = GroupBoxSP;
+                    Grid.SetRow(gp, 1);
 
-                //logical network StackPanel
-                StackPanel LogicalNetworkSP = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(10, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
-                LogicalNetworkSP.Children.Add(new TextBlock { HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0), VerticalAlignment = VerticalAlignment.Top, Width = 110, Background = Brushes.LightGray, Text = "Logical Network" });
-                TextBlock tb = new TextBlock { HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0), VerticalAlignment = VerticalAlignment.Top, Width = 280, Background = Brushes.LightGray };
-                LogicalNetworkSP.Children.Add(tb);
-                vmLogicalNetwork.Add(tb);
-                GroupBoxSP.Children.Add(LogicalNetworkSP);
+                    //logical network StackPanel
+                    StackPanel LogicalNetworkSP = new StackPanel
+                    {
+                        Orientation = Orientation.Horizontal,
+                        Margin = new Thickness(10, 0, 0, 0),
+                        VerticalAlignment = VerticalAlignment.Center
+                    };
 
-                //Mac Address StackPanel
-                StackPanel MacAddressSP = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(10, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
-                MacAddressSP.Children.Add(new TextBlock { HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0), VerticalAlignment = VerticalAlignment.Top, Width = 110, Background = Brushes.LightGray, Text = "Mac Address" });
-                tb = new TextBlock { HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0), VerticalAlignment = VerticalAlignment.Top, Width = 280, Background = Brushes.LightGray };
-                MacAddressSP.Children.Add(tb);
-                vmMacAddress.Add(tb);
-                GroupBoxSP.Children.Add(MacAddressSP);
+                    LogicalNetworkSP.Children.Add(new TextBlock
+                    {
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        Margin = new Thickness(0),
+                        VerticalAlignment = VerticalAlignment.Top,
+                        Width = 110,
+                        Background = Brushes.LightGray,
+                        Text = "Logical Network"
+                    });
 
-                //VSP element
-                DrawVSPElement(GroupBoxSP, "Domain", vsdDomain);
-                DrawVSPElement(GroupBoxSP, "Zone", vsdZone);
-                DrawVSPElement(GroupBoxSP, "Policy Group",vsdPolicyGroup);
-                DrawVSPElement(GroupBoxSP, "Redirection Target",vsdRedirectionTarget);
-                DrawVSPElement(GroupBoxSP, "Network",vsdNetwork);
+                    TextBlock tb = new TextBlock
+                    {
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        Margin = new Thickness(0),
+                        VerticalAlignment = VerticalAlignment.Top,
+                        Width = 280,
+                        Background = Brushes.LightGray,
+                        Text = (this.vNics[i].LogicalNetwork == null ? "" : this.vNics[i].LogicalNetwork.ToString())
+                    };
 
-                //Static IP
-                StackPanel StaticIpSP = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(10, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
-                StaticIpSP.Children.Add(new TextBlock { HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0), VerticalAlignment = VerticalAlignment.Top, Width = 110, Text = "Static IP Address" });
-                TextBox Tbox = new TextBox { HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(30, 2, 0, 2), VerticalAlignment = VerticalAlignment.Top, Width = 200 };
-                StaticIpSP.Children.Add(Tbox);
-                vmStaticIp.Add(Tbox);
-                GroupBoxSP.Children.Add(StaticIpSP);
+                    LogicalNetworkSP.Children.Add(tb);
+                    vmLogicalNetwork.Add(tb);
+                    GroupBoxSP.Children.Add(LogicalNetworkSP);
 
-                TopSP.Children.Add(gp);
+                    //Mac Address StackPanel
+                    StackPanel MacAddressSP = new StackPanel
+                    {
+                        Orientation = Orientation.Horizontal,
+                        Margin = new Thickness(10, 0, 0, 0),
+                        VerticalAlignment = VerticalAlignment.Center
+                    };
 
+                    MacAddressSP.Children.Add(new TextBlock
+                    {
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        Margin = new Thickness(0),
+                        VerticalAlignment = VerticalAlignment.Top,
+                        Width = 110,
+                        Background = Brushes.LightGray,
+                        Text = "Mac Address"
+                    });
+
+                    tb = new TextBlock
+                    {
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        Margin = new Thickness(0),
+                        VerticalAlignment = VerticalAlignment.Top,
+                        Width = 280,
+                        Background = Brushes.LightGray,
+                        Text = (this.vNics[i].MACAddress == null ? "" : this.vNics[i].MACAddress.ToString())
+                    };
+
+                    MacAddressSP.Children.Add(tb);
+                    vmMacAddress.Add(tb);
+                    GroupBoxSP.Children.Add(MacAddressSP);
+
+                    //VSP element
+                    DrawVSPElement(GroupBoxSP, "Domain", vsdDomain);
+                    DrawVSPElement(GroupBoxSP, "Zone", vsdZone);
+                    DrawVSPElement(GroupBoxSP, "Policy Group", vsdPolicyGroup);
+                    DrawVSPElement(GroupBoxSP, "Redirection Target", vsdRedirectionTarget);
+                    DrawVSPElement(GroupBoxSP, "Network", vsdNetwork);
+
+                    //Static IP
+                    StackPanel StaticIpSP = new StackPanel
+                    {
+                        Orientation = Orientation.Horizontal,
+                        Margin = new Thickness(10, 0, 0, 0),
+                        VerticalAlignment = VerticalAlignment.Center
+                    };
+                    StaticIpSP.Children.Add(new TextBlock
+                    {
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        Margin = new Thickness(0),
+                        VerticalAlignment = VerticalAlignment.Top,
+                        Width = 110,
+                        Text = "Static IP Address"
+                    });
+                    TextBox Tbox = new TextBox
+                    {
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        Margin = new Thickness(30, 2, 0, 2),
+                        VerticalAlignment = VerticalAlignment.Top,
+                        Width = 200
+                    };
+                    StaticIpSP.Children.Add(Tbox);
+                    vmStaticIp.Add(Tbox);
+                    GroupBoxSP.Children.Add(StaticIpSP);
+
+                    TopSP.Children.Add(gp);
+
+                }
             }
-
+            catch (Exception e)
+            {
+                logger.Error(e.ToString());
+            }
             this.vNicGroupBox.Content = TopSP;
             //this.RootGrid.Children.Add(TopSP);
 
@@ -165,13 +254,33 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
 
         private void DrawVSPElement(StackPanel GroupBoxSP,String name, List<ComboBox> VsdElement)
         {
-            StackPanel vsdDomainSP = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(10, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
-            vsdDomainSP.Children.Add(new TextBlock { HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0), VerticalAlignment = VerticalAlignment.Top, Width = 110, Text = name });
-            ComboBox cb = new ComboBox { HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(30, 2, 0, 2), Width = 200 };
-            vsdDomainSP.Children.Add(cb);
+            try
+            {
 
-            VsdElement.Add(cb);
-            GroupBoxSP.Children.Add(vsdDomainSP);
+                StackPanel vsdDomainSP = new StackPanel
+                {
+                    Orientation = Orientation.Horizontal,
+                    Margin = new Thickness(10, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                vsdDomainSP.Children.Add(new TextBlock
+                {
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    Margin = new Thickness(0),
+                    VerticalAlignment = VerticalAlignment.Top,
+                    Width = 110,
+                    Text = name
+                });
+                ComboBox cb = new ComboBox { HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(30, 2, 0, 2), Width = 200 };
+                vsdDomainSP.Children.Add(cb);
+
+                VsdElement.Add(cb);
+                GroupBoxSP.Children.Add(vsdDomainSP);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex.ToString());
+            }
         }
 
         private void GetVirtualMachineVnics(Guid vmID)
@@ -214,15 +323,59 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
         private void refreshButton_Click(object sender, RoutedEventArgs e)
         {
             //Connect to VSD and reterive the metadata
-            Uri baseUrl = new Uri("https://192.168.239.12:8443/");
-            string username = "csproot";
-            string password = "csproot";
+            //Uri baseUrl = new Uri("https://192.168.239.12:8443/");
+            //string username = "csproot";
+            //string password = "csproot";
+
+            //nuageVSDSession nuSession = new nuageVSDSession(username, password, "csp", baseUrl);
+            //nuSession.start();
+
+            string restScript = @"
+                $CertificatePolicyMethod= @'
+                    using System.Net;
+                    using System.Security.Cryptography.X509Certificates;
+                    public class TrustAllCertsPolicy : ICertificatePolicy {
+                        public bool CheckValidationResult(
+                            ServicePoint srvPoint, X509Certificate certificate,
+                            WebRequest request, int certificateProblem) {
+                            return true;
+                        }
+                }
+'@
 
 
-            nuageVSDSession nuSession = new nuageVSDSession(username, password, "csp", baseUrl);
-            nuSession.start();
+                Add-Type $CertificatePolicyMethod
+                [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
 
-            MessageBox.Show(nuSession.enterprise[0].name);
+                $headers = New-Object 'System.Collections.Generic.Dictionary[[String],[String]]'
+                $headers.Add('Content-Type','application/json')
+                $headers.Add('X-Nuage-Organization','csp')
+                $headers.Add('X-Requested-With','XMLHttpRequest')
+                $headers.Add('Authorization', 'XREST Y3Nwcm9vdDo5NDNmMGFjMi1hMjkyLTQzNzQtODU3Yy1lNGNkZDk5ZDY1YTE=')
+
+                Invoke-RestMethod -Method Get -Uri https://192.168.239.12:8443/nuage/api/v3_2/domains -Headers $headers | Format-Custom";
+
+            this.powerShellContext.ExecuteScript<PSObject>(
+                    restScript.ToString(),
+                    (results, error) =>
+                    {
+                        if (error != null)
+                        {
+                            MessageBox.Show(error.Problem);
+                        }
+                        else
+                        {
+
+                            foreach (PSObject domain in results)
+                            {
+                                MessageBox.Show(domain.ToString());
+                            }
+                            logger.InfoFormat("The number of vNic is {0} of virtual machine {1}", vNics.Count(), vmContext.Name);
+                        } 
+
+              });
+            //MessageBox.Show(nuSession.enterprise[0].name);
+
             //update the WPF element
         }
 
