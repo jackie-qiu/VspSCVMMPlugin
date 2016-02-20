@@ -44,6 +44,11 @@ namespace Nuage.VSDClient
         public string proxyARP { get; set; }
         public string multicast { get; set; }
         public string associatedMulticastChannelMapID { get; set; }
+
+        public override string ToString()
+        {
+            return name;
+        }
     }
 
     public class NuageSubnetPS

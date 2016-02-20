@@ -26,6 +26,11 @@ namespace Nuage.VSDClient
         public string externalID { get; set; }
         public string ESI { get; set; }
         public string templateID { get; set; }
+
+        public override string ToString()
+        {
+            return name;
+        }
     }
 
     public class NuageRedirectionTargetPS

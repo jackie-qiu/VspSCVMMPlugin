@@ -44,14 +44,20 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
         private List<VirtualNetworkAdapter> vNics = new List<VirtualNetworkAdapter>();
         private static readonly ILog logger = LogManager.GetLogger(typeof(NuageVSPWindow));
 
-        private List<TextBlock> vmLogicalNetwork = new List<TextBlock>();
-        private List<TextBlock> vmMacAddress = new List<TextBlock>();
-        private List<ComboBox> vsdDomain = new List<ComboBox>();
-        private List<ComboBox> vsdZone = new List<ComboBox>();
-        private List<ComboBox> vsdPolicyGroup = new List<ComboBox>();
-        private List<ComboBox> vsdRedirectionTarget = new List<ComboBox>();
-        private List<ComboBox> vsdNetwork = new List<ComboBox>();
-        private List<TextBox> vmStaticIp = new List<TextBox>();
+        private List<TextBlock> vmLogicalNetworks = new List<TextBlock>();
+        private List<TextBlock> vmMacAddresses = new List<TextBlock>();
+        private List<ComboBox> vsdDomains = new List<ComboBox>();
+        private List<ComboBox> vsdZones = new List<ComboBox>();
+        private List<ComboBox> vsdPolicyGroups = new List<ComboBox>();
+        private List<ComboBox> vsdRedirectionTargets = new List<ComboBox>();
+        private List<ComboBox> vsdNetworks = new List<ComboBox>();
+        private List<TextBox> vmStaticIps = new List<TextBox>();
+
+        private Uri baseUrl = new Uri("https://192.168.239.12:8443/");
+        private string username = "csproot";
+        private string password = "csproot";
+
+        NuageVSDPowerShellSession nuSession;
 
         public NuageVSPWindow(PowerShellContext powerShellContext, IEnumerable<VMContext> selectedVMs)
         {
@@ -64,13 +70,19 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
 
             this.powerShellContext = powerShellContext;
 
+            nuSession = new NuageVSDPowerShellSession(username, password, "csp", baseUrl);
+            nuSession.LoginVSD();
+            
+
             this.Loaded += new RoutedEventHandler(OnLoaded);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs args)
         {
+            this.RefreshVSDMetadata();
+            
             //Get vm
-            getVirtualMachine(vmContext.ID);
+            GetVirtualMachine(vmContext.ID);
             // Get the vm nics
             GetVirtualMachineVnics(vmContext.ID);
 
@@ -79,7 +91,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
         }
 
         //Get the vm
-        private void getVirtualMachine(Guid vmID)
+        private void GetVirtualMachine(Guid vmID)
         {
             List<VM> vmList = new List<VM>();
             StringBuilder GetVmScript = new StringBuilder();
@@ -101,7 +113,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                             vmList.Add(vm);
                         }
                         this.vm = vmList.First();
-                        DrawMainWindows(vNics.Count());
+                        //DrawMainWindows(vNics.Count());
                     }
 
                 });
@@ -116,9 +128,17 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
             this.vmUUID.Text = vm.ID.ToString();
             this.vmState.Text = vm.VirtualMachineState.ToString();
             this.vmHost.Text = vm.HostName.ToString();
+            this.vsdEneterprise.ItemsSource = nuSession.enterprise.Value;
 
             if(vNicCount == 0)
                 return;
+
+            vsdDomains.Clear();
+            vsdZones.Clear();
+            vsdPolicyGroups.Clear();
+            vsdRedirectionTargets.Clear();
+            vsdNetworks.Clear();
+            vmStaticIps.Clear();
 
             //Draw vNICs
             StackPanel TopSP = new StackPanel{Orientation = Orientation.Vertical, Margin = new Thickness(10,0,0,0),VerticalAlignment=VerticalAlignment.Top};
@@ -171,7 +191,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                     };
 
                     LogicalNetworkSP.Children.Add(tb);
-                    vmLogicalNetwork.Add(tb);
+                    vmLogicalNetworks.Add(tb);
                     GroupBoxSP.Children.Add(LogicalNetworkSP);
 
                     //Mac Address StackPanel
@@ -203,15 +223,15 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                     };
 
                     MacAddressSP.Children.Add(tb);
-                    vmMacAddress.Add(tb);
+                    vmMacAddresses.Add(tb);
                     GroupBoxSP.Children.Add(MacAddressSP);
 
                     //VSP element
-                    DrawVSPElement(GroupBoxSP, "Domain", vsdDomain);
-                    DrawVSPElement(GroupBoxSP, "Zone", vsdZone);
-                    DrawVSPElement(GroupBoxSP, "Policy Group", vsdPolicyGroup);
-                    DrawVSPElement(GroupBoxSP, "Redirection Target", vsdRedirectionTarget);
-                    DrawVSPElement(GroupBoxSP, "Network", vsdNetwork);
+                    DrawVSPElement<NuageDomain>(GroupBoxSP, "Domain", vsdDomains, nuSession.domains.Value);
+                    DrawVSPElement<NuageZone>(GroupBoxSP, "Zone", vsdZones, nuSession.zones.Value);
+                    DrawVSPElement<NuagePolicyGroup>(GroupBoxSP, "Policy Group", vsdPolicyGroups, nuSession.policyGroups.Value);
+                    DrawVSPElement<NuageRedirectionTarget>(GroupBoxSP, "Redirection Target", vsdRedirectionTargets, nuSession.redirectionTargets.Value);
+                    DrawVSPElement<NuageSubnet>(GroupBoxSP, "Network", vsdNetworks, nuSession.subnets.Value);
 
                     //Static IP
                     StackPanel StaticIpSP = new StackPanel
@@ -236,7 +256,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                         Width = 200
                     };
                     StaticIpSP.Children.Add(Tbox);
-                    vmStaticIp.Add(Tbox);
+                    vmStaticIps.Add(Tbox);
                     GroupBoxSP.Children.Add(StaticIpSP);
 
                     TopSP.Children.Add(gp);
@@ -252,30 +272,31 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
 
         }
 
-        private void DrawVSPElement(StackPanel GroupBoxSP,String name, List<ComboBox> VsdElement)
+        private void DrawVSPElement<T>(StackPanel GroupBoxSP, String Text, List<ComboBox> VsdElement, List<T> SourceData)
         {
             try
             {
 
-                StackPanel vsdDomainSP = new StackPanel
+                StackPanel sp = new StackPanel
                 {
                     Orientation = Orientation.Horizontal,
                     Margin = new Thickness(10, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center
                 };
-                vsdDomainSP.Children.Add(new TextBlock
+                sp.Children.Add(new TextBlock
                 {
                     HorizontalAlignment = HorizontalAlignment.Left,
                     Margin = new Thickness(0),
                     VerticalAlignment = VerticalAlignment.Top,
                     Width = 110,
-                    Text = name
+                    Text = Text
                 });
                 ComboBox cb = new ComboBox { HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(30, 2, 0, 2), Width = 200 };
-                vsdDomainSP.Children.Add(cb);
-
+                sp.Children.Add(cb);
+                cb.ItemsSource = SourceData;
+                cb.SelectionChanged += new SelectionChangedEventHandler(vsdElement_SelectionChanged);
                 VsdElement.Add(cb);
-                GroupBoxSP.Children.Add(vsdDomainSP);
+                GroupBoxSP.Children.Add(sp);
             }
             catch (Exception ex)
             {
@@ -315,6 +336,17 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
             return;
         }
 
+        private void RefreshVSDMetadata()
+        {
+            //Connect to VSD and reterive all of the metadata
+            nuSession.GetEnterrpise();
+            nuSession.GetDomains();
+            nuSession.GetSubnet();
+            nuSession.GetZone();
+            nuSession.GetPolicyGroup();
+            nuSession.GetRedirectionTarget();
+        }
+
         private void cancelButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
@@ -322,19 +354,13 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
 
         private void refreshButton_Click(object sender, RoutedEventArgs e)
         {
-            //Connect to VSD and reterive the metadata
-            Uri baseUrl = new Uri("https://192.168.239.12:8443/");
-            string username = "csproot";
-            string password = "csproot";
+            
+            this.RefreshVSDMetadata();
 
-            NuageVSDPowerShellSession nuSession = new NuageVSDPowerShellSession(username, password, "csp", baseUrl);
-            nuSession.LoginVSD();
-            nuSession.GetDomains();
-
-
-            MessageBox.Show(nuSession.domains.Value[1].name);
+            MessageBox.Show("Reresh VSD metadata success!");
 
             //update the WPF element
+            DrawMainWindows(this.vNics.Count());
         }
 
         private void applyButton_Click(object sender, RoutedEventArgs e)
@@ -375,6 +401,163 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
 
 
             this.Close();
+        }
+
+        private void vsdEneterprise_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            NuageEnterprise selectEneterprise = (NuageEnterprise)this.vsdEneterprise.SelectedItem;
+            if (selectEneterprise == null) return;
+            //Filter domains in this enterprise
+            List<NuageDomain> afterFilter = new List<NuageDomain>();
+
+            foreach (NuageDomain items in this.nuSession.domains.Value)
+            {
+                if (items.parentID.Equals(selectEneterprise.ID))
+                {
+                    afterFilter.Add(items);
+                }
+            }
+
+            foreach(ComboBox combox in this.vsdDomains)
+                combox.ItemsSource = afterFilter;
+
+            return;
+
+        }
+
+        private void vsdElement_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int NicIndex = -1;
+
+            if(isDomainComboBoxSelected(sender))
+            {
+                NicIndex = this.vsdDomains.IndexOf((ComboBox)sender);
+                NuageDomain selectedDomain = (NuageDomain)this.vsdDomains[NicIndex].SelectedItem;
+                if (selectedDomain == null) return;
+
+                //Filter Zone, policy group, redirection target in this domain
+                List<NuageZone> zoneFilter = new List<NuageZone>();
+                List<NuagePolicyGroup> policyGroupFilter = new List<NuagePolicyGroup>();
+                List<NuageRedirectionTarget> redirctionTargetFilter = new List<NuageRedirectionTarget>();
+
+                foreach (NuageZone items in this.nuSession.zones.Value)
+                {
+                    if (items.parentID.Equals(selectedDomain.ID))
+                    {
+                        zoneFilter.Add(items);
+                    }
+                }
+
+                foreach (NuagePolicyGroup items in this.nuSession.policyGroups.Value)
+                {
+                    if (items.parentID.Equals(selectedDomain.ID))
+                    {
+                        policyGroupFilter.Add(items);
+                    }
+                }
+
+                foreach (NuageRedirectionTarget items in this.nuSession.redirectionTargets.Value)
+                {
+                    if (items.parentID.Equals(selectedDomain.ID))
+                    {
+                        redirctionTargetFilter.Add(items);
+                    }
+                }
+
+                this.vsdZones[NicIndex].ItemsSource = zoneFilter;
+                this.vsdPolicyGroups[NicIndex].ItemsSource = policyGroupFilter;
+                this.vsdRedirectionTargets[NicIndex].ItemsSource = redirctionTargetFilter;
+                
+                return;
+            }
+
+            if(isZoneComboBoxSelected(sender))
+            {
+                NicIndex = this.vsdZones.IndexOf((ComboBox)sender);
+                NuageZone selectZone = (NuageZone)this.vsdZones[NicIndex].SelectedItem;
+                List<NuageSubnet> subnetFilter = new List<NuageSubnet>();
+
+                if (selectZone == null) return;
+
+                foreach (NuageSubnet items in this.nuSession.subnets.Value)
+                {
+                    if (items.parentID.Equals(selectZone.ID))
+                    {
+                        subnetFilter.Add(items);
+                    }
+                }
+
+                this.vsdNetworks[NicIndex].ItemsSource = subnetFilter;
+                return;
+            }
+
+            return;
+
+        }
+
+        private void UpdateVSDComboBoxItems(int NicIndex, string parentID)
+        {
+ 
+            //Filter Zone, policy group, redirection target in this domain
+            List<NuageZone> zoneFilter = new List<NuageZone>();
+            List<NuagePolicyGroup> policyGroupFilter = new List<NuagePolicyGroup>();
+            List<NuageRedirectionTarget> redirctionTargetFilter = new List<NuageRedirectionTarget>();
+            
+            foreach (NuageZone items in this.nuSession.zones.Value)
+            {
+                if (items.parentID.Equals(parentID))
+                {
+                    zoneFilter.Add(items);
+                }
+            }
+
+            foreach (NuagePolicyGroup items in this.nuSession.policyGroups.Value)
+            {
+                if (items.parentID.Equals(parentID))
+                {
+                    policyGroupFilter.Add(items);
+                }
+            }
+
+            foreach (NuageRedirectionTarget items in this.nuSession.redirectionTargets.Value)
+            {
+                if (items.parentID.Equals(parentID))
+                {
+                    redirctionTargetFilter.Add(items);
+                }
+            }
+
+            this.vsdZones[NicIndex].ItemsSource = zoneFilter;
+            this.vsdPolicyGroups[NicIndex].ItemsSource = policyGroupFilter;
+            this.vsdRedirectionTargets[NicIndex].ItemsSource = redirctionTargetFilter;
+
+
+        }
+
+        private Boolean isDomainComboBoxSelected(object sender)
+        {
+            foreach (ComboBox cb in this.vsdDomains)
+            {
+                if (cb.Equals(sender))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private Boolean isZoneComboBoxSelected(object sender)
+        {
+            foreach (ComboBox cb in this.vsdZones)
+            {
+                if (cb.Equals(sender))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

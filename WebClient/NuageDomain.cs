@@ -48,6 +48,11 @@ namespace Nuage.VSDClient
         public string uplinkPreference { get; set; }
         public string globalRoutingEnabled { get; set; }
         public string leakingEnabled { get; set; }
+
+        public override string ToString()
+        {
+            return name;
+        }
     }
 
     public class NuageDomainPS

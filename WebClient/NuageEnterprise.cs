@@ -39,6 +39,11 @@ namespace Nuage.VSDClient
         public string associatedKeyServerMonitorID { get; set; }
         public string LDAPEnabled { get; set; }
         public string LDAPAuthorizationEnabled { get; set; }
+        
+        public override string ToString()
+        {
+            return name;
+        }
     }
 
     public class NuageEnterprisePS

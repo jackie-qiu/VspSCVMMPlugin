@@ -34,6 +34,11 @@ namespace Nuage.VSDClient
         public string policyGroupID { get; set; }
         public string multicast { get; set; }
         public string associatedMulticastChannelMapID { get; set; }
+
+        public override string ToString()
+        {
+            return name;
+        }
     }
 
     public class NuageZonePS

@@ -25,6 +25,11 @@ namespace Nuage.VSDClient
         public string EVPNCommunityTag { get; set; }
         public string templateID { get; set; }
         public string policyGroupID { get; set; }
+
+        public override string ToString()
+        {
+            return name;
+        }
     }
 
     public class NuagePolicyGroupPS

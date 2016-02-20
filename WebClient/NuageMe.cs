@@ -26,6 +26,10 @@ namespace Nuage.VSDClient
         public string APIKeyExpiry {get;set;}
         public string enterpriseID {get;set;}
         public string externalID {get;set;}
- 
+
+        public override string ToString()
+        {
+            return userName;
+        }
     }
 }

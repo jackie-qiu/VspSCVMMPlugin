@@ -37,7 +37,7 @@ Copyright © 2016 Nuage. All rights reserved.
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
                     <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="140">Enterprise</TextBlock>
-                    <ComboBox  HorizontalAlignment="Left" Margin="30,2,0,2" Name="vsdEneterprise" Width="200"/>
+                    <ComboBox  HorizontalAlignment="Left" Margin="30,2,0,2" Name="vsdEneterprise" Width="200" SelectionChanged="vsdEneterprise_SelectionChanged"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
                     <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="140">User</TextBlock>

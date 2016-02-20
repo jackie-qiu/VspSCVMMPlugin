@@ -17,10 +17,12 @@ using Newtonsoft.Json;
 
 namespace Nuage.VSDClient
 {
+
     public class NuageVSDPowerShellSession
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(nuageVSDSession));
-
+        private int FAILED = -1;
+        private int SUCCESS = 0;
         private string username { get; set; }
         private string password { get; set; }
         private string organization { get; set; }
@@ -46,64 +48,138 @@ namespace Nuage.VSDClient
 
         }
 
-        public void LoginVSD()
+        public int LoginVSD()
         {
             string url = this.baseUrl.ToString() + "nuage/api/v3_2/me";
             string authKey = nuageBase64.Base64Encode(this.username + ":" + this.password);
 
             List<NuageMe[]> result = this.CallRestAPI<NuageMe[]>(url, authKey, false);
-            this.mes = result.First();
+            if (result.Count() == 0)
+            {
+                logger.Error("Login VSD Failed....");
+                return FAILED;
+            }
 
+            this.mes = result.First();
             this.token = nuageBase64.Base64Encode(username + ":" + mes.First().APIKey);
             logger.DebugFormat("Token: {0}", this.token);
+            return SUCCESS;
+
         }
 
-        public void GetDomains()
+        public int GetDomains()
         {
             string url = this.baseUrl.ToString() + "nuage/api/v3_2/domains";
 
             List<NuageDomainPS> result = this.CallRestAPI<NuageDomainPS>(url,this.token, true);
+            if (result.Count() == 0)
+            {
+                logger.Error("Get Domains Failed....");
+                return FAILED;
+            }
+
             this.domains = result.First();
+            return SUCCESS;
+
+            
         }
 
-        public void GetEnterrpise()
+        public int GetEnterrpise()
         {
             string url = this.baseUrl.ToString() + "nuage/api/v3_2/enterprises";
 
             List<NuageEnterprisePS> result = this.CallRestAPI<NuageEnterprisePS>(url, this.token, true);
+            if (result.Count() == 0)
+            {
+                logger.Error("Get Enterrpise Failed....");
+                return FAILED;
+            }
+
             this.enterprise = result.First();
+            return SUCCESS;
         }
 
-        public void GetPolicyGroup()
+        public int GetPolicyGroup()
         {
             string url = this.baseUrl.ToString() + "nuage/api/v3_2/policygroups";
 
             List<NuagePolicyGroupPS> result = this.CallRestAPI<NuagePolicyGroupPS>(url, this.token, true);
+            if (result.Count() == 0)
+            {
+                logger.Error("Get PolicyGroup Failed....");
+                return FAILED;
+            }
+
             this.policyGroups = result.First();
+            return SUCCESS;
+            
         }
 
-        public void GetRedirectionTarget()
+        public int GetRedirectionTarget()
         {
             string url = this.baseUrl.ToString() + "nuage/api/v3_2/redirectiontargets";
 
             List<NuageRedirectionTargetPS> result = this.CallRestAPI<NuageRedirectionTargetPS>(url, this.token, true);
+            if (result.Count() == 0)
+            {
+                logger.Error("Get RedirectionTarget Failed....");
+                return FAILED;
+                
+            }
+
             this.redirectionTargets = result.First();
+            return SUCCESS;
+           
         }
 
-        public void GetSubnet()
+        public int GetSubnet()
         {
             string url = this.baseUrl.ToString() + "nuage/api/v3_2/subnets";
 
             List<NuageSubnetPS> result = this.CallRestAPI<NuageSubnetPS>(url, this.token, true);
+            if (result.Count() == 0)
+            {
+                logger.Error("Get Subnet Failed....");
+                return FAILED;
+                
+            }
+
             this.subnets = result.First();
+
+            for ( int i = this.subnets.Value.Count -1; i >=0; i -- )
+            {
+                NuageSubnet item = this.subnets.Value[i];
+                //Remove unused BackHaulSubnet
+                if (item.name.Equals("BackHaulSubnet"))
+                {
+                    this.subnets.Value.Remove(item);
+                }
+            }
+            return SUCCESS;
         }
 
-        public void GetZone()
+        public int GetZone()
         {
             string url = this.baseUrl.ToString() + "nuage/api/v3_2/zones";
 
             List<NuageZonePS> result = this.CallRestAPI<NuageZonePS>(url, this.token, true);
+            if (result.Count() == 0)
+            {
+                logger.Error("Get Zone Failed....");
+                return FAILED;
+            }
             this.zones = result.First();
+            for (int i = this.zones.Value.Count - 1; i >= 0; i--)
+            {
+                //Remove unused BackHaulSubnet
+                NuageZone item = this.zones.Value[i];
+                if (item.name.Equals("BackHaulZone") || item.name.Equals("Shared Zone template"))
+                {
+                    this.zones.Value.Remove(item);
+                }
+            }
+            return SUCCESS;
+
         }
 
         private List<T> CallRestAPI<T>(string url, string token, bool tojson)
@@ -150,14 +226,20 @@ namespace Nuage.VSDClient
 
             PowerShell ps = PowerShell.Create();
             ps.AddScript(RestScriptFormatted);
-            Collection<PSObject> results = ps.Invoke<PSObject>();
-
-            foreach (var psObject in results)
+            try
             {
-                //Console.WriteLine("{0}", psObject.Properties["ID"].Value.ToString());
-                //Console.WriteLine("{0}", psObject.ToString());
-                T result = JsonConvert.DeserializeObject<T>(psObject.ToString());
-                NuageObject.Add(result);
+                Collection<PSObject> results = ps.Invoke<PSObject>();
+                foreach (var psObject in results)
+                {
+                    //Console.WriteLine("{0}", psObject.Properties["ID"].Value.ToString());
+                    //Console.WriteLine("{0}", psObject.ToString());
+                    T result = JsonConvert.DeserializeObject<T>(psObject.ToString());
+                    NuageObject.Add(result);
+                }
+            }
+            catch(Exception ex)
+            {
+                logger.ErrorFormat("Invoke Powershell rest url {0} failed! {1}",url, ex.Message);
             }
 
             return NuageObject;
