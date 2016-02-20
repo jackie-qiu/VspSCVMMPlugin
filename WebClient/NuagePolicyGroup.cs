@@ -26,4 +26,10 @@ namespace Nuage.VSDClient
         public string templateID { get; set; }
         public string policyGroupID { get; set; }
     }
+
+    public class NuagePolicyGroupPS
+    {
+        public List<NuagePolicyGroup> Value { get; set; }
+        public string Count { get; set; }
+    }
 }

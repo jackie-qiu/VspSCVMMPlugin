@@ -49,4 +49,10 @@ namespace Nuage.VSDClient
         public string globalRoutingEnabled { get; set; }
         public string leakingEnabled { get; set; }
     }
+
+    public class NuageDomainPS
+    {
+        public List<NuageDomain> Value { get; set; }
+        public string Count { get; set; }
+    }
 }

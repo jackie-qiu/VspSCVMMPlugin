@@ -323,58 +323,16 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
         private void refreshButton_Click(object sender, RoutedEventArgs e)
         {
             //Connect to VSD and reterive the metadata
-            //Uri baseUrl = new Uri("https://192.168.239.12:8443/");
-            //string username = "csproot";
-            //string password = "csproot";
+            Uri baseUrl = new Uri("https://192.168.239.12:8443/");
+            string username = "csproot";
+            string password = "csproot";
 
-            //nuageVSDSession nuSession = new nuageVSDSession(username, password, "csp", baseUrl);
-            //nuSession.start();
-
-            string restScript = @"
-                $CertificatePolicyMethod= @'
-                    using System.Net;
-                    using System.Security.Cryptography.X509Certificates;
-                    public class TrustAllCertsPolicy : ICertificatePolicy {
-                        public bool CheckValidationResult(
-                            ServicePoint srvPoint, X509Certificate certificate,
-                            WebRequest request, int certificateProblem) {
-                            return true;
-                        }
-                }
-'@
+            NuageVSDPowerShellSession nuSession = new NuageVSDPowerShellSession(username, password, "csp", baseUrl);
+            nuSession.LoginVSD();
+            nuSession.GetDomains();
 
 
-                Add-Type $CertificatePolicyMethod
-                [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
-
-                $headers = New-Object 'System.Collections.Generic.Dictionary[[String],[String]]'
-                $headers.Add('Content-Type','application/json')
-                $headers.Add('X-Nuage-Organization','csp')
-                $headers.Add('X-Requested-With','XMLHttpRequest')
-                $headers.Add('Authorization', 'XREST Y3Nwcm9vdDo5NDNmMGFjMi1hMjkyLTQzNzQtODU3Yy1lNGNkZDk5ZDY1YTE=')
-
-                Invoke-RestMethod -Method Get -Uri https://192.168.239.12:8443/nuage/api/v3_2/domains -Headers $headers | Format-Custom";
-
-            this.powerShellContext.ExecuteScript<PSObject>(
-                    restScript.ToString(),
-                    (results, error) =>
-                    {
-                        if (error != null)
-                        {
-                            MessageBox.Show(error.Problem);
-                        }
-                        else
-                        {
-
-                            foreach (PSObject domain in results)
-                            {
-                                MessageBox.Show(domain.ToString());
-                            }
-                            logger.InfoFormat("The number of vNic is {0} of virtual machine {1}", vNics.Count(), vmContext.Name);
-                        } 
-
-              });
-            //MessageBox.Show(nuSession.enterprise[0].name);
+            MessageBox.Show(nuSession.domains.Value[1].name);
 
             //update the WPF element
         }

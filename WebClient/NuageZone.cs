@@ -35,4 +35,10 @@ namespace Nuage.VSDClient
         public string multicast { get; set; }
         public string associatedMulticastChannelMapID { get; set; }
     }
+
+    public class NuageZonePS
+    {
+        public List<NuageZone> Value { get; set; }
+        public string Count { get; set; }
+    }
 }

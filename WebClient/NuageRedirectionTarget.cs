@@ -27,4 +27,10 @@ namespace Nuage.VSDClient
         public string ESI { get; set; }
         public string templateID { get; set; }
     }
+
+    public class NuageRedirectionTargetPS
+    {
+        public List<NuageRedirectionTarget> Value { get; set; }
+        public string Count { get; set; }
+    }
 }

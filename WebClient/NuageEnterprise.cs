@@ -40,4 +40,10 @@ namespace Nuage.VSDClient
         public string LDAPEnabled { get; set; }
         public string LDAPAuthorizationEnabled { get; set; }
     }
+
+    public class NuageEnterprisePS
+    {
+        public List<NuageEnterprise> Value { get; set; }
+        public string Count { get; set; }
+    }
 }
