@@ -53,26 +53,47 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
         private List<ComboBox> vsdNetworks = new List<ComboBox>();
         private List<TextBox> vmStaticIps = new List<TextBox>();
 
-        private Uri baseUrl = new Uri("https://192.168.239.12:8443/");
-        private string username = "csproot";
-        private string password = "csproot";
+        private string addinPath = ".\\bin\\AddInPipeline\\AddIns\\NUAGE_scvmm-dev\\VspSCVMMPlugin\\"; 
+        private string baseUrl = "";
+        private string username = "";
+        private string password = "";
 
         NuageVSDPowerShellSession nuSession;
 
         public NuageVSPWindow(PowerShellContext powerShellContext, IEnumerable<VMContext> selectedVMs)
         {
             this.vmContext = selectedVMs.First();
-
-            FileInfo config = new FileInfo(".\\log.conf");
-            XmlConfigurator.Configure(config);
-
             InitializeComponent();
-
             this.powerShellContext = powerShellContext;
+            var vsdConfig = new Dictionary<string, string>();
 
-            nuSession = new NuageVSDPowerShellSession(username, password, "csp", baseUrl);
-            nuSession.LoginVSD();
-            
+            try
+            {
+                FileInfo config = new FileInfo(addinPath + "log.conf");
+                XmlConfigurator.Configure(config);
+
+                foreach (var row in File.ReadLines(addinPath + "vsd.conf"))
+                {
+                    vsdConfig.Add(row.Split('=')[0], string.Join("=", row.Split('=').Skip(1).ToArray()));
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                logger.InfoFormat("Config file not founded {0}", ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Read configure file failed {0}", ex.Message);
+                this.Close();
+            }
+
+            if (vsdConfig.Count > 0)
+            {
+                vsdConfig.TryGetValue("Url", out this.baseUrl);
+                vsdConfig.TryGetValue("Username", out this.username);
+                vsdConfig.TryGetValue("Password", out this.password);
+
+            }
 
             this.Loaded += new RoutedEventHandler(OnLoaded);
         }
@@ -128,7 +149,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
             this.vmUUID.Text = vm.ID.ToString();
             this.vmState.Text = vm.VirtualMachineState.ToString();
             this.vmHost.Text = vm.HostName.ToString();
-            this.vsdEneterprise.ItemsSource = nuSession.enterprise.Value;
+            this.vsdEneterprise.ItemsSource = nuSession.GetEnterrpise();
 
             if(vNicCount == 0)
                 return;
@@ -227,11 +248,11 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                     GroupBoxSP.Children.Add(MacAddressSP);
 
                     //VSP element
-                    DrawVSPElement<NuageDomain>(GroupBoxSP, "Domain", vsdDomains, nuSession.domains.Value);
-                    DrawVSPElement<NuageZone>(GroupBoxSP, "Zone", vsdZones, nuSession.zones.Value);
-                    DrawVSPElement<NuagePolicyGroup>(GroupBoxSP, "Policy Group", vsdPolicyGroups, nuSession.policyGroups.Value);
-                    DrawVSPElement<NuageRedirectionTarget>(GroupBoxSP, "Redirection Target", vsdRedirectionTargets, nuSession.redirectionTargets.Value);
-                    DrawVSPElement<NuageSubnet>(GroupBoxSP, "Network", vsdNetworks, nuSession.subnets.Value);
+                    DrawVSPElement<NuageDomain>(GroupBoxSP, "Domain", vsdDomains, nuSession.GetDomains());
+                    DrawVSPElement<NuageZone>(GroupBoxSP, "Zone", vsdZones, nuSession.GetZones());
+                    DrawVSPElement<NuagePolicyGroup>(GroupBoxSP, "Policy Group", vsdPolicyGroups, nuSession.GetPolicyGroups());
+                    DrawVSPElement<NuageRedirectionTarget>(GroupBoxSP, "Redirection Target", vsdRedirectionTargets, nuSession.GetRedirectionTargets());
+                    DrawVSPElement<NuageSubnet>(GroupBoxSP, "Network", vsdNetworks, nuSession.GetSubnets());
 
                     //Static IP
                     StackPanel StaticIpSP = new StackPanel
@@ -336,15 +357,26 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
             return;
         }
 
-        private void RefreshVSDMetadata()
+        private Boolean RefreshVSDMetadata()
         {
             //Connect to VSD and reterive all of the metadata
-            nuSession.GetEnterrpise();
-            nuSession.GetDomains();
-            nuSession.GetSubnet();
-            nuSession.GetZone();
-            nuSession.GetPolicyGroup();
-            nuSession.GetRedirectionTarget();
+            nuSession = new NuageVSDPowerShellSession(username, password, "csp", new Uri(baseUrl));
+            
+            if (!nuSession.LoginVSD())
+            {
+                string result = string.Format("Connect vsd {0} failed.", this.baseUrl);
+                MessageBox.Show(result);
+                return false;
+            }
+
+            nuSession.GetEnterrpiseRestApi();
+            nuSession.GetDomainsRestApi();
+            nuSession.GetSubnetRestApi();
+            nuSession.GetZoneRestApi();
+            nuSession.GetPolicyGroupRestApi();
+            nuSession.GetRedirectionTargetRestApi();
+
+            return true;
         }
 
         private void cancelButton_Click(object sender, RoutedEventArgs e)
@@ -354,10 +386,11 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
 
         private void refreshButton_Click(object sender, RoutedEventArgs e)
         {
-            
-            this.RefreshVSDMetadata();
 
-            MessageBox.Show("Reresh VSD metadata success!");
+            if (this.RefreshVSDMetadata())
+            {
+                MessageBox.Show("Reresh VSD metadata success!");
+            }
 
             //update the WPF element
             DrawMainWindows(this.vNics.Count());
@@ -501,7 +534,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
             //Filter domains in this enterprise
             List<NuageDomain> afterFilter = new List<NuageDomain>();
 
-            foreach (NuageDomain items in this.nuSession.domains.Value)
+            foreach (NuageDomain items in this.nuSession.GetDomains())
             {
                 if (items.parentID.Equals(selectEneterprise.ID))
                 {
@@ -531,7 +564,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                 List<NuagePolicyGroup> policyGroupFilter = new List<NuagePolicyGroup>();
                 List<NuageRedirectionTarget> redirctionTargetFilter = new List<NuageRedirectionTarget>();
 
-                foreach (NuageZone items in this.nuSession.zones.Value)
+                foreach (NuageZone items in this.nuSession.GetZones())
                 {
                     if (items.parentID.Equals(selectedDomain.ID))
                     {
@@ -539,7 +572,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                     }
                 }
 
-                foreach (NuagePolicyGroup items in this.nuSession.policyGroups.Value)
+                foreach (NuagePolicyGroup items in this.nuSession.GetPolicyGroups())
                 {
                     if (items.parentID.Equals(selectedDomain.ID))
                     {
@@ -547,7 +580,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                     }
                 }
 
-                foreach (NuageRedirectionTarget items in this.nuSession.redirectionTargets.Value)
+                foreach (NuageRedirectionTarget items in this.nuSession.GetRedirectionTargets())
                 {
                     if (items.parentID.Equals(selectedDomain.ID))
                     {
@@ -570,7 +603,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
 
                 if (selectZone == null) return;
 
-                foreach (NuageSubnet items in this.nuSession.subnets.Value)
+                foreach (NuageSubnet items in this.nuSession.GetSubnets())
                 {
                     if (items.parentID.Equals(selectZone.ID))
                     {
@@ -594,7 +627,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
             List<NuagePolicyGroup> policyGroupFilter = new List<NuagePolicyGroup>();
             List<NuageRedirectionTarget> redirctionTargetFilter = new List<NuageRedirectionTarget>();
             
-            foreach (NuageZone items in this.nuSession.zones.Value)
+            foreach (NuageZone items in this.nuSession.GetZones())
             {
                 if (items.parentID.Equals(parentID))
                 {
@@ -602,7 +635,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                 }
             }
 
-            foreach (NuagePolicyGroup items in this.nuSession.policyGroups.Value)
+            foreach (NuagePolicyGroup items in this.nuSession.GetPolicyGroups())
             {
                 if (items.parentID.Equals(parentID))
                 {
@@ -610,7 +643,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                 }
             }
 
-            foreach (NuageRedirectionTarget items in this.nuSession.redirectionTargets.Value)
+            foreach (NuageRedirectionTarget items in this.nuSession.GetRedirectionTargets())
             {
                 if (items.parentID.Equals(parentID))
                 {
