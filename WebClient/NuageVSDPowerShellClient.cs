@@ -35,7 +35,7 @@ namespace Nuage.VSDClient
         public NuagePolicyGroupPS policyGroups { get; set; }
         public NuageRedirectionTargetPS redirectionTargets { get; set; }
         public NuageSubnetPS subnets { get; set; }
-
+        
         public NuageVSDPowerShellSession(string username, string password, string organization, Uri baseUrl)
         {
             FileInfo config = new FileInfo(".\\log.conf");

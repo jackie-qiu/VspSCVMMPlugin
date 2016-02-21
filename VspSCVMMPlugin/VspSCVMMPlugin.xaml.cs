@@ -27,7 +27,7 @@ using Microsoft.SystemCenter.VirtualMachineManager.Remoting;
 using log4net;
 using log4net.Config;
 using Nuage.VSDClient;
-
+using Newtonsoft.Json;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 
@@ -366,41 +366,132 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
         private void applyButton_Click(object sender, RoutedEventArgs e)
         {
             //Write the metadata to virtual machine's customer properties
+            string metaData = GetVspMetadataJson();
+            if (metaData == null)
+            {
+                return;
+            }
+            string NuageMetadataScript = @"
+                if (!(Get-SCCustomProperty -Name 'VspMetadata'))
+                    {New-SCCustomProperty -Name 'VspMetadata' -Description 'Nuage Network Metadata' -AddMember @('VM')}
+                ";
 
-            //IEnumerable<Guid> checkpointVMIds = null;
-            //if (!this.isContextual)
-            //{
-            //    // Only checkpoint selected VMs
-            //    checkpointVMIds =
-            //        this.VMList.SelectedItems.Cast<VMContext>().Select(vm => vm.ID);
-            //}
-            //else
-            //{
-            //    // Checkpoint all VMs in the list
-            //    checkpointVMIds =
-            //        this.VMList.Items.Cast<VMContext>().Select(vm => vm.ID);
-            //}
+            this.powerShellContext.ExecuteScript(NuageMetadataScript,
+                (results, error) =>
+                {
+                    if (error != null)
+                    {
+                        MessageBox.Show(error.Problem);
+                    }
+                });
 
-            //StringBuilder checkpointScript = new StringBuilder();
-            //foreach (Guid vmId in checkpointVMIds)
-            //{
-            //    checkpointScript.AppendLine(
-            //        string.Format(
-            //            "Get-SCVirtualMachine -ID {0} | New-SCVMCheckpoint -Name \"{0}\" -RunAsynchronous",
-            //            vmId, this.checkpointName.Text));
-            //}
+            string UpdateCustomerPropScript = @"
+                    function Update-CustomerProperty ($Vm, [string]$Name, [string]$Value) {
+                        process {
+                            if ($_) { $Vm = $_ } 
+                        }
+                        end {
+                            $CustomProp = Get-SCCustomProperty -Name $Name
+                            $CustomPropValue = $Vm | Get-SCCustomPropertyValue -CustomProperty $CustomProp
+                            if ([String]::IsNullOrEmpty($CustomPropValue.Value))
+                            {
+                                $Vm | Set-SCCustomPropertyValue -CustomProperty $CustomProp -Value $Value -RunAsynchronously
+                            }
+                            Else
+                            {
+                                Remove-SCCustomPropertyValue -CustomPropertyValue $CustomPropValue
+                                $Vm | Set-SCCustomPropertyValue -CustomProperty $CustomProp -Value $Value -RunAsynchronously
+                            }
+                        }
 
-            //this.powerShellContext.ExecuteScript(checkpointScript.ToString(),
-            //    (results, error) =>
-            //    {
-            //        if (error != null)
-            //        {
-            //            MessageBox.Show(error.Problem);
-            //        }
-            //    });
+                    }
+
+                    $vm = Get-SCVirtualMachine -ID VMID
+
+                    $vm | Update-CustomerProperty -Name VspMetadata -Value 'METADATA' | Out-Null
+
+                ";
+
+            string UpdateScriptFormatted = UpdateCustomerPropScript.Replace("VMID", vmContext.ID.ToString());
+            UpdateScriptFormatted = UpdateScriptFormatted.Replace("METADATA", metaData);
+
+            this.powerShellContext.ExecuteScript(UpdateScriptFormatted,
+                (results, error) =>
+                {
+                    if (error != null)
+                    {
+                        MessageBox.Show(error.Problem);
+                    }
+                });
 
 
             this.Close();
+        }
+
+        private string GetVspMetadataJson()
+        {
+            List<VspMetaData> VspMetaData = new List<VspMetaData>();
+            String result;
+
+            for (int i = 0; i < this.vNics.Count(); i++)
+            {
+                string domain = "";
+                string zone = "";
+                string policyGroup = "";
+                string redirectionTarget = "";
+                string subnet = "";
+                string StaticIp = "";
+
+                if (this.vsdDomains[i].SelectedItem != null)
+                {
+                    domain = ((NuageDomain)this.vsdDomains[i].SelectedItem).ID;
+                }
+                if (this.vsdZones[i].SelectedItem != null)
+                {
+                    zone = ((NuageZone)this.vsdZones[i].SelectedItem).ID;
+                }
+                if (this.vsdPolicyGroups[i].SelectedItem != null)
+                {
+                    policyGroup = ((NuagePolicyGroup)this.vsdPolicyGroups[i].SelectedItem).ID;
+                }
+                if (this.vsdRedirectionTargets[i].SelectedItem != null)
+                {
+                    redirectionTarget = ((NuageRedirectionTarget)this.vsdRedirectionTargets[i].SelectedItem).ID;
+                }
+                if (this.vsdNetworks[i].SelectedItem != null)
+                {
+                    subnet = ((NuageSubnet)this.vsdNetworks[i].SelectedItem).ID;
+                }
+                if (!System.String.IsNullOrEmpty(this.vmStaticIps[i].Text))
+                {
+                    StaticIp = this.vmStaticIps[i].Text;
+                }
+
+
+                VspMetaData.Add(new VspMetaData
+                {
+                    domainID = domain,
+                    zoneID = zone,
+                    policyGroupID = policyGroup,
+                    redirectionTargetID = redirectionTarget,
+                    StaticIp = StaticIp,
+                    subnetID = subnet
+                });
+
+            }
+
+            try
+            {
+                result = JsonConvert.SerializeObject(VspMetaData);
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show("Convert to Json Failed {0}", ex.Message);
+                return null;
+            }
+
+            return result;
         }
 
         private void vsdEneterprise_SelectionChanged(object sender, SelectionChangedEventArgs e)
