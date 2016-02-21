@@ -57,6 +57,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
         private string baseUrl = "";
         private string username = "";
         private string password = "";
+        private string organization = "";
 
         NuageVSDPowerShellSession nuSession;
 
@@ -71,29 +72,13 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
             {
                 FileInfo config = new FileInfo(addinPath + "log.conf");
                 XmlConfigurator.Configure(config);
-
-                foreach (var row in File.ReadLines(addinPath + "vsd.conf"))
-                {
-                    vsdConfig.Add(row.Split('=')[0], string.Join("=", row.Split('=').Skip(1).ToArray()));
-                }
             }
             catch (FileNotFoundException ex)
             {
-                logger.InfoFormat("Config file not founded {0}", ex.Message);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Read configure file failed {0}", ex.Message);
-                this.Close();
+                logger.InfoFormat("Log4net config file not found {0}", ex.Message);
             }
 
-            if (vsdConfig.Count > 0)
-            {
-                vsdConfig.TryGetValue("Url", out this.baseUrl);
-                vsdConfig.TryGetValue("Username", out this.username);
-                vsdConfig.TryGetValue("Password", out this.password);
-
-            }
+            readVSDConfigFile();
 
             this.Loaded += new RoutedEventHandler(OnLoaded);
         }
@@ -111,6 +96,38 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
 
         }
 
+        private Boolean readVSDConfigFile()
+        {
+            var vsdConfig = new Dictionary<string, string>();
+
+            try
+            {
+                foreach (var row in File.ReadLines(addinPath + "vsd.conf"))
+                {
+                    vsdConfig.Add(row.Split('=')[0], string.Join("=", row.Split('=').Skip(1).ToArray()));
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                logger.InfoFormat("Config file not found {0}", ex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorFormat("Read VSD configure file failed {0}", ex.Message);
+                return false;
+            }
+
+            if (vsdConfig.Count > 0)
+            {
+                vsdConfig.TryGetValue("Url", out this.baseUrl);
+                vsdConfig.TryGetValue("Username", out this.username);
+                vsdConfig.TryGetValue("Password", out this.password);
+                vsdConfig.TryGetValue("Organization", out this.organization);
+
+            }
+
+            return true;
+        }
         //Get the vm
         private void GetVirtualMachine(Guid vmID)
         {
@@ -359,12 +376,21 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
 
         private Boolean RefreshVSDMetadata()
         {
+            readVSDConfigFile();
+
             //Connect to VSD and reterive all of the metadata
-            nuSession = new NuageVSDPowerShellSession(username, password, "csp", new Uri(baseUrl));
+            Uri uriResult;
+            Uri.TryCreate(baseUrl, UriKind.Absolute, out uriResult);
+            if (!(uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
+            {
+                logger.ErrorFormat("Invalid Url address {0}.", baseUrl);
+                return false;
+            }
+            nuSession = new NuageVSDPowerShellSession(username, password, organization, uriResult);
             
             if (!nuSession.LoginVSD())
             {
-                string result = string.Format("Connect vsd {0} failed.", this.baseUrl);
+                string result = string.Format("Connect to vsd {0} failed.", this.baseUrl);
                 MessageBox.Show(result);
                 return false;
             }
@@ -395,7 +421,12 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
             //update the WPF element
             DrawMainWindows(this.vNics.Count());
         }
+        private void configMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            VspSCVMMPluginConfigVsdWindows configVsdWindow = new VspSCVMMPluginConfigVsdWindows(baseUrl, username, organization);
+            configVsdWindow.Show();
 
+        }
         private void applyButton_Click(object sender, RoutedEventArgs e)
         {
             //Write the metadata to virtual machine's customer properties

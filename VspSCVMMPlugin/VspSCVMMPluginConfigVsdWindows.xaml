@@ -1,0 +1,54 @@
+﻿<Window x:Class="Microsoft.VirtualManager.UI.AddIns.NuageVSP.VspSCVMMPluginConfigVsdWindows"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Connect VSD" Height="300" Width="400" Background="WhiteSmoke">
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock VerticalAlignment="Top"  HorizontalAlignment="Left" Margin="10,25,0,0" Width="200" FontSize="12pt" Foreground="#003399" ><Run Text="Connect to VSD"/></TextBlock>
+        <StackPanel Orientation="Vertical" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <StackPanel Orientation="Horizontal" Margin="5,60,10,0" Height="20" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="80" ><Run Text="URL"/></TextBlock>
+                <TextBox HorizontalAlignment="Left" Margin="0" x:Name="vsdUrl" Width="240"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="5,10,10,0" Height="20" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="80" ><Run Text="User Name"/></TextBlock>
+                <TextBox HorizontalAlignment="Left" Margin="0" x:Name="vsdUserName" Width="240"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="5,10,10,0" Height="20" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="80"><Run Text="Password"/></TextBlock>
+                <PasswordBox HorizontalAlignment="Left" Margin="0" x:Name="vsdPassword" Width="240"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="5,10,10,0" Height="20"  HorizontalAlignment="Left" VerticalAlignment="Center">
+                <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="80"><Run Text="Organization"/></TextBlock>
+                <TextBox HorizontalAlignment="Left" Margin="0" x:Name="vsdOrganization" Width="240"/>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel
+            Grid.Row="1"
+            Margin="5"
+            Orientation="Horizontal"
+            HorizontalAlignment="Right">
+            <Button 
+                Height="23" 
+                HorizontalAlignment="Right" 
+                Name="okButton" 
+                VerticalAlignment="Bottom" 
+                Width="75" 
+                Margin="0,0,5,0"
+                Click="connectButton_Click"
+                Content="_Connect" />
+            <Button 
+                Height="23" 
+                Name="cancelButton" 
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Right" 
+                Width="75" 
+                IsCancel="True" 
+                Click="cancelButton_Click"
+                Content="_Cancel" />
+        </StackPanel>
+    </Grid>
+</Window>
