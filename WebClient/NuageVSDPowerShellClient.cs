@@ -21,8 +21,8 @@ namespace Nuage.VSDClient
     public class NuageVSDPowerShellSession
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(nuageVSDSession));
-        private int FAILED = -1;
-        private int SUCCESS = 0;
+        public int FAILED = -1;
+        public int SUCCESS = 0;
         private string username { get; set; }
         private string password { get; set; }
         private string organization { get; set; }
@@ -48,7 +48,7 @@ namespace Nuage.VSDClient
 
         }
 
-        public int LoginVSD()
+        public Boolean LoginVSD()
         {
             string url = this.baseUrl.ToString() + "nuage/api/v3_2/me";
             string authKey = nuageBase64.Base64Encode(this.username + ":" + this.password);
@@ -57,17 +57,22 @@ namespace Nuage.VSDClient
             if (result.Count() == 0)
             {
                 logger.Error("Login VSD Failed....");
-                return FAILED;
+                return false;
             }
 
             this.mes = result.First();
             this.token = nuageBase64.Base64Encode(username + ":" + mes.First().APIKey);
             logger.DebugFormat("Token: {0}", this.token);
-            return SUCCESS;
+            return true;
 
         }
-
-        public int GetDomains()
+        public List<NuageDomain> GetDomains()
+        {
+            if (this.domains != null)
+                return this.domains.Value;
+            return null;
+        }
+        public Boolean GetDomainsRestApi()
         {
             string url = this.baseUrl.ToString() + "nuage/api/v3_2/domains";
 
@@ -75,16 +80,21 @@ namespace Nuage.VSDClient
             if (result.Count() == 0)
             {
                 logger.Error("Get Domains Failed....");
-                return FAILED;
+                return false;
             }
 
             this.domains = result.First();
-            return SUCCESS;
+            return true;
 
             
         }
-
-        public int GetEnterrpise()
+        public List<NuageEnterprise> GetEnterrpise()
+        {
+            if (this.enterprise != null)
+                return this.enterprise.Value;
+            return null;
+        }
+        public Boolean GetEnterrpiseRestApi()
         {
             string url = this.baseUrl.ToString() + "nuage/api/v3_2/enterprises";
 
@@ -92,14 +102,19 @@ namespace Nuage.VSDClient
             if (result.Count() == 0)
             {
                 logger.Error("Get Enterrpise Failed....");
-                return FAILED;
+                return false;
             }
 
             this.enterprise = result.First();
-            return SUCCESS;
+            return true;
         }
-
-        public int GetPolicyGroup()
+        public List<NuagePolicyGroup> GetPolicyGroups()
+        {
+            if (this.policyGroups != null)
+                return this.policyGroups.Value;
+            return null;
+        }
+        public Boolean GetPolicyGroupRestApi()
         {
             string url = this.baseUrl.ToString() + "nuage/api/v3_2/policygroups";
 
@@ -107,15 +122,20 @@ namespace Nuage.VSDClient
             if (result.Count() == 0)
             {
                 logger.Error("Get PolicyGroup Failed....");
-                return FAILED;
+                return false;
             }
 
             this.policyGroups = result.First();
-            return SUCCESS;
+            return true;
             
         }
-
-        public int GetRedirectionTarget()
+        public List<NuageRedirectionTarget> GetRedirectionTargets()
+        {
+            if (this.redirectionTargets != null)
+                return this.redirectionTargets.Value;
+            return null;
+        }
+        public Boolean GetRedirectionTargetRestApi()
         {
             string url = this.baseUrl.ToString() + "nuage/api/v3_2/redirectiontargets";
 
@@ -123,16 +143,21 @@ namespace Nuage.VSDClient
             if (result.Count() == 0)
             {
                 logger.Error("Get RedirectionTarget Failed....");
-                return FAILED;
+                return false;
                 
             }
 
             this.redirectionTargets = result.First();
-            return SUCCESS;
+            return true;
            
         }
-
-        public int GetSubnet()
+        public List<NuageSubnet> GetSubnets()
+        {
+            if (this.redirectionTargets != null)
+                return this.subnets.Value;
+            return null;
+        }
+        public Boolean GetSubnetRestApi()
         {
             string url = this.baseUrl.ToString() + "nuage/api/v3_2/subnets";
 
@@ -140,7 +165,7 @@ namespace Nuage.VSDClient
             if (result.Count() == 0)
             {
                 logger.Error("Get Subnet Failed....");
-                return FAILED;
+                return false;
                 
             }
 
@@ -155,10 +180,15 @@ namespace Nuage.VSDClient
                     this.subnets.Value.Remove(item);
                 }
             }
-            return SUCCESS;
+            return true;
         }
-
-        public int GetZone()
+        public List<NuageZone> GetZones()
+        {
+            if (this.redirectionTargets != null)
+                return this.zones.Value;
+            return null;
+        }
+        public Boolean GetZoneRestApi()
         {
             string url = this.baseUrl.ToString() + "nuage/api/v3_2/zones";
 
@@ -166,7 +196,7 @@ namespace Nuage.VSDClient
             if (result.Count() == 0)
             {
                 logger.Error("Get Zone Failed....");
-                return FAILED;
+                return false;
             }
             this.zones = result.First();
             for (int i = this.zones.Value.Count - 1; i >= 0; i--)
@@ -178,7 +208,7 @@ namespace Nuage.VSDClient
                     this.zones.Value.Remove(item);
                 }
             }
-            return SUCCESS;
+            return true;
 
         }
 
