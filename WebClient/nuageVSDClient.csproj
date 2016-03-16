@@ -38,6 +38,10 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="IPAddressRange, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\IPAddressRange.1.5.0.0\lib\net40\IPAddressRange.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
@@ -71,7 +75,11 @@
     <Compile Include="NuageMe.cs" />
     <Compile Include="NuagePolicyGroup.cs" />
     <Compile Include="NuageRedirectionTarget.cs" />
+    <Compile Include="NuageResyncInfo.cs" />
     <Compile Include="NuageSubnet.cs" />
+    <Compile Include="NuageVmInterface.cs" />
+    <Compile Include="NuageVms.cs" />
+    <Compile Include="NuageVport.cs" />
     <Compile Include="NuageVSDPowerShellClient.cs" />
     <Compile Include="nuageVSDSession.cs" />
     <Compile Include="NuageZone.cs" />

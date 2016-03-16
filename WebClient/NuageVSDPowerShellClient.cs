@@ -53,7 +53,7 @@ namespace Nuage.VSDClient
             string url = this.baseUrl.ToString() + "nuage/api/v3_2/me";
             string authKey = nuageBase64.Base64Encode(this.username + ":" + this.password);
 
-            List<NuageMe[]> result = this.CallRestAPI<NuageMe[]>(url, authKey, false);
+            List<NuageMe[]> result = this.CallRestGetAPI<NuageMe[]>(url, authKey, null, false);
             if (result.Count() == 0)
             {
                 logger.Error("Login VSD Failed....");
@@ -76,7 +76,7 @@ namespace Nuage.VSDClient
         {
             string url = this.baseUrl.ToString() + "nuage/api/v3_2/domains";
 
-            List<NuageDomainPS> result = this.CallRestAPI<NuageDomainPS>(url,this.token, true);
+            List<NuageDomainPS> result = this.CallRestGetAPI<NuageDomainPS>(url,this.token, null, true);
             if (result.Count() == 0)
             {
                 logger.Error("Get Domains Failed....");
@@ -98,7 +98,7 @@ namespace Nuage.VSDClient
         {
             string url = this.baseUrl.ToString() + "nuage/api/v3_2/enterprises";
 
-            List<NuageEnterprisePS> result = this.CallRestAPI<NuageEnterprisePS>(url, this.token, true);
+            List<NuageEnterprisePS> result = this.CallRestGetAPI<NuageEnterprisePS>(url, this.token, null, true);
             if (result.Count() == 0)
             {
                 logger.Error("Get Enterrpise Failed....");
@@ -118,7 +118,7 @@ namespace Nuage.VSDClient
         {
             string url = this.baseUrl.ToString() + "nuage/api/v3_2/policygroups";
 
-            List<NuagePolicyGroupPS> result = this.CallRestAPI<NuagePolicyGroupPS>(url, this.token, true);
+            List<NuagePolicyGroupPS> result = this.CallRestGetAPI<NuagePolicyGroupPS>(url, this.token, null, true);
             if (result.Count() == 0)
             {
                 logger.Error("Get PolicyGroup Failed....");
@@ -139,7 +139,7 @@ namespace Nuage.VSDClient
         {
             string url = this.baseUrl.ToString() + "nuage/api/v3_2/redirectiontargets";
 
-            List<NuageRedirectionTargetPS> result = this.CallRestAPI<NuageRedirectionTargetPS>(url, this.token, true);
+            List<NuageRedirectionTargetPS> result = this.CallRestGetAPI<NuageRedirectionTargetPS>(url, this.token, null, true);
             if (result.Count() == 0)
             {
                 logger.Error("Get RedirectionTarget Failed....");
@@ -161,7 +161,7 @@ namespace Nuage.VSDClient
         {
             string url = this.baseUrl.ToString() + "nuage/api/v3_2/subnets";
 
-            List<NuageSubnetPS> result = this.CallRestAPI<NuageSubnetPS>(url, this.token, true);
+            List<NuageSubnetPS> result = this.CallRestGetAPI<NuageSubnetPS>(url, this.token, null, true);
             if (result.Count() == 0)
             {
                 logger.Error("Get Subnet Failed....");
@@ -192,7 +192,7 @@ namespace Nuage.VSDClient
         {
             string url = this.baseUrl.ToString() + "nuage/api/v3_2/zones";
 
-            List<NuageZonePS> result = this.CallRestAPI<NuageZonePS>(url, this.token, true);
+            List<NuageZonePS> result = this.CallRestGetAPI<NuageZonePS>(url, this.token, null, true);
             if (result.Count() == 0)
             {
                 logger.Error("Get Zone Failed....");
@@ -212,7 +212,62 @@ namespace Nuage.VSDClient
 
         }
 
-        private List<T> CallRestAPI<T>(string url, string token, bool tojson)
+        public NuageVport CreateVport(string subnetId, string name)
+        {
+            NuageVport request = new NuageVport();
+
+            request.type = "VM";
+            request.name = name;
+            request.description = name;
+            request.addressSpoofing = "INHERITED";
+
+            string request_json = JsonConvert.SerializeObject(request);
+
+            logger.DebugFormat("Create vPort with content: {0}", request_json);
+
+            string url = this.baseUrl.ToString() + "nuage/api/v3_2/subnets/" + subnetId + "/vports";
+
+            List<NuageVportPS> result = this.CallRestPostAPI<NuageVportPS>(url, this.token, request_json, true);
+            if (result != null && result.Count > 0)
+                return result.First().Value.First();
+
+            return null;
+            
+        }
+
+        public NuageVms CreateVirtualMachine(List<NuageVmInterface> vmNics, string UUID, string name)
+        {
+            NuageVms request = new NuageVms();
+
+            request.UUID = UUID;
+            request.name = name;
+            request.interfaces = vmNics;
+
+            string request_json = JsonConvert.SerializeObject(request);
+
+            logger.DebugFormat("Create virtual machine with content: {0}", request_json);
+
+            string url = this.baseUrl.ToString() + "nuage/api/v3_2/vms";
+
+            List<NuageVmsPS> result = this.CallRestPostAPI<NuageVmsPS>(url, this.token, request_json, false);
+            if (result != null && result.Count > 0)
+                return result.First().Value.First();
+
+            return null;
+
+        }
+
+        private List<T> CallRestGetAPI<T>(string url, string token, string content, bool tojson)
+        {
+            return CallRestAPI<T>(url, token, "Get", content, tojson);
+        }
+
+        private List<T> CallRestPostAPI<T>(string url, string token, string content, bool tojson)
+        {
+            return CallRestAPI<T>(url, token, "Post", content, tojson);
+        }
+
+        private List<T> CallRestAPI<T>(string url, string token, string action, string content, bool tojson)
         {
            
             List<T> NuageObject = new List<T>();
@@ -239,12 +294,26 @@ namespace Nuage.VSDClient
                 $headers.Add('X-Requested-With','XMLHttpRequest')
                 $headers.Add('Authorization', 'XREST TOKEN')
 
-                $result=Invoke-RestMethod -Method Get -Uri URL -Headers $headers TOJSON
+                $body=@'
+                BODY
+'@
+                $post = 'ACTION'
+                if ($post -ne 'Post')
+                {
+                    $result=Invoke-RestMethod -Method ACTION -ContentType application/json -Uri URL -Headers $headers TOJSON
+                }
+                Else
+                {
+                    $result=Invoke-RestMethod -Method ACTION -ContentType application/json -Uri URL -Headers $headers -Body $body TOJSON
+                }
+
+                
                 return $result";
 
             string RestScriptFormatted = RestScript.Replace("URL", url);
             RestScriptFormatted = RestScriptFormatted.Replace("ORGANIZATION", this.organization);
             RestScriptFormatted = RestScriptFormatted.Replace("TOKEN", token);
+            RestScriptFormatted = RestScriptFormatted.Replace("ACTION", action);
             if (tojson)
             {
                 RestScriptFormatted = RestScriptFormatted.Replace("TOJSON", "| ConvertTo-Json");
@@ -254,6 +323,16 @@ namespace Nuage.VSDClient
                 RestScriptFormatted = RestScriptFormatted.Replace("TOJSON", "");
             }
 
+            //Replace json body if the operation is POST
+            if (action.Equals("Post"))
+            {
+                RestScriptFormatted = RestScriptFormatted.Replace("BODY", content);
+            }
+            else
+            {
+                RestScriptFormatted = RestScriptFormatted.Replace("BODY", "");
+            }
+            logger.DebugFormat("The rest powershell scripts to excuete {0}", RestScriptFormatted);
             PowerShell ps = PowerShell.Create();
             ps.AddScript(RestScriptFormatted);
             try
@@ -263,6 +342,8 @@ namespace Nuage.VSDClient
                 {
                     //Console.WriteLine("{0}", psObject.Properties["ID"].Value.ToString());
                     //Console.WriteLine("{0}", psObject.ToString());
+                    if (psObject == null)
+                        continue;
                     T result = JsonConvert.DeserializeObject<T>(psObject.ToString());
                     NuageObject.Add(result);
                 }

@@ -7,6 +7,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -30,6 +31,7 @@ using Nuage.VSDClient;
 using Newtonsoft.Json;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using NetTools;
 
 namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
 {
@@ -429,12 +431,85 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
         }
         private void applyButton_Click(object sender, RoutedEventArgs e)
         {
-            //Write the metadata to virtual machine's customer properties
-            string metaData = GetVspMetadataJson();
-            if (metaData == null)
+            Guid uuid = this.vm.ID;
+            List<VspMetaData> VspMetaData = GetVspMetadata();
+            List<NuageVmInterface> vmInterfaces = new List<NuageVmInterface>();
+
+            if (VspMetaData == null || VspMetaData.Count() == 0)
             {
+                logger.ErrorFormat("Can not get the vsp metadata");
                 return;
             }
+
+            int i = 0;
+            foreach (VspMetaData items in VspMetaData)
+            {
+                string vPortName = this.vm.Name + uuid.ToString() + "_" + i;
+                i ++;
+
+                NuageVport vPort = nuSession.CreateVport(items.subnetID, vPortName);
+
+                if (vPort != null)
+                {
+                    logger.DebugFormat("Create vPort {0} on VSD success", vPortName);
+                    vmInterfaces.Add(new NuageVmInterface
+                    {
+                        IPAddress = items.StaticIp,
+                        MAC = items.MAC,
+                        VPortID = vPort.ID,
+                        externalID = items.ID
+                    });
+
+                }
+                else
+                {
+                    logger.ErrorFormat("Create vPort {0} on VSD failed", vPortName);
+                    MessageBox.Show(string.Format("Create vPort {0} on VSD failed", vPortName), "Error");
+                    return;
+                }
+                           
+            }
+
+            if (vmInterfaces.Count > 0)
+            {
+                NuageVms vm = nuSession.CreateVirtualMachine(vmInterfaces, uuid.ToString(), this.vm.Name + uuid.ToString());
+                if (vm != null)
+                {
+                    logger.DebugFormat("Create virtual machine {0} on VSD success", this.vm.Name + uuid.ToString());
+                }
+            }
+            else
+            {
+                logger.ErrorFormat("Create virtual machine {0} on VSD success", this.vm.Name + uuid.ToString());
+                MessageBox.Show(string.Format("Create virtual machine {0} on VSD success", this.vm.Name + uuid.ToString()),"Error");
+                return;
+            }
+
+            this.Close();
+
+        }
+
+        //Write the metadata to virtual machine's customer properties
+        private void SetVirtualMachineCustomerProperties()
+        {
+            List<VspMetaData> VspMetaData = GetVspMetadata();
+            string metaData = null;
+            if (VspMetaData == null || VspMetaData.Count() == 0)
+            {
+                logger.ErrorFormat("Can not get the vsp metadata");
+                return;
+            }
+
+            try
+            {
+                metaData = JsonConvert.SerializeObject(VspMetaData);
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorFormat("Convert vsp metadata to Json failed {0}", ex.Message);
+                return;
+            }
+
             string NuageMetadataScript = @"
                 if (!(Get-SCCustomProperty -Name 'VspMetadata'))
                     {New-SCCustomProperty -Name 'VspMetadata' -Description 'Nuage Network Metadata' -AddMember @('VM')}
@@ -492,10 +567,9 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
             this.Close();
         }
 
-        private string GetVspMetadataJson()
+        private List<VspMetaData> GetVspMetadata()
         {
             List<VspMetaData> VspMetaData = new List<VspMetaData>();
-            String result;
 
             for (int i = 0; i < this.vNics.Count(); i++)
             {
@@ -503,7 +577,8 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                 string zone = "";
                 string policyGroup = "";
                 string redirectionTarget = "";
-                string subnet = "";
+                NuageSubnet subnet = null;
+                string subnetID = "";
                 string StaticIp = "";
 
                 if (this.vsdDomains[i].SelectedItem != null)
@@ -524,13 +599,21 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                 }
                 if (this.vsdNetworks[i].SelectedItem != null)
                 {
-                    subnet = ((NuageSubnet)this.vsdNetworks[i].SelectedItem).ID;
+                    subnet = ((NuageSubnet)this.vsdNetworks[i].SelectedItem);
+                    subnetID = subnet.ID;
                 }
                 if (!System.String.IsNullOrEmpty(this.vmStaticIps[i].Text))
                 {
                     StaticIp = this.vmStaticIps[i].Text;
                 }
 
+                var ipRange = IPAddressRange.Parse(subnet.address + "/" + subnet.netmask);
+                if(!ipRange.Contains(IPAddress.Parse(StaticIp)))
+                {
+                    logger.ErrorFormat("Static ip subnet {0} must in the range of {1}", subnet.ToString(), subnet.address + "/" + subnet.netmask);
+                    MessageBox.Show(string.Format("Static ip of subnet {0} must be in the range of {1}", subnet.ToString(), subnet.address + "/" + subnet.netmask), "Error");
+                    return null;
+                }
 
                 VspMetaData.Add(new VspMetaData
                 {
@@ -539,23 +622,15 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                     policyGroupID = policyGroup,
                     redirectionTargetID = redirectionTarget,
                     StaticIp = StaticIp,
-                    subnetID = subnet
+                    subnetID = subnetID,
+                    MAC = this.vNics[i].MACAddress == null ? "" : this.vNics[i].MACAddress.ToString(),
+                    ID = this.vNics[i].ID.ToString()
                 });
 
             }
 
-            try
-            {
-                result = JsonConvert.SerializeObject(VspMetaData);
-            }
-            catch (Exception ex)
-            {
 
-                MessageBox.Show("Convert to Json Failed {0}", ex.Message);
-                return null;
-            }
-
-            return result;
+            return VspMetaData;
         }
 
         private void vsdEneterprise_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -646,6 +721,27 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                 return;
             }
 
+            if (isSubnetComboBoxSelected(sender))
+            {
+                NicIndex = this.vsdNetworks.IndexOf((ComboBox)sender);
+                NuageSubnet selectSubnet = (NuageSubnet)this.vsdNetworks[NicIndex].SelectedItem;
+
+                if (selectSubnet == null) return;
+
+                //write subnet cidr to the ip address Text
+
+                foreach (NuageSubnet items in this.nuSession.GetSubnets())
+                {
+                    if (items.ID.Equals(selectSubnet.ID))
+                    {
+                        this.vmStaticIps[NicIndex].Clear();
+                        this.vmStaticIps[NicIndex].AppendText(items.address);
+                    }
+                }
+                
+            }
+            
+
             return;
 
         }
@@ -705,6 +801,19 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
         private Boolean isZoneComboBoxSelected(object sender)
         {
             foreach (ComboBox cb in this.vsdZones)
+            {
+                if (cb.Equals(sender))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private Boolean isSubnetComboBoxSelected(object sender)
+        {
+            foreach (ComboBox cb in this.vsdNetworks)
             {
                 if (cb.Equals(sender))
                 {
