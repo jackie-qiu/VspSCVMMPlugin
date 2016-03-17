@@ -17,7 +17,6 @@ using Newtonsoft.Json;
 
 namespace Nuage.VSDClient
 {
-
     public class NuageVSDPowerShellSession
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(nuageVSDSession));
@@ -311,7 +310,7 @@ namespace Nuage.VSDClient
             List<T> NuageObject = new List<T>();
             
             string RestScript = @"
-                $CertificatePolicyMethod= @'
+               Add-Type @'
                     using System.Net;
                     using System.Security.Cryptography.X509Certificates;
                     public class TrustAllCertsPolicy : ICertificatePolicy {
@@ -323,8 +322,6 @@ namespace Nuage.VSDClient
                 }
 '@
 
-
-                Add-Type $CertificatePolicyMethod
                 [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
 
                 $headers = New-Object 'System.Collections.Generic.Dictionary[[String],[String]]'
@@ -338,24 +335,29 @@ namespace Nuage.VSDClient
                 BODY
 '@
                 $request = 'ACTION'
-                if ($request -eq 'Get')
-                {
-                    $result=Invoke-RestMethod -Method ACTION -ContentType application/json -Uri URL -Headers $headers TOJSON
+                try {
+                    if ($request -eq 'Get')
+                    {
+                        $result=Invoke-RestMethod -Method ACTION -ContentType application/json -Uri URL -Headers $headers TOJSON
+                    }
+                    ElseIf ($request -eq 'Post')
+                    {
+                        $result=Invoke-RestMethod -Method ACTION -ContentType application/json -Uri URL -Headers $headers -Body $body TOJSON
+                    }
+                    ElseIf ($request -eq 'Delete')
+                    {
+                        $result=Invoke-RestMethod -Method ACTION -ContentType application/json -Uri URL -Headers $headers
+                    }
+                    Else
+                    {
+                        Write-Error ""Unknown_Request""
+                    }
                 }
-                ElseIf ($request -eq 'Post')
-                {
-                    $result=Invoke-RestMethod -Method ACTION -ContentType application/json -Uri URL -Headers $headers -Body $body TOJSON
-                }
-                ElseIf ($request -eq 'Delete')
-                {
-                    $result=Invoke-RestMethod -Method ACTION -ContentType application/json -Uri URL -Headers $headers
-                }
-                Else
-                {
-                    Write-Host ""Unknown http request""
+                catch {
+                    $error=$_.Exception.Response
+                    Write-Error $error.StatusCode
                 }
 
-                
                 return $result";
 
             string RestScriptFormatted = RestScript.Replace("URL", url);
@@ -400,12 +402,21 @@ namespace Nuage.VSDClient
                     logger.ErrorFormat("Invoke Powershell rest url {0} failed!", url);
                     return null;
                 }
+                if (ps.Streams.Error.Count > 0)
+                {
+                    foreach (var item in ps.Streams.Error)
+                    {
+                        logger.ErrorFormat("Invoke Powershell rest url {0} failed with status code {1}", url, item.ToString());
+                    }
+                    return null;
+                }
                 foreach (var psObject in results)
                 {
                     //Console.WriteLine("{0}", psObject.Properties["ID"].Value.ToString());
                     //Console.WriteLine("{0}", psObject.ToString());
                     if (psObject == null)
                         continue;
+
                     T result = JsonConvert.DeserializeObject<T>(psObject.ToString());
                     if (result != null)
                     {

@@ -829,7 +829,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
             NuageVms nuageVM = this.nuSession.GetVirtualMachineByUUID(this.vm.ID.ToString());
             if (nuageVM == null)
             {
-                MessageBox.Show(string.Format("There is no data on VSD about vm {0}", nuageVM.ToString()));
+                MessageBox.Show(string.Format("There is no data on VSD about this vm"));
                 return;
             }
             List<string> vPortIDs = new List<string>();
