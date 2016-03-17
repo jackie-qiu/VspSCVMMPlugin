@@ -35,6 +35,11 @@ namespace Nuage.VSDClient
         public string associatedMulticastChannelMapID { get; set; }
         public string associatedSendMulticastChannelMapID { get; set; }
 
+        public override string ToString()
+        {
+            return name;
+        }
+
 
     }
 

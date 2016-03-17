@@ -33,11 +33,16 @@ namespace Nuage.VSDClient
         public string siteIdentifier { get; set; }
         public string enterpriseID { get; set; }
         public string userID { get; set; }
-        public string domainIDs { get; set; }
-        public string l2DomainIDs { get; set; }
-        public string zoneIDs { get; set; }
-        public string subnetIDs { get; set; }
+        public List<string> domainIDs { get; set; }
+        public List<string> l2DomainIDs { get; set; }
+        public List<string> zoneIDs { get; set; }
+        public List<string> subnetIDs { get; set; }
         public string VRSID { get; set; }
+
+        public override string ToString()
+        {
+            return name;
+        }
     }
 
     public class NuageVmsPS

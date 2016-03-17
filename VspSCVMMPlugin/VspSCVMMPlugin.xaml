@@ -22,6 +22,7 @@ Copyright © 2016 Nuage. All rights reserved.
                 <Menu DockPanel.Dock="Top" Background="WhiteSmoke">
                     <MenuItem Header="_Configure">
                         <MenuItem Header="_Connect VSD..." Click="configMenuItem_Click"/>
+                        <MenuItem Header="_Remove VM" Click="deleteVMMenuItem_Click"></MenuItem>
                     </MenuItem>
                 </Menu>
             </DockPanel>

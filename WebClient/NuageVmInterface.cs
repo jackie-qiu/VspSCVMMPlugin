@@ -37,5 +37,10 @@ namespace Nuage.VSDClient
         public string VPortID { get; set; }
         public string tierID { get; set; }
         public string VPortName { get; set; }
+
+        public override string ToString()
+        {
+            return name;
+        }
     }
 }

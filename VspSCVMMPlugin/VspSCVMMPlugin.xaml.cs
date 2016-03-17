@@ -429,6 +429,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
             configVsdWindow.Show();
 
         }
+
         private void applyButton_Click(object sender, RoutedEventArgs e)
         {
             Guid uuid = this.vm.ID;
@@ -448,7 +449,6 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                 i ++;
 
                 NuageVport vPort = nuSession.CreateVport(items.subnetID, vPortName);
-
                 if (vPort != null)
                 {
                     logger.DebugFormat("Create vPort {0} on VSD success", vPortName);
@@ -822,6 +822,44 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
             }
 
             return false;
+        }
+
+        private void deleteVMMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            NuageVms nuageVM = this.nuSession.GetVirtualMachineByUUID(this.vm.ID.ToString());
+            if (nuageVM == null)
+            {
+                MessageBox.Show(string.Format("There is no data on VSD about vm {0}", nuageVM.ToString()));
+                return;
+            }
+            List<string> vPortIDs = new List<string>();
+            foreach (NuageVmInterface items in nuageVM.interfaces)
+            {
+                vPortIDs.Add(items.VPortID);
+            }
+            //Delete the virtualmachine
+            if (!this.nuSession.DeleteVirtualMachine(nuageVM))
+            {
+                MessageBox.Show("Remove virtual machine on VSD failed.");
+                return;
+            }
+
+            logger.DebugFormat("Remove virtual machine {0} success.", nuageVM.ToString());
+            foreach (string item in vPortIDs)
+            {
+                if (!this.nuSession.DeleteVPort(item))
+                {
+                    MessageBox.Show(string.Format("Remove vPort {0} on VSD failed.", item));
+                    return;
+                }
+
+                logger.DebugFormat("Remove vports {0} success.", item);
+            }
+
+            MessageBox.Show(string.Format("Remove virtual machine {0} success.", nuageVM.ToString()));
+            return;
+
+
         }
     }
 }
