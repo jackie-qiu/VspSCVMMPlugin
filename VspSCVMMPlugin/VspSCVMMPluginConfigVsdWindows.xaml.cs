@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,7 +24,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
     /// </summary>
     public partial class VspSCVMMPluginConfigVsdWindows : Window
     {
-        private string addinPath = ".\\bin\\AddInPipeline\\AddIns\\NUAGE_scvmm-dev\\VspSCVMMPlugin\\";
+        private string addinPath = "";
         private static readonly ILog logger = LogManager.GetLogger(typeof(VspSCVMMPluginConfigVsdWindows));
 
         public VspSCVMMPluginConfigVsdWindows(string baseUrl, string username, string organization)
@@ -52,7 +53,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
             }
 
             NuageVSDPowerShellSession nuSession = new NuageVSDPowerShellSession(this.vsdUserName.Text, this.vsdPassword.Password,
-                                                               this.vsdOrganization.Text, new Uri(this.vsdUrl.Text));
+                                                               this.vsdOrganization.Text, new Uri(this.vsdUrl.Text), this.vsdVersion.Text);
 
             if (!nuSession.LoginVSD())
             {
@@ -61,14 +62,17 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                 return;
             }
 
+            addinPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             try
             {
-                File.WriteAllText(addinPath + "vsd.conf", string.Empty);
-                File.AppendAllText(addinPath + "vsd.conf", 
+                string version = this.vsdVersion.Text;
+                File.WriteAllText(addinPath + "\\vsd.conf", string.Empty);
+                File.AppendAllText(addinPath + "\\vsd.conf", 
                                        "Url=" + this.vsdUrl.Text + Environment.NewLine
                                         + "Username=" + this.vsdUserName.Text + Environment.NewLine
                                         + "Password=" + this.vsdPassword.Password + Environment.NewLine
-                                        + "Organization=" + this.vsdOrganization.Text + Environment.NewLine);
+                                        + "Organization=" + this.vsdOrganization.Text + Environment.NewLine
+                                        + "Version=" + version.Replace(".","_") + Environment.NewLine);
             }
             catch (Exception ex)
             {

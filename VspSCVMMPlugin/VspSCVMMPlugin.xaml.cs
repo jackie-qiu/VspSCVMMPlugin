@@ -19,6 +19,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Collections.ObjectModel;
+using System.Reflection;
 
 using Microsoft.SystemCenter.VirtualMachineManager;
 using Microsoft.SystemCenter.VirtualMachineManager.Cmdlets;
@@ -55,11 +56,12 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
         private List<ComboBox> vsdNetworks = new List<ComboBox>();
         private List<TextBox> vmStaticIps = new List<TextBox>();
 
-        private string addinPath = ".\\bin\\AddInPipeline\\AddIns\\NUAGE_scvmm-dev\\VspSCVMMPlugin\\"; 
+        private string addinPath = ""; 
         private string baseUrl = "";
         private string username = "";
         private string password = "";
         private string organization = "";
+        private string vsd_version = "";
 
         NuageVSDPowerShellSession nuSession;
 
@@ -69,11 +71,11 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
             InitializeComponent();
             this.powerShellContext = powerShellContext;
             var vsdConfig = new Dictionary<string, string>();
-
+            addinPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             try
             {
-                FileInfo config = new FileInfo(addinPath + "log.conf");
-                XmlConfigurator.Configure(config);
+                FileInfo configFile = new FileInfo(System.IO.Path.Combine(addinPath + "\\log.conf"));
+                XmlConfigurator.Configure(configFile);
             }
             catch (FileNotFoundException ex)
             {
@@ -104,7 +106,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
 
             try
             {
-                foreach (var row in File.ReadLines(addinPath + "vsd.conf"))
+                foreach (var row in File.ReadLines(System.IO.Path.Combine(addinPath + "\\vsd.conf")))
                 {
                     vsdConfig.Add(row.Split('=')[0], string.Join("=", row.Split('=').Skip(1).ToArray()));
                 }
@@ -125,6 +127,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                 vsdConfig.TryGetValue("Username", out this.username);
                 vsdConfig.TryGetValue("Password", out this.password);
                 vsdConfig.TryGetValue("Organization", out this.organization);
+                vsdConfig.TryGetValue("Version", out this.vsd_version);
 
             }
 
@@ -383,12 +386,17 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
             //Connect to VSD and reterive all of the metadata
             Uri uriResult;
             Uri.TryCreate(baseUrl, UriKind.Absolute, out uriResult);
+            if (uriResult == null)
+            {
+                logger.ErrorFormat("Invalid Url address {0}.", baseUrl);
+                return false;
+            }
             if (!(uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
             {
                 logger.ErrorFormat("Invalid Url address {0}.", baseUrl);
                 return false;
             }
-            nuSession = new NuageVSDPowerShellSession(username, password, organization, uriResult);
+            nuSession = new NuageVSDPowerShellSession(username, password, organization, uriResult, vsd_version);
             
             if (!nuSession.LoginVSD())
             {
@@ -669,28 +677,36 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                 List<NuageZone> zoneFilter = new List<NuageZone>();
                 List<NuagePolicyGroup> policyGroupFilter = new List<NuagePolicyGroup>();
                 List<NuageRedirectionTarget> redirctionTargetFilter = new List<NuageRedirectionTarget>();
-
-                foreach (NuageZone items in this.nuSession.GetZones())
+                if(this.nuSession.GetZones() != null)
                 {
-                    if (items.parentID.Equals(selectedDomain.ID))
+                    foreach (NuageZone items in this.nuSession.GetZones())
                     {
-                        zoneFilter.Add(items);
+                        if (items.parentID.Equals(selectedDomain.ID))
+                        {
+                            zoneFilter.Add(items);
+                        }
                     }
                 }
 
-                foreach (NuagePolicyGroup items in this.nuSession.GetPolicyGroups())
+                if (this.nuSession.GetPolicyGroups() != null)
                 {
-                    if (items.parentID.Equals(selectedDomain.ID))
+                    foreach (NuagePolicyGroup items in this.nuSession.GetPolicyGroups())
                     {
-                        policyGroupFilter.Add(items);
+                        if (items.parentID.Equals(selectedDomain.ID))
+                        {
+                            policyGroupFilter.Add(items);
+                        }
                     }
                 }
 
-                foreach (NuageRedirectionTarget items in this.nuSession.GetRedirectionTargets())
+                if (this.nuSession.GetRedirectionTargets() != null)
                 {
-                    if (items.parentID.Equals(selectedDomain.ID))
+                    foreach (NuageRedirectionTarget items in this.nuSession.GetRedirectionTargets())
                     {
-                        redirctionTargetFilter.Add(items);
+                        if (items.parentID.Equals(selectedDomain.ID))
+                        {
+                            redirctionTargetFilter.Add(items);
+                        }
                     }
                 }
 

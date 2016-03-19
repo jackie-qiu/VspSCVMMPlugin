@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Security;
@@ -25,6 +26,7 @@ namespace Nuage.VSDClient
         private string username { get; set; }
         private string password { get; set; }
         private string organization { get; set; }
+        private string version { get; set; }
         private string token { get; set; }
         private Uri baseUrl { get; set; }
         public NuageMe[] mes { get; set; }
@@ -35,21 +37,30 @@ namespace Nuage.VSDClient
         public NuageRedirectionTargetPS redirectionTargets { get; set; }
         public NuageSubnetPS subnets { get; set; }
         
-        public NuageVSDPowerShellSession(string username, string password, string organization, Uri baseUrl)
+        public NuageVSDPowerShellSession(string username, string password, string organization, Uri baseUrl, string version)
         {
-            FileInfo config = new FileInfo(".\\log.conf");
-            XmlConfigurator.Configure(config);
+            string addinPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            try
+            {
+                FileInfo configFile = new FileInfo(System.IO.Path.Combine(addinPath + "\\log.conf"));
+                XmlConfigurator.Configure(configFile);
+            }
+            catch (FileNotFoundException ex)
+            {
+                logger.InfoFormat("Log4net config file not found {0}", ex.Message);
+            }
 
             this.username = username;
             this.password = password;
             this.organization = organization;
             this.baseUrl = baseUrl;
+            this.version = version;
 
         }
 
         public Boolean LoginVSD()
         {
-            string url = this.baseUrl.ToString() + "nuage/api/v3_2/me";
+            string url = this.baseUrl.ToString() + "nuage/api/" + version + "/me";
             string authKey = nuageBase64.Base64Encode(this.username + ":" + this.password);
 
             List<NuageMe[]> result = this.CallRestGetAPI<NuageMe[]>(url, authKey, null, false);
@@ -73,7 +84,7 @@ namespace Nuage.VSDClient
         }
         public Boolean GetDomainsRestApi()
         {
-            string url = this.baseUrl.ToString() + "nuage/api/v3_2/domains";
+            string url = this.baseUrl.ToString() + "nuage/api/" + version + "/domains";
 
             List<NuageDomainPS> result = this.CallRestGetAPI<NuageDomainPS>(url,this.token, null, true);
             if (result == null || result.Count() == 0)
@@ -95,7 +106,7 @@ namespace Nuage.VSDClient
         }
         public Boolean GetEnterrpiseRestApi()
         {
-            string url = this.baseUrl.ToString() + "nuage/api/v3_2/enterprises";
+            string url = this.baseUrl.ToString() + "nuage/api/" + version + "/enterprises";
 
             List<NuageEnterprisePS> result = this.CallRestGetAPI<NuageEnterprisePS>(url, this.token, null, true);
             if (result == null || result.Count() == 0)
@@ -115,7 +126,7 @@ namespace Nuage.VSDClient
         }
         public Boolean GetPolicyGroupRestApi()
         {
-            string url = this.baseUrl.ToString() + "nuage/api/v3_2/policygroups";
+            string url = this.baseUrl.ToString() + "nuage/api/" + version + "/policygroups";
 
             List<NuagePolicyGroupPS> result = this.CallRestGetAPI<NuagePolicyGroupPS>(url, this.token, null, true);
             if (result == null || result.Count() == 0)
@@ -136,7 +147,7 @@ namespace Nuage.VSDClient
         }
         public Boolean GetRedirectionTargetRestApi()
         {
-            string url = this.baseUrl.ToString() + "nuage/api/v3_2/redirectiontargets";
+            string url = this.baseUrl.ToString() + "nuage/api/" + version + "/redirectiontargets";
 
             List<NuageRedirectionTargetPS> result = this.CallRestGetAPI<NuageRedirectionTargetPS>(url, this.token, null, true);
             if (result == null || result.Count() == 0)
@@ -152,13 +163,13 @@ namespace Nuage.VSDClient
         }
         public List<NuageSubnet> GetSubnets()
         {
-            if (this.redirectionTargets != null)
+            if (this.subnets != null)
                 return this.subnets.Value;
             return null;
         }
         public Boolean GetSubnetRestApi()
         {
-            string url = this.baseUrl.ToString() + "nuage/api/v3_2/subnets";
+            string url = this.baseUrl.ToString() + "nuage/api/" + version + "/subnets";
 
             List<NuageSubnetPS> result = this.CallRestGetAPI<NuageSubnetPS>(url, this.token, null, true);
             if (result == null || result.Count() == 0)
@@ -183,13 +194,13 @@ namespace Nuage.VSDClient
         }
         public List<NuageZone> GetZones()
         {
-            if (this.redirectionTargets != null)
+            if (this.zones != null)
                 return this.zones.Value;
             return null;
         }
         public Boolean GetZoneRestApi()
         {
-            string url = this.baseUrl.ToString() + "nuage/api/v3_2/zones";
+            string url = this.baseUrl.ToString() + "nuage/api/" + version + "/zones";
 
             List<NuageZonePS> result = this.CallRestGetAPI<NuageZonePS>(url, this.token, null, true);
             if (result == null || result.Count() == 0)
@@ -224,7 +235,7 @@ namespace Nuage.VSDClient
 
             logger.DebugFormat("Create vPort with content: {0}", request_json);
 
-            string url = this.baseUrl.ToString() + "nuage/api/v3_2/subnets/" + subnetId + "/vports";
+            string url = this.baseUrl.ToString() + "nuage/api/" + version + "/subnets/" + subnetId + "/vports";
 
             List<NuageVportPS> result = this.CallRestPostAPI<NuageVportPS>(url, this.token, request_json, true);
             if (result != null && result.Count > 0)
@@ -246,7 +257,7 @@ namespace Nuage.VSDClient
 
             logger.DebugFormat("Create virtual machine with content: {0}", request_json);
 
-            string url = this.baseUrl.ToString() + "nuage/api/v3_2/vms";
+            string url = this.baseUrl.ToString() + "nuage/api/" + version + "/vms";
 
             List<NuageVmsPS> result = this.CallRestPostAPI<NuageVmsPS>(url, this.token, request_json, false);
             if (result != null && result.Count > 0)
@@ -259,7 +270,7 @@ namespace Nuage.VSDClient
         public NuageVms GetVirtualMachineByUUID(string UUID)
         {
 
-            string url = this.baseUrl.ToString() + "nuage/api/v3_2/vms";
+            string url = this.baseUrl.ToString() + "nuage/api/" + version + "/vms";
             string filter = string.Format("UUID IS '{0}'",UUID);
 
             List<NuageVmsPS> result = this.CallRestGetAPI<NuageVmsPS>(url, this.token, filter, true);
@@ -273,7 +284,7 @@ namespace Nuage.VSDClient
         public Boolean DeleteVirtualMachine(NuageVms vm)
         {
 
-            string url = this.baseUrl.ToString() + "nuage/api/v3_2/vms/" + vm.ID + "?responseChoice=1";
+            string url = this.baseUrl.ToString() + "nuage/api/" + version + "/vms/" + vm.ID + "?responseChoice=1";
 
             return this.CallRestDeleteAPI<NuageVmsPS>(url, this.token);
 
@@ -282,7 +293,7 @@ namespace Nuage.VSDClient
         public Boolean DeleteVPort(string vPortIDs)
         {
 
-            string url = this.baseUrl.ToString() + "nuage/api/v3_2/vports/" + vPortIDs + "?responseChoice=1";
+            string url = this.baseUrl.ToString() + "nuage/api/" + version + "/vports/" + vPortIDs + "?responseChoice=1";
 
             return this.CallRestDeleteAPI<NuageVmsPS>(url, this.token);
 
@@ -338,15 +349,15 @@ namespace Nuage.VSDClient
                 try {
                     if ($request -eq 'Get')
                     {
-                        $result=Invoke-RestMethod -Method ACTION -ContentType application/json -Uri URL -Headers $headers TOJSON
+                        $result=Invoke-RestMethod -Method ACTION -ContentType application/json -Uri URL -TimeoutSec 5 -Headers $headers TOJSON
                     }
                     ElseIf ($request -eq 'Post')
                     {
-                        $result=Invoke-RestMethod -Method ACTION -ContentType application/json -Uri URL -Headers $headers -Body $body TOJSON
+                        $result=Invoke-RestMethod -Method ACTION -ContentType application/json -Uri URL -TimeoutSec 5 -Headers $headers -Body $body TOJSON
                     }
                     ElseIf ($request -eq 'Delete')
                     {
-                        $result=Invoke-RestMethod -Method ACTION -ContentType application/json -Uri URL -Headers $headers
+                        $result=Invoke-RestMethod -Method ACTION -ContentType application/json -Uri URL -TimeoutSec 5 -Headers $headers
                     }
                     Else
                     {

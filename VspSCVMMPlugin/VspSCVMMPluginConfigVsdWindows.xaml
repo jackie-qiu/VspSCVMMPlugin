@@ -25,6 +25,10 @@
                 <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="80"><Run Text="Organization"/></TextBlock>
                 <TextBox HorizontalAlignment="Left" Margin="0" x:Name="vsdOrganization" Width="240"/>
             </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="5,10,10,0" Height="20"  HorizontalAlignment="Left" VerticalAlignment="Center">
+                <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="80"><Run Text="Verson"/></TextBlock>
+                <TextBox HorizontalAlignment="Left" Margin="0" x:Name="vsdVersion" Width="240" Text="v4.0"></TextBox>
+            </StackPanel>
         </StackPanel>
         <StackPanel
             Grid.Row="1"
