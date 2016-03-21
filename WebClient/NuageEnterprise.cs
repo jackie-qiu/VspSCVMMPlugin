@@ -46,9 +46,4 @@ namespace Nuage.VSDClient
         }
     }
 
-    public class NuageEnterprisePS
-    {
-        public List<NuageEnterprise> Value { get; set; }
-        public string Count { get; set; }
-    }
 }

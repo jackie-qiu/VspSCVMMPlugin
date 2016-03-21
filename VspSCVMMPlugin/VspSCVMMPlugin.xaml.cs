@@ -156,10 +156,17 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                             vmList.Add(vm);
                         }
                         this.vm = vmList.First();
+                        if (this.vm == null)
+                        {
+                            logger.ErrorFormat("Get virtualmachi {0} failed", vmID.ToString());
+                            MessageBox.Show("Pleae select the virtual machine firstly");
+                        }
                         //DrawMainWindows(vNics.Count());
                     }
 
                 });
+
+
 
             return;
         }
@@ -167,6 +174,12 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
         private void DrawMainWindows(int vNicCount)
         {
             //Draw general information
+            if (vm == null)
+            {
+                logger.ErrorFormat("Virtual machine is not selected!");
+                MessageBox.Show("Pleae select the virtual machine firstly");
+                return;
+            }
             this.vmName.Text = vm.Name;
             this.vmUUID.Text = vm.ID.ToString();
             this.vmState.Text = vm.VirtualMachineState.ToString();
@@ -447,6 +460,13 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
             if (VspMetaData == null || VspMetaData.Count() == 0)
             {
                 logger.ErrorFormat("Can not get the vsp metadata");
+                return;
+            }
+
+            NuageVms nuageVM = this.nuSession.GetVirtualMachineByUUID(this.vm.ID.ToString());
+            if (nuageVM != null)
+            {
+                MessageBox.Show(string.Format("This virtual machine has beed created on VSD already."), "Notice");
                 return;
             }
 

@@ -33,9 +33,5 @@ namespace Nuage.VSDClient
         }
     }
 
-    public class NuageRedirectionTargetPS
-    {
-        public List<NuageRedirectionTarget> Value { get; set; }
-        public string Count { get; set; }
-    }
+
 }

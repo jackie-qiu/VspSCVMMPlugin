@@ -32,9 +32,4 @@ namespace Nuage.VSDClient
         }
     }
 
-    public class NuagePolicyGroupPS
-    {
-        public List<NuagePolicyGroup> Value { get; set; }
-        public string Count { get; set; }
-    }
 }

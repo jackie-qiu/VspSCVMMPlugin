@@ -55,9 +55,4 @@ namespace Nuage.VSDClient
         }
     }
 
-    public class NuageDomainPS
-    {
-        public List<NuageDomain> Value { get; set; }
-        public string Count { get; set; }
-    }
 }

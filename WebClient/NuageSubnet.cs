@@ -51,9 +51,4 @@ namespace Nuage.VSDClient
         }
     }
 
-    public class NuageSubnetPS
-    {
-        public List<NuageSubnet> Value { get; set; }
-        public string Count { get; set; }
-    }
 }

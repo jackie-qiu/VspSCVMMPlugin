@@ -43,9 +43,5 @@ namespace Nuage.VSDClient
 
     }
 
-    public class NuageVportPS
-    {
-        public List<NuageVport> Value { get; set; }
-        public string Count { get; set; }
-    }
+
 }

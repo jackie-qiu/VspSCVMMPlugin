@@ -45,9 +45,4 @@ namespace Nuage.VSDClient
         }
     }
 
-    public class NuageVmsPS
-    {
-        public List<NuageVms> Value { get; set; }
-        public string Count { get; set; }
-    }
 }
