@@ -161,6 +161,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                             logger.ErrorFormat("Get virtualmachi {0} failed", vmID.ToString());
                             MessageBox.Show("Pleae select the virtual machine firstly");
                         }
+                        
                         //DrawMainWindows(vNics.Count());
                     }
 
@@ -381,6 +382,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
 
                         foreach (VirtualNetworkAdapter nic in results)
                         {
+                            logger.InfoFormat("The vNic VLanEnabled is {0} of virtual network adapter {1}", nic.VLanEnabled, nic.ID);
                             this.vNics.Add(nic);
                         }
                         logger.InfoFormat("The number of vNic is {0} of virtual machine {1}", vNics.Count(), vmContext.Name);
@@ -463,12 +465,22 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                 return;
             }
 
+            foreach (VspMetaData items in VspMetaData)
+            {
+                if (String.IsNullOrEmpty(items.MAC) || items.MAC.Equals("00:00:00:00:00:00"))
+                {
+                    MessageBox.Show(String.Format("The MAC address of nic {0} is invalid", items.ID), "Error");
+                    return;
+                }
+            }
+
             NuageVms nuageVM = this.nuSession.GetVirtualMachineByUUID(this.vm.ID.ToString());
             if (nuageVM != null)
             {
                 MessageBox.Show(string.Format("This virtual machine has beed created on VSD already."), "Notice");
                 return;
             }
+
 
             int i = 0;
             foreach (VspMetaData items in VspMetaData)
