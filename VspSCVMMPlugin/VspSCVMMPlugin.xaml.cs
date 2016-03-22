@@ -54,6 +54,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
         private List<ComboBox> vsdPolicyGroups = new List<ComboBox>();
         private List<ComboBox> vsdRedirectionTargets = new List<ComboBox>();
         private List<ComboBox> vsdNetworks = new List<ComboBox>();
+        private List<ComboBox> vsdFloatingIPs = new List<ComboBox>();
         private List<TextBox> vmStaticIps = new List<TextBox>();
 
         private string addinPath = ""; 
@@ -289,6 +290,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                     DrawVSPElement<NuagePolicyGroup>(GroupBoxSP, "Policy Group", vsdPolicyGroups, nuSession.GetPolicyGroups());
                     DrawVSPElement<NuageRedirectionTarget>(GroupBoxSP, "Redirection Target", vsdRedirectionTargets, nuSession.GetRedirectionTargets());
                     DrawVSPElement<NuageSubnet>(GroupBoxSP, "Network", vsdNetworks, nuSession.GetSubnets());
+                    DrawVSPElement<NuageFloatingIP>(GroupBoxSP, "Floating IP", vsdFloatingIPs, nuSession.GetFloatingIPs());
 
                     //Static IP
                     StackPanel StaticIpSP = new StackPanel
@@ -426,6 +428,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
             nuSession.GetZoneRestApi();
             nuSession.GetPolicyGroupRestApi();
             nuSession.GetRedirectionTargetRestApi();
+            nuSession.GetFloatingIPsRestApi();
 
             return true;
         }
@@ -485,10 +488,10 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
             int i = 0;
             foreach (VspMetaData items in VspMetaData)
             {
-                string vPortName = this.vm.Name + uuid.ToString() + "_" + i;
+                string vPortName = this.vm.Name + "_" + uuid.ToString() + "_" + i;
                 i ++;
 
-                NuageVport vPort = nuSession.CreateVport(items.subnetID, vPortName);
+                NuageVport vPort = nuSession.CreateVport(items.subnetID, vPortName, items.floatingipID);
                 if (vPort != null)
                 {
                     logger.DebugFormat("Create vPort {0} on VSD success", vPortName);
@@ -512,7 +515,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
 
             if (vmInterfaces.Count > 0)
             {
-                NuageVms vm = nuSession.CreateVirtualMachine(vmInterfaces, uuid.ToString(), this.vm.Name + uuid.ToString());
+                NuageVms vm = nuSession.CreateVirtualMachine(vmInterfaces, uuid.ToString(), this.vm.Name + "_" + uuid.ToString());
                 if (vm != null)
                 {
                     logger.DebugFormat("Create virtual machine {0} on VSD success", this.vm.Name + uuid.ToString());
@@ -617,6 +620,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                 string zone = "";
                 string policyGroup = "";
                 string redirectionTarget = "";
+                string floatingIP = "";
                 NuageSubnet subnet = null;
                 string subnetID = "";
                 string StaticIp = "";
@@ -636,6 +640,10 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                 if (this.vsdRedirectionTargets[i].SelectedItem != null)
                 {
                     redirectionTarget = ((NuageRedirectionTarget)this.vsdRedirectionTargets[i].SelectedItem).ID;
+                }
+                if (this.vsdFloatingIPs[i].SelectedItem != null)
+                {
+                    floatingIP = ((NuageFloatingIP)this.vsdFloatingIPs[i].SelectedItem).ID;
                 }
                 if (this.vsdNetworks[i].SelectedItem != null)
                 {
@@ -663,6 +671,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                     redirectionTargetID = redirectionTarget,
                     StaticIp = StaticIp,
                     subnetID = subnetID,
+                    floatingipID = floatingIP,
                     MAC = this.vNics[i].MACAddress == null ? "" : this.vNics[i].MACAddress.ToString(),
                     ID = this.vNics[i].ID.ToString()
                 });
@@ -709,6 +718,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                 List<NuageZone> zoneFilter = new List<NuageZone>();
                 List<NuagePolicyGroup> policyGroupFilter = new List<NuagePolicyGroup>();
                 List<NuageRedirectionTarget> redirctionTargetFilter = new List<NuageRedirectionTarget>();
+                List<NuageFloatingIP> FloatingIPFilter = new List<NuageFloatingIP>();
                 if(this.nuSession.GetZones() != null)
                 {
                     foreach (NuageZone items in this.nuSession.GetZones())
@@ -742,9 +752,21 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                     }
                 }
 
+                if (this.nuSession.GetFloatingIPs() != null)
+                {
+                    foreach (NuageFloatingIP items in this.nuSession.GetFloatingIPs())
+                    {
+                        if (items.parentID.Equals(selectedDomain.ID))
+                        {
+                            FloatingIPFilter.Add(items);
+                        }
+                    }
+                }
+
                 this.vsdZones[NicIndex].ItemsSource = zoneFilter;
                 this.vsdPolicyGroups[NicIndex].ItemsSource = policyGroupFilter;
                 this.vsdRedirectionTargets[NicIndex].ItemsSource = redirctionTargetFilter;
+                this.vsdFloatingIPs[NicIndex].ItemsSource = FloatingIPFilter;
                 
                 return;
             }
@@ -788,6 +810,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                 }
                 
             }
+
             
 
             return;

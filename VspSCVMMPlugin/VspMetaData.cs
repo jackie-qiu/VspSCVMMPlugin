@@ -13,6 +13,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
         public string policyGroupID { get; set; }
         public string redirectionTargetID { get; set; }
         public string subnetID { get; set; }
+        public string floatingipID { get; set; }
         public string StaticIp { get; set; }
         public string MAC { get; set; }
         public string ID { get; set; }

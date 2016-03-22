@@ -29,13 +29,14 @@ namespace Nuage.VSDClient
         private string version { get; set; }
         private string token { get; set; }
         private Uri baseUrl { get; set; }
-        public List<NuageMe> mes { get; set; }
-        public List<NuageEnterprise> enterprise { get; set; }
-        public List<NuageDomain> domains { get; set; }
-        public List<NuageZone> zones { get; set; }
-        public List<NuagePolicyGroup> policyGroups { get; set; }
-        public List<NuageRedirectionTarget> redirectionTargets { get; set; }
-        public List<NuageSubnet> subnets { get; set; }
+        private List<NuageMe> mes { get; set; }
+        private List<NuageEnterprise> enterprise { get; set; }
+        private List<NuageDomain> domains { get; set; }
+        private List<NuageZone> zones { get; set; }
+        private List<NuagePolicyGroup> policyGroups { get; set; }
+        private List<NuageRedirectionTarget> redirectionTargets { get; set; }
+        private List<NuageSubnet> subnets { get; set; }
+        private List<NuageFloatingIP> floatingIPs { get; set; }
         private PowerShell powerShellContext;
         
         public NuageVSDPowerShellSession(string username, string password, string organization, Uri baseUrl, string version)
@@ -167,13 +168,40 @@ namespace Nuage.VSDClient
             List<NuagePolicyGroup> result = this.CallRestGetAPI<NuagePolicyGroup>(url, this.token, null);
             if (result == null || result.Count() == 0)
             {
-                logger.Error("Get PolicyGroup Failed....");
+                logger.Error("There is no policy group.");
                 return false;
             }
 
             this.policyGroups = result;
             return true;
             
+        }
+
+        public List<NuageFloatingIP> GetFloatingIPs()
+        {
+            if (this.floatingIPs != null)
+                return this.floatingIPs;
+            return null;
+        }
+        public Boolean GetFloatingIPsRestApi()
+        {
+            string url = this.baseUrl.ToString() + "nuage/api/" + version + "/floatingips";
+
+            List<NuageFloatingIP> result = this.CallRestGetAPI<NuageFloatingIP>(url, this.token, null);
+            if (result == null || result.Count() == 0)
+            {
+                logger.Debug("There is no floating ip.");
+                return false;
+            }
+
+            this.floatingIPs = new List<NuageFloatingIP>();
+            foreach (NuageFloatingIP item in result)
+            {
+                if (item.assigned.Equals("false")) 
+                    this.floatingIPs.Add(item);
+            }
+            return true;
+
         }
         public List<NuageRedirectionTarget> GetRedirectionTargets()
         {
@@ -188,7 +216,7 @@ namespace Nuage.VSDClient
             List<NuageRedirectionTarget> result = this.CallRestGetAPI<NuageRedirectionTarget>(url, this.token, null);
             if (result == null || result.Count() == 0)
             {
-                logger.Error("Get RedirectionTarget Failed....");
+                logger.Debug("There is no redirection target");
                 return false;
                 
             }
@@ -257,7 +285,7 @@ namespace Nuage.VSDClient
 
         }
 
-        public NuageVport CreateVport(string subnetId, string name)
+        public NuageVport CreateVport(string subnetId, string name, string floatingipID)
         {
             NuageVport request = new NuageVport();
 
@@ -265,6 +293,8 @@ namespace Nuage.VSDClient
             request.name = name;
             request.description = name;
             request.addressSpoofing = "INHERITED";
+            if (!String.IsNullOrEmpty(floatingipID))
+                request.associatedFloatingIPID = floatingipID;
 
             string request_json = JsonConvert.SerializeObject(request);
 

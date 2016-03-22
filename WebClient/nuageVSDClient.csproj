@@ -72,6 +72,7 @@
     <Compile Include="nuageBase64.cs" />
     <Compile Include="NuageDomain.cs" />
     <Compile Include="NuageEnterprise.cs" />
+    <Compile Include="NuageFloatingIP.cs" />
     <Compile Include="NuageMe.cs" />
     <Compile Include="NuagePolicyGroup.cs" />
     <Compile Include="NuageRedirectionTarget.cs" />
