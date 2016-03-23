@@ -491,7 +491,8 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                 string vPortName = this.vm.Name + "_" + uuid.ToString() + "_" + i;
                 i ++;
 
-                NuageVport vPort = nuSession.CreateVport(items.subnetID, vPortName, items.floatingipID);
+                logger.DebugFormat("Creating vPort {0} on VSD...", vPortName);
+                NuageVport vPort = nuSession.CreateVport(items.subnetID, this.vm.Name, items.floatingipID);
                 if (vPort != null)
                 {
                     logger.DebugFormat("Create vPort {0} on VSD success", vPortName);
@@ -510,21 +511,33 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                     MessageBox.Show(string.Format("Create vPort {0} on VSD failed", vPortName), "Error");
                     return;
                 }
+
+                if (!String.IsNullOrEmpty(items.policyGroupID))
+                {
+                    logger.DebugFormat("Add a vport {0} to a policy group {1} on VSD...", vPortName, items.policyGroupID);
+                }
+
+                if (!String.IsNullOrEmpty(items.redirectionTargetID))
+                {
+                    logger.DebugFormat("Add a vport {0} to a redirection target {1} on VSD...", vPortName, items.redirectionTargetID);
+                }
                            
             }
 
+            string vm_name = this.vm.Name + "_" + uuid.ToString();
             if (vmInterfaces.Count > 0)
             {
-                NuageVms vm = nuSession.CreateVirtualMachine(vmInterfaces, uuid.ToString(), this.vm.Name + "_" + uuid.ToString());
+                
+                NuageVms vm = nuSession.CreateVirtualMachine(vmInterfaces, uuid.ToString(), vm_name);
                 if (vm != null)
                 {
-                    logger.DebugFormat("Create virtual machine {0} on VSD success", this.vm.Name + uuid.ToString());
+                    logger.DebugFormat("Create virtual machine {0} on VSD success", vm_name);
                 }
             }
             else
             {
-                logger.ErrorFormat("Create virtual machine {0} on VSD success", this.vm.Name + uuid.ToString());
-                MessageBox.Show(string.Format("Create virtual machine {0} on VSD success", this.vm.Name + uuid.ToString()),"Error");
+                logger.ErrorFormat("There is no virtual network adapter on vm {0}", vm_name);
+                MessageBox.Show(string.Format("There is no virtual network adapter on vm {0}", vm_name), "Error");
                 return;
             }
 
@@ -672,7 +685,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                     StaticIp = StaticIp,
                     subnetID = subnetID,
                     floatingipID = floatingIP,
-                    MAC = this.vNics[i].MACAddress == null ? "" : this.vNics[i].MACAddress.ToString(),
+                    MAC = this.vNics[i].MACAddress == null ? "00:00:00:00:00:00" : this.vNics[i].MACAddress.ToString(),
                     ID = this.vNics[i].ID.ToString()
                 });
 
