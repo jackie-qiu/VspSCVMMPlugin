@@ -489,10 +489,11 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
             foreach (VspMetaData items in VspMetaData)
             {
                 string vPortName = this.vm.Name + "_" + uuid.ToString() + "_" + i;
+                //string vPortName = this.vm.Name;
                 i ++;
 
                 logger.DebugFormat("Creating vPort {0} on VSD...", vPortName);
-                NuageVport vPort = nuSession.CreateVport(items.subnetID, this.vm.Name, items.floatingipID);
+                NuageVport vPort = nuSession.CreateVport(items.subnetID, vPortName, items.floatingipID);
                 if (vPort != null)
                 {
                     logger.DebugFormat("Create vPort {0} on VSD success", vPortName);
@@ -525,6 +526,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
             }
 
             string vm_name = this.vm.Name + "_" + uuid.ToString();
+            //string vm_name = this.vm.Name;
             if (vmInterfaces.Count > 0)
             {
                 
