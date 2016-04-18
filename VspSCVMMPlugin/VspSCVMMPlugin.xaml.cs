@@ -461,6 +461,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
             Guid uuid = this.vm.ID;
             List<VspMetaData> VspMetaData = GetVspMetadata();
             List<NuageVmInterface> vmInterfaces = new List<NuageVmInterface>();
+            
 
             if (VspMetaData == null || VspMetaData.Count() == 0)
             {
@@ -483,7 +484,8 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                 MessageBox.Show(string.Format("This virtual machine has beed created on VSD already."), "Notice");
                 return;
             }
-
+            //Temp solution,set Hyper-v port and OVS vport maping
+            nuSession.SetHyperVOVSPort(this.vm.Name, this.vm.VMHost.ComputerName, "administrator", "tigris1@");
 
             int i = 0;
             foreach (VspMetaData items in VspMetaData)

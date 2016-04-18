@@ -38,6 +38,7 @@ namespace Nuage.VSDClient
         private List<NuageSubnet> subnets { get; set; }
         private List<NuageFloatingIP> floatingIPs { get; set; }
         private PowerShell powerShellContext;
+        private NuagePowerShell nuagePS;
         
         public NuageVSDPowerShellSession(string username, string password, string organization, Uri baseUrl, string version)
         {
@@ -59,6 +60,8 @@ namespace Nuage.VSDClient
             this.organization = organization;
             this.baseUrl = baseUrl;
             this.version = version;
+
+            nuagePS = new NuagePowerShell();
 
 
 
@@ -508,6 +511,30 @@ namespace Nuage.VSDClient
             }
 
             return NuageObject;
+        }
+
+        public void SetHyperVOVSPort(string vmName, string hypervHost, string hypervUsername, string HypervPasswd)
+        {
+            
+            IEnumerable<PSObject> output;
+            string errors;
+
+            string scripts = @"
+                Import-Module C:\OVS.psm1
+                Set-VMNetworkAdapterOVSPortDirect -vmName VMNAME -OVSPortName VMNAME
+";
+            string RestScriptFormatted = scripts.Replace("VMNAME", vmName);
+            logger.InfoFormat("Seting Hyper-V OVS port name with script '{0}'", RestScriptFormatted);
+
+            bool result = nuagePS.RunPowerShellScriptRemote(RestScriptFormatted, hypervHost, hypervUsername, 
+                                   HypervPasswd, out output, out errors);
+            if (!result)
+            {
+                logger.ErrorFormat("Set HyperV OVS Port failed with error {0}", errors);
+                return;
+            }
+
+            return;
         }
 
     }

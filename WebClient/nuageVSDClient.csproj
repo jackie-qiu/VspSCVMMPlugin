@@ -75,6 +75,7 @@
     <Compile Include="NuageFloatingIP.cs" />
     <Compile Include="NuageMe.cs" />
     <Compile Include="NuagePolicyGroup.cs" />
+    <Compile Include="NuagePowerShell.cs" />
     <Compile Include="NuageRedirectionTarget.cs" />
     <Compile Include="NuageResyncInfo.cs" />
     <Compile Include="NuageSubnet.cs" />
