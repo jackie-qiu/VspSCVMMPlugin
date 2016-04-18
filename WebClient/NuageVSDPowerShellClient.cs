@@ -335,6 +335,37 @@ namespace Nuage.VSDClient
 
         }
 
+        public List<string> GetVportInPolicyGroup(string policyGroupID)
+        {
+            List<string> vportIds = new List<string>();
+            string url = this.baseUrl.ToString() + "nuage/api/" + version + "/policygroups/" + policyGroupID + "/vports";
+            logger.Info(string.Format("Get vport in policy group ID '{0}'", policyGroupID));
+
+            List<NuageVport> result = this.CallRestGetAPI<NuageVport>(url, this.token, null);
+            if (result != null && result.Count > 0)
+            {
+                foreach (NuageVport port in result)
+                    vportIds.Add(port.ID);
+            }
+
+            return vportIds;
+
+        }
+
+        public Boolean UpdateVportInPolicyGroup(string policyGroupID, List<string> vportIds)
+        {
+            string url = this.baseUrl.ToString() + "nuage/api/" + version + "/policygroups/" + policyGroupID + "/vports";
+            logger.Info(string.Format("Put {0} vports into policy group ID '{1}'",vportIds.Count(), policyGroupID));
+
+            string request_json = JsonConvert.SerializeObject(vportIds);
+
+            logger.DebugFormat("Put vPort into policy group with content: {0}", request_json);
+
+            return this.CallRestPutAPI<NuageVport>(url, this.token, request_json);
+
+
+        }
+
         public NuageVms GetVirtualMachineByUUID(string UUID)
         {
 
@@ -370,6 +401,12 @@ namespace Nuage.VSDClient
         private List<T> CallRestGetAPI<T>(string url, string token, string filter)
         {
             return CallRestAPI<T>(url, token, "Get", null, filter);
+        }
+
+        private Boolean CallRestPutAPI<T>(string url, string token, string content)
+        {
+            CallRestAPI<T>(url, token, "Put", content, null);
+            return true;
         }
 
         private List<T> CallRestPostAPI<T>(string url, string token, string content, bool tojson)
@@ -408,17 +445,21 @@ namespace Nuage.VSDClient
                 {
                     if ($request -eq 'Get')
                     {
-                        $result=(Invoke-WebRequest -Method Get -ContentType application/json -Uri URL -TimeoutSec 5 -Headers $headers).content
+                        $result=(Invoke-WebRequest -Method Get -ContentType application/json -Uri URL -TimeoutSec 10 -Headers $headers).content
                     }
                     ElseIf ($request -eq 'Post')
                     {
-                        $result=(Invoke-WebRequest -Method Post -ContentType application/json -Uri URL -TimeoutSec 5 -Headers $headers -Body $body).content
+                        $result=(Invoke-WebRequest -Method Post -ContentType application/json -Uri URL -TimeoutSec 10 -Headers $headers -Body $body).content
+                    }
+                    ElseIf ($request -eq 'Put')
+                    {
+                        $result=(Invoke-WebRequest -Method Put -ContentType application/json -Uri URL -TimeoutSec 10 -Headers $headers -Body $body).content
                     }
                     ElseIf ($request -eq 'Delete')
                     {
                         #When issuing more than two Invoke-RestMethod commands with the PUT or DELETE method against the same server, 
                         #the third one fails with error: “Invoke-RestMethod : The operation has timed out.” 
-                        #$result=Invoke-RestMethod -Method Delete -ContentType application/json -Uri URL -TimeoutSec 5 -Headers $headers
+                        #$result=Invoke-RestMethod -Method Delete -ContentType application/json -Uri URL -TimeoutSec 10 -Headers $headers
                         $result=(Invoke-WebRequest -Uri URL -Method DELETE -Headers $headers).content
                     }
                     Else
@@ -454,7 +495,7 @@ namespace Nuage.VSDClient
             }
 
             //Replace json body if the operation is POST
-            if (action.Equals("Post"))
+            if (action.Equals("Post") || action.Equals("Put"))
             {
                 RestScriptFormatted = RestScriptFormatted.Replace("BODY", content);
             }

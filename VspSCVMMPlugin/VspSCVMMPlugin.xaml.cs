@@ -518,6 +518,9 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                 if (!String.IsNullOrEmpty(items.policyGroupID))
                 {
                     logger.DebugFormat("Add a vport {0} to a policy group {1} on VSD...", vPortName, items.policyGroupID);
+                    List<string> vportIds = nuSession.GetVportInPolicyGroup(items.policyGroupID);
+                    vportIds.Add(vPort.ID);
+                    nuSession.UpdateVportInPolicyGroup(items.policyGroupID, vportIds);
                 }
 
                 if (!String.IsNullOrEmpty(items.redirectionTargetID))
