@@ -5,7 +5,7 @@ Copyright © 2016 Nuage. All rights reserved.
 <Window x:Class="Microsoft.VirtualManager.UI.AddIns.NuageVSP.NuageVSPWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Config Virtual Machines Metadata" 
+    Title="Nuage VCS Networking" 
     Width="520"
     Height="650" 
     Background="WhiteSmoke">

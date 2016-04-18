@@ -1,18 +1,18 @@
 ﻿<ConsoleAddIn 
   xmlns="urn:VMM-AddIns-v1" 
-  Name="Nuage VSP Add-in" 
-  Version="0.1" 
-  Author="Alcatel-Lucent" 
-  Description="An add-in that can config the virtual machines in Nuage VSP networks." 
+  Name="Nuage VCS Add-in" 
+  Version="1.0" 
+  Author="Nuage" 
+  Description="An add-in that configure the virtual machines in Nuage VCS networking." 
   FolderName="VspSCVMMPlugin">
   <ActionAddIn 
-    Name="Config VSP Metadata" 
+    Name="Nuage VCS Networking" 
     Icon="VspSCVMMPlugin.ico" 
     Contexts="VM" 
     AssemblyName="Nuage.Vsp.SCVMMPlugin" 
     ActionType="Code">
     <ButtonLabel>
-       Config VSP Metadata
+      Nuage VCS Networking
     </ButtonLabel>
   </ActionAddIn>
 <!--  <ActionAddIn 

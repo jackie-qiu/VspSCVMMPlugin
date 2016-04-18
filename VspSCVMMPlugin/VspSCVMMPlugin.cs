@@ -12,7 +12,7 @@ using System.AddIn;
 
 namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
 {
-    [AddIn("Config VSP Metadata")]
+    [AddIn("Nuage VCS Networking")]
     public class NuageVSPContextual : ActionAddInBase
     {
         public override bool CheckIfEnabledFor(IList<ContextObject> contextObjects)

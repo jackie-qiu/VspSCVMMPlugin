@@ -52,7 +52,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
         private List<ComboBox> vsdDomains = new List<ComboBox>();
         private List<ComboBox> vsdZones = new List<ComboBox>();
         private List<ComboBox> vsdPolicyGroups = new List<ComboBox>();
-        private List<ComboBox> vsdRedirectionTargets = new List<ComboBox>();
+        //private List<ComboBox> vsdRedirectionTargets = new List<ComboBox>();
         private List<ComboBox> vsdNetworks = new List<ComboBox>();
         private List<ComboBox> vsdFloatingIPs = new List<ComboBox>();
         private List<TextBox> vmStaticIps = new List<TextBox>();
@@ -194,7 +194,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
             vsdDomains.Clear();
             vsdZones.Clear();
             vsdPolicyGroups.Clear();
-            vsdRedirectionTargets.Clear();
+            //vsdRedirectionTargets.Clear();
             vsdNetworks.Clear();
             vmStaticIps.Clear();
 
@@ -288,7 +288,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                     DrawVSPElement<NuageDomain>(GroupBoxSP, "Domain", vsdDomains, nuSession.GetDomains());
                     DrawVSPElement<NuageZone>(GroupBoxSP, "Zone", vsdZones, nuSession.GetZones());
                     DrawVSPElement<NuagePolicyGroup>(GroupBoxSP, "Policy Group", vsdPolicyGroups, nuSession.GetPolicyGroups());
-                    DrawVSPElement<NuageRedirectionTarget>(GroupBoxSP, "Redirection Target", vsdRedirectionTargets, nuSession.GetRedirectionTargets());
+                    //DrawVSPElement<NuageRedirectionTarget>(GroupBoxSP, "Redirection Target", vsdRedirectionTargets, nuSession.GetRedirectionTargets());
                     DrawVSPElement<NuageSubnet>(GroupBoxSP, "Network", vsdNetworks, nuSession.GetSubnets());
                     DrawVSPElement<NuageFloatingIP>(GroupBoxSP, "Floating IP", vsdFloatingIPs, nuSession.GetFloatingIPs());
 
@@ -654,10 +654,11 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                 {
                     policyGroup = ((NuagePolicyGroup)this.vsdPolicyGroups[i].SelectedItem).ID;
                 }
+                /*
                 if (this.vsdRedirectionTargets[i].SelectedItem != null)
                 {
                     redirectionTarget = ((NuageRedirectionTarget)this.vsdRedirectionTargets[i].SelectedItem).ID;
-                }
+                }*/
                 if (this.vsdFloatingIPs[i].SelectedItem != null)
                 {
                     floatingIP = ((NuageFloatingIP)this.vsdFloatingIPs[i].SelectedItem).ID;
@@ -757,7 +758,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                         }
                     }
                 }
-
+                /*
                 if (this.nuSession.GetRedirectionTargets() != null)
                 {
                     foreach (NuageRedirectionTarget items in this.nuSession.GetRedirectionTargets())
@@ -768,6 +769,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                         }
                     }
                 }
+                */
 
                 if (this.nuSession.GetFloatingIPs() != null)
                 {
@@ -782,7 +784,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
 
                 this.vsdZones[NicIndex].ItemsSource = zoneFilter;
                 this.vsdPolicyGroups[NicIndex].ItemsSource = policyGroupFilter;
-                this.vsdRedirectionTargets[NicIndex].ItemsSource = redirctionTargetFilter;
+                //this.vsdRedirectionTargets[NicIndex].ItemsSource = redirctionTargetFilter;
                 this.vsdFloatingIPs[NicIndex].ItemsSource = FloatingIPFilter;
                 
                 return;
@@ -857,7 +859,7 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                     policyGroupFilter.Add(items);
                 }
             }
-
+            /*
             foreach (NuageRedirectionTarget items in this.nuSession.GetRedirectionTargets())
             {
                 if (items.parentID.Equals(parentID))
@@ -865,10 +867,10 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                     redirctionTargetFilter.Add(items);
                 }
             }
-
+            */
             this.vsdZones[NicIndex].ItemsSource = zoneFilter;
             this.vsdPolicyGroups[NicIndex].ItemsSource = policyGroupFilter;
-            this.vsdRedirectionTargets[NicIndex].ItemsSource = redirctionTargetFilter;
+            //this.vsdRedirectionTargets[NicIndex].ItemsSource = redirctionTargetFilter;
 
 
         }
