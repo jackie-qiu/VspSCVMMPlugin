@@ -456,6 +456,67 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
 
         }
 
+        private void updatePolicyGroupMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            updatePolicyGroup();
+            MessageBox.Show("Update policy group success","Success");
+            return;
+        }
+
+        private void updatePolicyGroup()
+        {
+            //get vminterface ID of virtualmachine
+            NuageVms nuageVM = this.nuSession.GetVirtualMachineByUUID(this.vm.ID.ToString());
+            if (nuageVM == null)
+            {
+                MessageBox.Show(string.Format("Create virtual machine on VSD firstly."), "Notice");
+                return;
+            }
+
+            for (int i = 0; i < nuageVM.interfaces.Count(); i++)
+            {
+                string policyGroup = null;
+                List<string> vportIds = null;
+                List<string> newvportIds = new List<string>();
+                if (this.vsdPolicyGroups[i].SelectedItem != null)
+                {
+                    policyGroup = ((NuagePolicyGroup)this.vsdPolicyGroups[i].SelectedItem).ID;
+                }
+                else
+                {
+                    logger.Error(string.Format("The policy group of vnic {0} is not selected, skip.", nuageVM.interfaces[i].VPortName));
+                    continue;
+                }
+
+                NuagePolicyGroup pg = this.nuSession.GetPolicyGroupInVMInterface(nuageVM.interfaces[i].ID);
+                if (pg != null && !pg.ID.Equals(policyGroup))
+                {
+                    logger.DebugFormat("Remove the vport {0} from policy group {1}", nuageVM.interfaces[i].VPortName, pg.name);
+                    vportIds = this.nuSession.GetVportInPolicyGroup(pg.ID);
+                   
+                    foreach (string port in vportIds)
+                    {
+                        if (!port.Equals(nuageVM.interfaces[i].VPortID))
+                            newvportIds.Add(port);
+                    }
+                    nuSession.UpdateVportInPolicyGroup(pg.ID, newvportIds);
+
+                }
+
+                logger.DebugFormat("Add a vport {0} to a policy group {1} on VSD...", nuageVM.interfaces[i].ID, policyGroup);
+                vportIds = this.nuSession.GetVportInPolicyGroup(policyGroup);
+                if (vportIds != null)
+                {
+                    vportIds.Add(nuageVM.interfaces[i].VPortID);
+                    nuSession.UpdateVportInPolicyGroup(policyGroup, vportIds);
+                }
+                
+
+            }
+
+            return;
+        }
+
         private void applyButton_Click(object sender, RoutedEventArgs e)
         {
             Guid uuid = this.vm.ID;
@@ -515,14 +576,6 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                     return;
                 }
 
-                if (!String.IsNullOrEmpty(items.policyGroupID))
-                {
-                    logger.DebugFormat("Add a vport {0} to a policy group {1} on VSD...", vPortName, items.policyGroupID);
-                    List<string> vportIds = nuSession.GetVportInPolicyGroup(items.policyGroupID);
-                    vportIds.Add(vPort.ID);
-                    nuSession.UpdateVportInPolicyGroup(items.policyGroupID, vportIds);
-                }
-
                 if (!String.IsNullOrEmpty(items.redirectionTargetID))
                 {
                     logger.DebugFormat("Add a vport {0} to a redirection target {1} on VSD...", vPortName, items.redirectionTargetID);
@@ -547,6 +600,8 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
                 MessageBox.Show(string.Format("There is no virtual network adapter on vm {0}", vm_name), "Error");
                 return;
             }
+
+            updatePolicyGroup();
 
             this.Close();
 

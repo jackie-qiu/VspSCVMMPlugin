@@ -352,6 +352,22 @@ namespace Nuage.VSDClient
 
         }
 
+        public NuagePolicyGroup GetPolicyGroupInVMInterface(string vmInterfaceID)
+        {
+            List<string> vportIds = new List<string>();
+            string url = this.baseUrl.ToString() + "nuage/api/" + version + "/vminterfaces/" + vmInterfaceID + "/policygroups";
+            logger.Info(string.Format("Get policy group vm interface ID '{0}'", vmInterfaceID));
+
+            List<NuagePolicyGroup> result = this.CallRestGetAPI<NuagePolicyGroup>(url, this.token, null);
+            if (result != null && result.Count > 0)
+            {
+                return result.First<NuagePolicyGroup>();
+            }
+
+            return null;
+
+        }
+
         public Boolean UpdateVportInPolicyGroup(string policyGroupID, List<string> vportIds)
         {
             string url = this.baseUrl.ToString() + "nuage/api/" + version + "/policygroups/" + policyGroupID + "/vports";

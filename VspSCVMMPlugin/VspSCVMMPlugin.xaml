@@ -22,6 +22,7 @@ Copyright © 2016 Nuage. All rights reserved.
                 <Menu DockPanel.Dock="Top" Background="WhiteSmoke">
                     <MenuItem Header="_Configure">
                         <MenuItem Header="_Connect VSD..." Click="configMenuItem_Click"/>
+                        <MenuItem Header="_Update PolicyGroup..." Click="updatePolicyGroupMenuItem_Click"/>
                         <MenuItem Header="_Remove VM" Click="deleteVMMenuItem_Click"></MenuItem>
                     </MenuItem>
                 </Menu>
@@ -49,10 +50,12 @@ Copyright © 2016 Nuage. All rights reserved.
                     <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="140">Enterprise</TextBlock>
                     <ComboBox  HorizontalAlignment="Left" Margin="30,2,0,2" Name="vsdEneterprise" Width="200" SelectionChanged="vsdEneterprise_SelectionChanged"/>
                 </StackPanel>
+                <!--
                 <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
                     <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="140">User</TextBlock>
                     <ComboBox  HorizontalAlignment="Left" Margin="30,2,0,2" Name="vsdUser" Width="200"/>
                 </StackPanel>
+                -->
 
             </StackPanel>
         </GroupBox>
