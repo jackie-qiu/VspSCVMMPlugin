@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Nuage.VSDClient
 {
-    public class NuageRedirectionTarget
+    public class NuageRedirectionTarget : NuageServerBaseClass
     {
         public string children { get; set; }
         public string parentType { get; set; }
@@ -30,6 +31,52 @@ namespace Nuage.VSDClient
         public override string ToString()
         {
             return name;
+        }
+
+        public string post_data(Dictionary<string, string> create_params)
+        {
+            this.name = create_params["name"];
+            this.redundancyEnabled = create_params["redundancy_enabled"];
+            this.description = create_params["description"];
+            this.endPointType = "L3";
+            if (create_params.ContainsKey("insertion_mode"))
+            {
+                this.endPointType = create_params["insertion_mode"];
+            }
+
+            string data = JsonConvert.SerializeObject(this);
+
+            return data;
+        }
+
+        public string post_resource(string parent_id)
+        {
+            return "/domains/" + parent_id + "/redirectiontargets";
+        }
+
+        public string delete_resource(string id)
+        {
+            return "/redirectiontargets/" + id + "?responseChoice=1";
+        }
+
+        public string put_resource(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string get_all_resources()
+        {
+            return "/redirectiontargets";
+        }
+
+        public string get_all_resources_in_parent(string parent_id)
+        {
+            return "/domains/" + parent_id + "/redirectiontargets";
+        }
+
+        public string get_vport_redirect_target(string vport_id)
+        {
+            return "/vports/" + vport_id + "/redirectiontargets";
         }
     }
 

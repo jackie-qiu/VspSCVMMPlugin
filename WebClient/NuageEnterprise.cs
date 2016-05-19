@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Nuage.VSDClient
 {
-    public class NuageEnterprise
+    public class NuageEnterprise : NuageServerBaseClass
     {
         public string children { get; set; }
         public string parentType { get; set; }
@@ -43,6 +44,44 @@ namespace Nuage.VSDClient
         public override string ToString()
         {
             return name;
+        }
+
+        public string post_data(Dictionary<string, string> create_params)
+        {
+            this.name = create_params["name"];
+            this.allowedForwardingClasses = new string[]{"E", "F", "G", "H"};
+
+            if(create_params.ContainsKey("fp_quota"))
+                this.floatingIPsQuota = create_params["fp_quota"];
+
+            string data = JsonConvert.SerializeObject(this);
+
+            return data;
+        }
+
+        public string post_resource(string parent_id)
+        {
+            return "/enterprises";
+        }
+
+        public string delete_resource(string id)
+        {
+            return "/enterprises/" + id + "?responseChoice=1";
+        }
+
+        public string put_resource(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string get_all_resources()
+        {
+            return "/enterprises";
+        }
+
+        public string get_all_resources_in_parent(string parent_id)
+        {
+            throw new NotImplementedException();
         }
     }
 

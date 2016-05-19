@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Nuage.VSDClient
 {
-    public class NuageDomain
+    public class NuageDomain : NuageServerBaseClass
     {
         public string children { get; set; }
         public string parentType { get; set; }
@@ -52,6 +53,51 @@ namespace Nuage.VSDClient
         public override string ToString()
         {
             return name;
+        }
+
+        public string post_data(Dictionary<string, string> create_params)
+        {
+            this.name = create_params["name"];
+            this.templateID = create_params["templateID"];
+
+            string data = JsonConvert.SerializeObject(this);
+
+            return data;
+        }
+
+        public string post_resource(string parent_id) 
+        {
+            return "/enterprises/" + parent_id + "/domains";
+        }
+
+        public string delete_resource(string id)
+        {
+            return "/domains/" + id + "?responseChoice=1";
+        }
+
+        public string put_resource(string id)
+        {
+            return "/domains/" + id + "?responseChoice=1";
+        }
+
+        public string get_all_resources()
+        {
+            return "/domains";
+        }
+
+        public string get_all_resources_in_parent(string parent_id)
+        {
+            return "/enterprises/" + parent_id + "/domains";
+        }
+
+        public string get_all_zones()
+        {
+            return "/domains/" + this.ID + "/zones";
+        }
+
+        public string get_domain_subnets()
+        {
+            return "/domains/" + this.ID + "/subnets";
         }
     }
 

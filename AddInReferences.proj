@@ -1,6 +1,6 @@
 ﻿<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-     <VmmAdminConsolePath>C:\Program Files\Microsoft System Center 2012 R2\Virtual Machine Manager\bin</VmmAdminConsolePath>
+     <VmmAdminConsolePath>e:\Program Files\Microsoft System Center 2012 R2\Virtual Machine Manager\bin</VmmAdminConsolePath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.SystemCenter.VirtualMachineManager, Version=1.0.523.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">

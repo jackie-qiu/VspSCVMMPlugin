@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Nuage.VSDClient
 {
-    public class NuageSubnet
+    public class NuageSubnet : NuageServerBaseClass
     {
         public string children { get; set; }
         public string parentType { get; set; }
@@ -48,6 +49,58 @@ namespace Nuage.VSDClient
         public override string ToString()
         {
             return name;
+        }
+
+        public string post_data(Dictionary<string, string> create_params)
+        {
+            this.name = create_params["name"];
+            this.address = create_params["ip"];
+            this.netmask = create_params["netmask"];
+            this.gateway = create_params["gateway"];
+
+            string data = JsonConvert.SerializeObject(this);
+
+            return data;
+        }
+
+        public string post_resource(string parent_id)
+        {
+            return "/zones/" + parent_id + "/subnets";
+        }
+
+        public string delete_resource(string id)
+        {
+            return "/subnets/" + id + "?responseChoice=1";
+        }
+
+        public string put_resource(string id)
+        {
+            return "/subnets/" + id + "?responseChoice=1";
+        }
+
+        public string get_all_resources()
+        {
+            return "/subnets";
+        }
+
+        public string get_all_resources_in_parent(string parent_id)
+        {
+            return "/zones/" + parent_id + "/subnets";
+        }
+
+        public string get_all_resources_in_domain(string domain_id)
+        {
+            return "/domains/" + domain_id + "/subnets";
+        }
+
+        public string get_all_vports(string id)
+        {
+            return "/subnets/" + id + "/vports";
+        }
+
+        public string vm_get_resource(string id)
+        {
+            return "/subnets/" + id + "/vms";
         }
     }
 

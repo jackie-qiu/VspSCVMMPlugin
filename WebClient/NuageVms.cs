@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Nuage.VSDClient
 {
-    public class NuageVms
+    public class NuageVms : NuageServerBaseClass
     {
         public string children { get; set; }
         public string parentType { get; set; }
@@ -42,6 +43,55 @@ namespace Nuage.VSDClient
         public override string ToString()
         {
             return name;
+        }
+
+        public string post_data(Dictionary<string, string> create_params)
+        {
+            NuageVmInterface intf = new NuageVmInterface();
+            List<NuageVmInterface> vmInterfaces = new List<NuageVmInterface>();
+
+            intf.MAC = create_params["mac"];
+            intf.VPortID = create_params["vport_id"];
+            intf.externalID = create_params["external_id"];
+
+            if (create_params.ContainsKey("ip"))
+            {
+                intf.IPAddress = create_params["ip"];
+            }
+            vmInterfaces.Add(intf);
+
+            this.UUID = create_params["uuid"];
+            this.name = create_params["name"];
+            this.interfaces = vmInterfaces;
+
+            string data = JsonConvert.SerializeObject(this);
+
+            return data;
+        }
+
+        public string post_resource(string parent_id)
+        {
+            return "/vms";
+        }
+
+        public string delete_resource(string id)
+        {
+            return "/vms/" + id + "?responseChoice=1";
+        }
+
+        public string put_resource(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string get_all_resources()
+        {
+            return "/vms";
+        }
+
+        public string get_all_resources_in_parent(string parent_id)
+        {
+            throw new NotImplementedException();
         }
     }
 

@@ -71,6 +71,7 @@
     <Compile Include="App.cs" />
     <Compile Include="nuageBase64.cs" />
     <Compile Include="NuageDomain.cs" />
+    <Compile Include="NuageDomainTemplate.cs" />
     <Compile Include="NuageEnterprise.cs" />
     <Compile Include="NuageFloatingIP.cs" />
     <Compile Include="NuageMe.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="NuagePowerShell.cs" />
     <Compile Include="NuageRedirectionTarget.cs" />
     <Compile Include="NuageResyncInfo.cs" />
+    <Compile Include="NuageServerBaseClass.cs" />
     <Compile Include="NuageSubnet.cs" />
     <Compile Include="NuageVmInterface.cs" />
     <Compile Include="NuageVms.cs" />
