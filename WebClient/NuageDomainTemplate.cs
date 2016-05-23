@@ -60,7 +60,7 @@ namespace Nuage.VSDClient
 
         public string get_all_resources()
         {
-            return "/domaintemplates";
+            throw new NotImplementedException();
         }
 
         public string get_all_resources_in_parent(string parent_id)

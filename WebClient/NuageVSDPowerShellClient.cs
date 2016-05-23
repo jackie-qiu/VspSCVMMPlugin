@@ -20,7 +20,7 @@ namespace Nuage.VSDClient
 {
     public class NuageVSDPowerShellSession
     {
-        private static readonly ILog logger = LogManager.GetLogger(typeof(nuageVSDSession));
+        private static readonly ILog logger = LogManager.GetLogger(typeof(NuageVSDPowerShellSession));
         public int FAILED = -1;
         public int SUCCESS = 0;
         private string username { get; set; }

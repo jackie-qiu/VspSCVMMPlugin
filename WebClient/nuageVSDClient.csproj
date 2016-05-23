@@ -7,7 +7,7 @@
     <ProjectGuid>{5C93D445-F17E-448D-B73B-BADB1263F7B3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>nuageVSDClient</RootNamespace>
+    <RootNamespace>Nuage.VSDClient</RootNamespace>
     <AssemblyName>WebClient</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -69,12 +69,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
+    <Compile Include="Domain.cs" />
+    <Compile Include="Enterprise.cs" />
     <Compile Include="nuageBase64.cs" />
+    <Compile Include="NuageClient.cs" />
     <Compile Include="NuageDomain.cs" />
     <Compile Include="NuageDomainTemplate.cs" />
     <Compile Include="NuageEnterprise.cs" />
+    <Compile Include="NuageException.cs" />
     <Compile Include="NuageFloatingIP.cs" />
+    <Compile Include="NuageInboundACL.cs" />
     <Compile Include="NuageMe.cs" />
+    <Compile Include="NuageOutboundACL.cs" />
     <Compile Include="NuagePolicyGroup.cs" />
     <Compile Include="NuagePowerShell.cs" />
     <Compile Include="NuageRedirectionTarget.cs" />
@@ -88,6 +94,7 @@
     <Compile Include="nuageVSDSession.cs" />
     <Compile Include="NuageZone.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RestProxy.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
