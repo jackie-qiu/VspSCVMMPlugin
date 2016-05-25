@@ -24,6 +24,11 @@ namespace Nuage.VSDClient
         public string externalID { get; set; }
         public string IPType { get; set; }
 
+        public override string ToString()
+        {
+            return name;
+        }
+
         public string post_data(Dictionary<string, string> create_params)
         {
             this.name = create_params["name"];

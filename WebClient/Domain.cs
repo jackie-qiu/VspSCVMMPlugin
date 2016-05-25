@@ -49,7 +49,7 @@ namespace Nuage.VSDClient
                                                  );
             if (result == null || result.Count() == 0)
             {
-                string msg = string.Format("Create Domains in enterprise {0} Failed....", ent_id)
+                string msg = string.Format("Create Domains in enterprise {0} Failed....", ent_id);
                 logger.Error(msg);
                 throw new NuageException(msg);
             }
@@ -551,8 +551,8 @@ namespace Nuage.VSDClient
         }
 
         public NuageACLRule CreateACLRule(string acl_id, string direction, string description,
-                                         string action, string priority,string protocol,
-                                         string src_port, string dest_port, string location_type,
+                                         string action, string priority,string ether_type, string protocol,
+                                         string src_port, string dest_port, string dscp, string location_type,
                                          string location_id, string network_type, string network_id)
         {
             NuageACLRule rule = new NuageACLRule();
@@ -584,6 +584,8 @@ namespace Nuage.VSDClient
             if (!String.IsNullOrEmpty(description)) create_params["description"] = description;
             if (!String.IsNullOrEmpty(priority)) create_params["priority"] = priority;
 
+            create_params["etherType"] = ether_type;
+            create_params["DSCP"] = dscp;
             create_params["protocol"] = PROTO_NAME_TO_NUM[protocol];
             if (protocol.Equals("tcp") || protocol.Equals("udp"))
             {

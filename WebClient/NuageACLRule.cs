@@ -109,8 +109,8 @@ namespace Nuage.VSDClient
 
         public string post_data(Dictionary<string, string> create_params)
         {
-            this.DSCP = "*";
-            this.etherType = "0x0800";
+            this.DSCP = create_params["DSCP"];
+            this.etherType = create_params["etherType"];
             if(create_params.ContainsKey("description"))
             {
                 this.description = create_params["description"];

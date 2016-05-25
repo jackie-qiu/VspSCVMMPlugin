@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 
 namespace Nuage.VSDClient
 {
-    class RestProxy
+    public class RestProxy
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(RestProxy));
         private Uri baseUrl { get; set; }

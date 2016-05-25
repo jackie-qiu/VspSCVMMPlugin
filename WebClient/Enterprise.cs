@@ -77,5 +77,153 @@ namespace Nuage.VSDClient
 
         }
 
+        public NuageNetworkMacroGroups CreateNetworkMacroGroup(string ent_id, string name)
+        {
+            NuageNetworkMacroGroups macro_group = new NuageNetworkMacroGroups();
+
+            Dictionary<string, string> create_params = new Dictionary<string, string>();
+            create_params.Add("name", name);
+            create_params.Add("description", name);
+
+            List<NuageNetworkMacroGroups> result = restproxy.CallRestPostAPI<NuageNetworkMacroGroups>(
+                                                 macro_group.post_resource(ent_id),
+                                                 macro_group.post_data(create_params)
+                                                 );
+            if (result == null || result.Count() == 0)
+            {
+                string msg = string.Format("Create network macro group {0} Failed....", name);
+                logger.Error(msg);
+                throw new NuageException(msg);
+            }
+            macro_group = result.First();
+
+            return macro_group;
+
+        }
+
+        public List<NuageNetworkMacroGroups> GetNetworkMacroGroupsInEnterprise(string ent_id, string filter)
+        {
+            NuageNetworkMacroGroups macro_group = new NuageNetworkMacroGroups();
+
+            List<NuageNetworkMacroGroups> result = restproxy.CallRestGetAPI<NuageNetworkMacroGroups>(macro_group.get_all_resources_in_parent(ent_id), filter);
+            if (result == null || result.Count() == 0)
+            {
+                string msg = string.Format("Get network macro group from enterprise {0} Failed....", ent_id);
+                logger.Error(msg);
+                throw new NuageException(msg);
+            }
+
+            return result;
+        }
+
+        public bool DeleteNetworkMacroGroups(string id)
+        {
+            NuageNetworkMacroGroups network_macro_group = new NuageNetworkMacroGroups();
+
+            return restproxy.CallRestDeleteAPI<NuageDomain>(network_macro_group.delete_resource(id));
+
+        }
+
+        public List<NuageEnterpriseNetworks> GetNetworkMacrosInGroup(string macro_group_id, string filter)
+        {
+            NuageNetworkMacroGroups macro_group = new NuageNetworkMacroGroups();
+
+            List<NuageEnterpriseNetworks> result = restproxy.CallRestGetAPI<NuageEnterpriseNetworks>(macro_group.get_network_macro_list(macro_group_id), filter);
+            if (result == null || result.Count() == 0)
+            {
+                string msg = string.Format("Get network macro list from group {0} Failed....", macro_group_id);
+                logger.Error(msg);
+                throw new NuageException(msg);
+            }
+
+            return result;
+        }
+
+        public NuageEnterpriseNetworks CreateNetworkMacro(string ent_id, string name, string address, string netmask)
+        {
+            NuageEnterpriseNetworks network_macro = new NuageEnterpriseNetworks();
+
+            Dictionary<string, string> create_params = new Dictionary<string, string>();
+            create_params.Add("name", name);
+            create_params.Add("address", address);
+            create_params.Add("netmask", netmask);
+
+            List<NuageEnterpriseNetworks> result = restproxy.CallRestPostAPI<NuageEnterpriseNetworks>(
+                                                 network_macro.post_resource(ent_id),
+                                                 network_macro.post_data(create_params)
+                                                 );
+            if (result == null || result.Count() == 0)
+            {
+                string msg = string.Format("Create network macro {0} Failed....", name);
+                logger.Error(msg);
+                throw new NuageException(msg);
+            }
+            network_macro = result.First();
+
+            return network_macro;
+
+        }
+
+        public List<NuageEnterpriseNetworks> GetNetworkMacrosInEnterprise(string ent_id, string filter)
+        {
+            NuageEnterpriseNetworks network_macro = new NuageEnterpriseNetworks();
+
+            List<NuageEnterpriseNetworks> result = restproxy.CallRestGetAPI<NuageEnterpriseNetworks>(network_macro.get_all_resources_in_parent(ent_id), filter);
+            if (result == null || result.Count() == 0)
+            {
+                string msg = string.Format("Get network macro group from enterprise {0} Failed....", ent_id);
+                logger.Error(msg);
+                throw new NuageException(msg);
+            }
+
+            return result;
+        }
+
+        public bool DeleteNetworkMacro(string id)
+        {
+            NuageEnterpriseNetworks network_macro = new NuageEnterpriseNetworks();
+
+            return restproxy.CallRestDeleteAPI<NuageDomain>(network_macro.delete_resource(id));
+
+        }
+
+        public bool AddNetworkMacrosToGroup(string macro_group_id, string network_macro_id)
+        {
+            List<string> macro_group_list = new List<string>();
+
+            List<NuageEnterpriseNetworks> result = GetNetworkMacrosInGroup(macro_group_id, null);
+            foreach (NuageEnterpriseNetworks item in result)
+            {
+                if (item.ID.Equals(network_macro_id))
+                    return true;
+                macro_group_list.Add(item.ID);
+            }
+
+            macro_group_list.Add(network_macro_id);
+
+            NuageNetworkMacroGroups macro_group = new NuageNetworkMacroGroups();
+
+            return restproxy.CallRestPutAPI<NuageEnterpriseNetworks>(macro_group.get_network_macro_list(macro_group_id),
+                                                                           macro_group.put_data(macro_group_list));
+        }
+
+        public bool DeleteNetworkMacrosFromGroup(string macro_group_id, string network_macro_id)
+        {
+            List<string> macro_group_list = new List<string>();
+
+            List<NuageEnterpriseNetworks> result = GetNetworkMacrosInGroup(macro_group_id, null);
+            foreach (NuageEnterpriseNetworks item in result)
+            {
+                if (item.ID.Equals(network_macro_id))
+                    continue;
+                macro_group_list.Add(item.ID);
+            }
+
+            NuageNetworkMacroGroups macro_group = new NuageNetworkMacroGroups();
+
+            return restproxy.CallRestPutAPI<NuageEnterpriseNetworks>(macro_group.get_network_macro_list(macro_group_id),
+                                                                           macro_group.put_data(macro_group_list));
+        }
+
     }
 }

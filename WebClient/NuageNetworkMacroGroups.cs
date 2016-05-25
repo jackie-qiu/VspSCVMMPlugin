@@ -22,12 +22,24 @@ namespace Nuage.VSDClient
         public string parentID { get; set; }
         public string externalID { get; set; }
 
+        public override string ToString()
+        {
+            return name;
+        }
+
         public string post_data(Dictionary<string, string> create_params)
         {
             this.name = create_params["name"];
             this.description = create_params["description"];
 
             string data = JsonConvert.SerializeObject(this);
+
+            return data;
+        }
+
+        public string put_data(List<string> put_params)
+        {
+            string data = JsonConvert.SerializeObject(put_params);
 
             return data;
         }
