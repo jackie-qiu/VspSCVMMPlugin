@@ -14,7 +14,8 @@ namespace Nuage.VSDClient
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(NuageClient));
         private RestProxy restproxy { get; set; }
-
+        private Dictionary<string, string> PROTO_NAME_TO_NUM = new Dictionary<string, string>();
+        private string[] NETWORK_TYPE = { "ANY", "ZONE", "SUBNET", "POLICYGROUP", "ENDPOINT_DOMAIN", "ENDPOINT_ZONE", "ENDPOINT_SUBNET", "ENTERPRISE_NETWORK", "NETWORK_MACRO_GROUP"};
         public Domain(RestProxy proxy)
         {
             string addinPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -28,6 +29,11 @@ namespace Nuage.VSDClient
                 logger.InfoFormat("Log4net config file not found {0}", ex.Message);
             }
             this.restproxy = proxy;
+
+            PROTO_NAME_TO_NUM.Add("any", "ANY");
+            PROTO_NAME_TO_NUM.Add("tcp", "6");
+            PROTO_NAME_TO_NUM.Add("udp", "17");
+            PROTO_NAME_TO_NUM.Add("icmp", "1");
         }
 
         public NuageDomain CreateL3Domain(string ent_id, string name, string template_id)
@@ -381,6 +387,311 @@ namespace Nuage.VSDClient
             NuageFloatingIP floatingip = new NuageFloatingIP();
 
             return restproxy.CallRestDeleteAPI<NuageFloatingIP>(floatingip.delete_resource(id));
+
+        }
+
+        public NuageInboundACL CreateL3DomainIngressACLTmplt(string domain_id, string name, string priority, bool addr_spoof, bool allow_ip, bool allow_nonip)
+        {
+            NuageInboundACL L3DomainIngressACLTmplt = new NuageInboundACL();
+            Dictionary<string, string> create_params = new Dictionary<string, string>();
+            if (name != null)
+            {
+                create_params.Add("name", name);
+                create_params.Add("description", name);
+            }
+
+            if (priority != null) create_params.Add("priority", priority);
+            if (addr_spoof) create_params.Add("addressSpoof", "true");
+            if (allow_ip) create_params.Add("allowIp", "true");
+            if (allow_nonip) create_params.Add("allowNonIp", "true");
+
+            List<NuageInboundACL> result = restproxy.CallRestPostAPI<NuageInboundACL>(
+                                                 L3DomainIngressACLTmplt.post_resource(domain_id),
+                                                 L3DomainIngressACLTmplt.post_data(create_params)
+                                                 );
+            if (result == null || result.Count() == 0)
+            {
+                string msg = string.Format("Create ingress acl in domain {0} Failed....", domain_id);
+                logger.Error(msg);
+                throw new NuageException(msg);
+            }
+
+            return result.First();
+        }
+
+        public List<NuageInboundACL> GetL3DomainIngressACLTmplts(string filter)
+        {
+            NuageInboundACL L3DomainIngressACLTmplt = new NuageInboundACL();
+
+            List<NuageInboundACL> result = restproxy.CallRestGetAPI<NuageInboundACL>(L3DomainIngressACLTmplt.get_all_resources(), filter);
+            if (result == null || result.Count() == 0)
+            {
+                string msg = string.Format("Get L3 domain ingress acls Failed....");
+                logger.Error(msg);
+                throw new NuageException(msg);
+            }
+
+            return result;
+        }
+
+        public List<NuageInboundACL> GetL3DomainIngressACLTmpltsInDomain(string domain_id, string filter)
+        {
+            NuageInboundACL L3DomainIngressACLTmplt = new NuageInboundACL();
+
+            List<NuageInboundACL> result = restproxy.CallRestGetAPI<NuageInboundACL>(L3DomainIngressACLTmplt.get_all_resources_in_parent(domain_id), filter);
+            if (result == null || result.Count() == 0)
+            {
+                string msg = string.Format("Get L3 domain ingress acls in domain {0} Failed....", domain_id);
+                logger.Error(msg);
+                throw new NuageException(msg);
+            }
+
+            return result;
+        }
+
+        public bool DeleteL3DomainIngressACLTmplt(string id)
+        {
+            NuageInboundACL L3DomainIngressACLTmplt = new NuageInboundACL();
+
+            return restproxy.CallRestDeleteAPI<NuageInboundACL>(L3DomainIngressACLTmplt.delete_resource(id));
+
+        }
+
+        public NuageOutboundACL CreateL3DomainEgressACLTmplt(string domain_id, string name, string priority, bool implicit_rule, bool allow_ip, bool allow_nonip)
+        {
+            NuageOutboundACL L3DomainEgressACLTmplt = new NuageOutboundACL();
+            Dictionary<string, string> create_params = new Dictionary<string, string>();
+            if (name != null)
+            {
+                create_params.Add("name", name);
+                create_params.Add("description", name);
+            }
+
+            if (priority != null) create_params.Add("priority", priority);
+            if (implicit_rule) create_params.Add("installImplicitRules", "true");
+            if (allow_ip) create_params.Add("allowIp", "true");
+            if (allow_nonip) create_params.Add("allowNonIp", "true");
+
+            List<NuageOutboundACL> result = restproxy.CallRestPostAPI<NuageOutboundACL>(
+                                                 L3DomainEgressACLTmplt.post_resource(domain_id),
+                                                 L3DomainEgressACLTmplt.post_data(create_params)
+                                                 );
+            if (result == null || result.Count() == 0)
+            {
+                string msg = string.Format("Create egress acl in domain {0} Failed....", domain_id);
+                logger.Error(msg);
+                throw new NuageException(msg);
+            }
+
+            return result.First();
+        }
+
+        public List<NuageOutboundACL> GetL3DomainEgressACLTmplts(string filter)
+        {
+            NuageOutboundACL L3DomainEgressACLTmplt = new NuageOutboundACL();
+
+            List<NuageOutboundACL> result = restproxy.CallRestGetAPI<NuageOutboundACL>(L3DomainEgressACLTmplt.get_all_resources(), filter);
+            if (result == null || result.Count() == 0)
+            {
+                string msg = string.Format("Get L3 domain egress acls Failed....");
+                logger.Error(msg);
+                throw new NuageException(msg);
+            }
+
+            return result;
+        }
+
+        public List<NuageOutboundACL> GetL3DomainEgressACLTmpltsInDomain(string domain_id, string filter)
+        {
+            NuageOutboundACL L3DomainEgressACLTmplt = new NuageOutboundACL();
+
+            List<NuageOutboundACL> result = restproxy.CallRestGetAPI<NuageOutboundACL>(L3DomainEgressACLTmplt.get_all_resources_in_parent(domain_id), filter);
+            if (result == null || result.Count() == 0)
+            {
+                string msg = string.Format("Get L3 domain egress acls in domain {0} Failed....", domain_id);
+                logger.Error(msg);
+                throw new NuageException(msg);
+            }
+
+            return result;
+        }
+
+        public bool DeleteL3DomainEgressACLTmplt(string id)
+        {
+            NuageOutboundACL L3DomainEgressACLTmplt = new NuageOutboundACL();
+
+            return restproxy.CallRestDeleteAPI<NuageOutboundACL>(L3DomainEgressACLTmplt.delete_resource(id));
+
+        }
+
+        public NuageACLRule CreateACLRule(string acl_id, string direction, Dictionary<string, string> create_params)
+        {
+            NuageACLRule rule = new NuageACLRule();
+            string resource = null;
+            if (direction.Equals("ingress"))
+            {
+                resource = rule.in_post_resource(acl_id);
+            }
+            else
+            {
+                resource = rule.eg_post_resource(acl_id);
+            }
+            List<NuageACLRule> result = restproxy.CallRestPostAPI<NuageACLRule>(
+                                                 resource,
+                                                 rule.post_data(create_params)
+                                                 );
+            if (result == null || result.Count() == 0)
+            {
+                string msg = string.Format("Create {0} rule in acl {1} Failed....", direction, acl_id);
+                logger.Error(msg);
+                throw new NuageException(msg);
+            }
+
+            return result.First();
+        }
+
+        public NuageACLRule CreateACLRule(string acl_id, string direction, string description,
+                                         string action, string priority,string protocol,
+                                         string src_port, string dest_port, string location_type,
+                                         string location_id, string network_type, string network_id)
+        {
+            NuageACLRule rule = new NuageACLRule();
+            Dictionary<string, string> create_params = new Dictionary<string, string>();
+            if (!PROTO_NAME_TO_NUM.ContainsKey(protocol))
+            {
+                string msg = string.Format("Unsupport protocol {0}", protocol);
+                logger.Error(msg);
+                throw new NuageException(msg);
+            }
+
+            if (!NETWORK_TYPE.Contains(location_type) || !NETWORK_TYPE.Contains(network_type))
+            {
+                string msg = string.Format("Unsupport network type {0} or location type {1}", network_type, location_type);
+                logger.Error(msg);
+                throw new NuageException(msg);
+            }
+
+            string resource = null;
+            if (direction.Equals("ingress"))
+            {
+                resource = rule.in_post_resource(acl_id);
+            }
+            else
+            {
+                resource = rule.eg_post_resource(acl_id);
+            }
+
+            if (!String.IsNullOrEmpty(description)) create_params["description"] = description;
+            if (!String.IsNullOrEmpty(priority)) create_params["priority"] = priority;
+
+            create_params["protocol"] = PROTO_NAME_TO_NUM[protocol];
+            if (protocol.Equals("tcp") || protocol.Equals("udp"))
+            {
+                create_params["sourcePort"] = src_port;
+                create_params["destPort"] = dest_port;
+            }
+            create_params["locationType"] = location_type;
+            if(!location_type.Equals("ANY")) create_params["locationID"] = location_id;
+            create_params["networkType"] = network_type;
+            if (!network_type.Equals("ANY")) create_params["networkID"] = network_id;
+            create_params["action"] = action;
+            List<NuageACLRule> result = restproxy.CallRestPostAPI<NuageACLRule>(
+                                                 resource,
+                                                 rule.post_data(create_params)
+                                                 );
+            if (result == null || result.Count() == 0)
+            {
+                string msg = string.Format("Create {0} rule in acl {1} Failed....", direction, acl_id);
+                logger.Error(msg);
+                throw new NuageException(msg);
+            }
+
+            return result.First();
+        }
+
+        public List<NuageACLRule> GetACLRules(string direction, string filter)
+        {
+            NuageACLRule rule = new NuageACLRule();
+            string resource = null;
+            if (direction.Equals("ingress"))
+            {
+                resource = rule.in_get_all_resources();
+            }
+            else
+            {
+                resource = rule.eg_get_all_resources();
+            }
+
+            List<NuageACLRule> result = restproxy.CallRestGetAPI<NuageACLRule>(resource, filter);
+            if (result == null || result.Count() == 0)
+            {
+                string msg = string.Format("Get {0} acl rules Failed....", direction);
+                logger.Error(msg);
+                throw new NuageException(msg);
+            }
+
+            return result;
+        }
+
+        public List<NuageACLRule> GetACLRulesInDomain(string domain_id, string direction, string filter)
+        {
+            NuageACLRule rule = new NuageACLRule();
+            string resource = null;
+            if (direction.Equals("ingress"))
+            {
+                resource = rule.in_get_all_resources_in_domain(domain_id);
+            }
+            else
+            {
+                resource = rule.eg_get_all_resources_in_domain(domain_id);
+            }
+            List<NuageACLRule> result = restproxy.CallRestGetAPI<NuageACLRule>(resource, filter);
+            if (result == null || result.Count() == 0)
+            {
+                string msg = string.Format("Get {0} acl rules in domain {1} Failed....", direction, domain_id);
+                logger.Error(msg);
+                throw new NuageException(msg);
+            }
+
+            return result;
+        }
+
+        public List<NuageACLRule> GetACLRulesInACL(string acl_id, string direction, string filter)
+        {
+            NuageACLRule rule = new NuageACLRule();
+            string resource = null;
+            if (direction.Equals("ingress"))
+            {
+                resource = rule.in_get_all_resources_in_parent(acl_id);
+            }
+            else
+            {
+                resource = rule.eg_get_all_resources_in_parent(acl_id);
+            }
+            List<NuageACLRule> result = restproxy.CallRestGetAPI<NuageACLRule>(resource, filter);
+            if (result == null || result.Count() == 0)
+            {
+                string msg = string.Format("Get {0} acl rules in ACL {1} Failed....", direction, acl_id);
+                logger.Error(msg);
+                throw new NuageException(msg);
+            }
+
+            return result;
+        }
+
+        public bool DeleteACLRule(string id, string direction)
+        {
+            NuageACLRule rule = new NuageACLRule();
+            string resource = null;
+            if (direction.Equals("ingress"))
+            {
+                resource = rule.in_delete_resource(id);
+            }
+            else
+            {
+                resource = rule.eg_delete_resource(id);
+            }
+            return restproxy.CallRestDeleteAPI<NuageACLRule>(resource);
 
         }
 
