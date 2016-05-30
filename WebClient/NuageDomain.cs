@@ -67,6 +67,9 @@ namespace Nuage.VSDClient
             this.name = create_params["name"];
             this.templateID = create_params["templateID"];
 
+            if(create_params.ContainsKey("description"))
+                this.description = create_params["description"];
+
             string data = JsonConvert.SerializeObject(this);
 
             return data;

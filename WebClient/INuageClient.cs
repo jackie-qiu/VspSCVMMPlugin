@@ -8,9 +8,9 @@ namespace Nuage.VSDClient
         bool AddNetworkMacrosToGroup(string macro_group_id, string network_macro_id);
         NuageACLRule CreateACLRule(string acl_id, string direction, string description, string action, string priority, string ether_type, string protocol, string src_port, string dest_port, string dscp, string location_type, string location_id, string network_type, string network_id);
         NuageDomainTemplate CreateDefaultL3DomainTemplate(string ent_id);
-        NuageEnterprise CreateEnterprise(string name);
+        NuageEnterprise CreateEnterprise(string name, string description);
         NuageFloatingIP CreateFloatingIP(string domain_id, string shared_netid);
-        NuageDomain CreateL3Domain(string ent_id, string name);
+        NuageDomain CreateL3Domain(string ent_id, string name, string description);
         NuageOutboundACL CreateL3DomainEgressACLTmplt(string domain_id, string name, string priority, bool implicit_rule, bool allow_ip, bool allow_nonip);
         NuageInboundACL CreateL3DomainIngressACLTmplt(string domain_id, string name, string priority, bool addr_spoof, bool allow_ip, bool allow_nonip);
         NuageEnterpriseNetworks CreateNetworkMacro(string ent_id, string name, string address, string netmask);

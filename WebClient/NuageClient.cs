@@ -44,9 +44,9 @@ namespace Nuage.VSDClient
             return restproxy.LoginVSD();
         }
 
-        public NuageEnterprise CreateEnterprise(string name)
+        public NuageEnterprise CreateEnterprise(string name, string description)
         {
-            return enterprise.CreateEnterprise(name);
+            return enterprise.CreateEnterprise(name, description);
         }
 
         public List<NuageEnterprise> GetEnterprises()
@@ -117,7 +117,7 @@ namespace Nuage.VSDClient
             return result.First<NuageDomainTemplate>();
         }
 
-        public NuageDomain CreateL3Domain(string ent_id, string name)
+        public NuageDomain CreateL3Domain(string ent_id, string name, string description)
         {
             NuageDomainTemplate tmpt = GetDefaultL3DomainTemplate(ent_id);
             if (tmpt == null)
@@ -125,7 +125,7 @@ namespace Nuage.VSDClient
                 tmpt = CreateDefaultL3DomainTemplate(ent_id);
             }
 
-            return l3domain.CreateL3Domain(ent_id, name, tmpt.ID);
+            return l3domain.CreateL3Domain(ent_id, name, description, tmpt.ID);
 
         }
 

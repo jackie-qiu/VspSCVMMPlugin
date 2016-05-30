@@ -31,12 +31,14 @@ namespace Nuage.VSDClient
            
         }
 
-        public NuageEnterprise CreateEnterprise(string name)
+        public NuageEnterprise CreateEnterprise(string name, string description)
         {
             NuageEnterprise net_partition = new NuageEnterprise();
 
             Dictionary<string, string> create_params = new Dictionary<string, string>();
             create_params.Add("name", name);
+            if(description != null)
+                create_params.Add("description", description);
 
             List<NuageEnterprise> result = restproxy.CallRestPostAPI<NuageEnterprise>(
                                                  net_partition.post_resource(""),
@@ -73,7 +75,7 @@ namespace Nuage.VSDClient
         {
             NuageEnterprise ent = new NuageEnterprise();
 
-            return restproxy.CallRestDeleteAPI<NuageDomain>(ent.delete_resource(id));
+            return restproxy.CallRestDeleteAPI<NuageEnterprise>(ent.delete_resource(id));
 
         }
 
@@ -120,7 +122,7 @@ namespace Nuage.VSDClient
         {
             NuageNetworkMacroGroups network_macro_group = new NuageNetworkMacroGroups();
 
-            return restproxy.CallRestDeleteAPI<NuageDomain>(network_macro_group.delete_resource(id));
+            return restproxy.CallRestDeleteAPI<NuageNetworkMacroGroups>(network_macro_group.delete_resource(id));
 
         }
 
@@ -183,7 +185,7 @@ namespace Nuage.VSDClient
         {
             NuageEnterpriseNetworks network_macro = new NuageEnterpriseNetworks();
 
-            return restproxy.CallRestDeleteAPI<NuageDomain>(network_macro.delete_resource(id));
+            return restproxy.CallRestDeleteAPI<NuageEnterpriseNetworks>(network_macro.delete_resource(id));
 
         }
 

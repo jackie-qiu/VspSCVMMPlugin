@@ -22,7 +22,7 @@ namespace Nuage.VSDClient
         private string organization { get; set; }
         private string version { get; set; }
         private string token { get; set; }
-        private PowerShell powerShellContext;
+
         public RestProxy(string username, string password, string organization, Uri baseUrl, string version)
         {
             string addinPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -35,8 +35,6 @@ namespace Nuage.VSDClient
             {
                 logger.InfoFormat("Log4net config file not found {0}", ex.Message);
             }
-
-            powerShellContext = PowerShell.Create();
 
             this.username = username;
             this.password = password;
@@ -89,7 +87,7 @@ namespace Nuage.VSDClient
             return true;
         }
 
-        private Boolean AddCertificatePolicyType()
+        private Boolean AddCertificatePolicyType(PowerShell powerShellContext)
         {
             string restScripts = @"
                Add-Type @'
@@ -124,9 +122,13 @@ namespace Nuage.VSDClient
         {
 
             List<T> NuageObject = new List<T>();
+            PowerShell powerShellContext = PowerShell.Create();
 
-            if (!AddCertificatePolicyType())
-                return null;
+            if (!AddCertificatePolicyType(powerShellContext))
+            {
+               powerShellContext.Dispose();
+               throw new NuageException("Add Certificate policy type failed");
+            }
 
             string RestScript = @"
                 $headers = New-Object 'System.Collections.Generic.Dictionary[[String],[String]]'
@@ -170,9 +172,8 @@ namespace Nuage.VSDClient
                 }
                 Catch [System.Net.WebException]
                 {
-                    Write-Warning $_.Exception.Status
-                    Write-Warning $_.Exception.Response.StatusCode.Value__
-                    Write-Warning $_.Exception.Response.StatusDescription
+                    $warning_message = 'Failed with status code ' + $_.Exception.Response.StatusCode.Value__ + ' and error message ' + $_.Exception.Response.StatusDescription
+                    Write-Warning $warning_message
                 }
                 Catch
                 {
@@ -214,22 +215,27 @@ namespace Nuage.VSDClient
                 if (results == null)
                 {
                     logger.ErrorFormat("Invoke Powershell rest url {0} failed!", url);
-                    return null;
+                    throw new NuageException("Invoke REST API failed.");
                 }
                 if (powerShellContext.Streams.Error.Count > 0)
                 {
+                    string error_msg = "";
                     foreach (var item in powerShellContext.Streams.Error)
                     {
                         logger.ErrorFormat("Invoke Powershell rest url {0} {1} failed {2}", action, url, item.ToString());
+                        error_msg = item.ToString();
                     }
-                    return null;
+                    throw new NuageException(error_msg);
                 }
                 if (powerShellContext.Streams.Warning.Count > 0)
                 {
+                    string warn_msg = "";
                     foreach (var item in powerShellContext.Streams.Warning)
                     {
                         logger.WarnFormat("Invoke Powershell rest url {0} {1} warning {2}", action, url, item.ToString());
+                        warn_msg = item.ToString();
                     }
+                    throw new NuageException(warn_msg);
                 }
                 foreach (var psObject in results)
                 {
@@ -245,10 +251,19 @@ namespace Nuage.VSDClient
                     }
                 }
             }
+            catch (NuageException e)
+            {
+                throw e;
+            }
             catch (Exception ex)
             {
-                logger.ErrorFormat("Invoke Powershell rest url {0} failed! {1}", url, ex.Message);
-                return null;
+                string error_message = string.Format("Invoke Powershell rest url {0} failed! {1}", url, ex.Message);
+                logger.Error(error_message);
+                throw new NuageException(error_message, ex);
+            }
+            finally
+            {
+                powerShellContext.Dispose();
             }
 
             return NuageObject;

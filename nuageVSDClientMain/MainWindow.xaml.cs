@@ -19,7 +19,7 @@ using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 using Xceed.Wpf.Toolkit.PropertyGrid;
 using Nuage.VSDClient;
 
-namespace nuageVSDClientMain
+namespace Nuage.VSDClient.Main
 {
     /// <summary>
     /// MainWindow.xaml Logical
@@ -58,16 +58,40 @@ namespace nuageVSDClientMain
             
         }
 
-        private void onAddClick(object sender, RoutedEventArgs e)
+        private void _EnterpriseAdd_Click(object sender, RoutedEventArgs e)
         {
+            Organization org = new Organization(this.rest_client, this._Enterprises);
+            org.Show();
+        }
+        private void _EnterpriseDel_Click(object sender, RoutedEventArgs e)
+        {
+            if (_Enterprises.SelectedIndex == -1)
+            {
+                return;
+            }
 
-
-
+            NuageEnterprise ent = (NuageEnterprise)this._Enterprises.SelectedItem;
+            try
+            {
+                rest_client.DeleteEnterprise(ent.ID);
+            }
+            catch (NuageException)
+            {
+                MessageBox.Show("The Enterprise contains one or more domains and cannot be deleted.", "Error");
+                return;
+            }
+            
+            _Enterprises.Items.RemoveAt(_Enterprises.SelectedIndex);
+        }
+        private void _EnterpriseUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            string str = string.Format("{0}", this._Enterprises.SelectedItem);
+            MessageBox.Show(str);
         }
 
-        private void onDelClick(object sender, RoutedEventArgs e)
+        private void _Enterprises_MouseDown(object sender, MouseButtonEventArgs e)
         {
-
+            this._Enterprises.UnselectAll();
         }
 
         private void _layoutEnterprise_IsSelectedChanged(object sender, EventArgs e)
@@ -75,9 +99,9 @@ namespace nuageVSDClientMain
             try
             {
                 enterprises = rest_client.GetEnterprises();
-                if (enterprises != null)
+                this._Enterprises.Items.Clear();
+                if (enterprises != null && enterprises.Count() > 0)
                 {
-                    this._Enterprises.Items.Clear();
                     foreach (NuageEnterprise item in enterprises)
                     {
                         this._Enterprises.Items.Add(item);
@@ -102,9 +126,9 @@ namespace nuageVSDClientMain
             try
             {
                 List<NuageDomain> domains = rest_client.GetL3DomainsInEnterprise(ent.ID);
-                if (domains != null)
+                this._Domains.Items.Clear();
+                if (domains != null && domains.Count() !=0)
                 {
-                    this._Domains.Items.Clear();
                     foreach(NuageDomain item in domains)
                     {
                         this._Domains.Items.Add(item);
@@ -130,10 +154,11 @@ namespace nuageVSDClientMain
 
             try
             {
+
                 List<NuageZone> zones = rest_client.GetZonesInDomain(domain.ID);
-                if (zones != null)
+                this._Zones.Items.Clear();
+                if (zones != null && zones.Count() > 0)
                 {
-                    this._Zones.Items.Clear();
                     foreach (NuageZone item in zones)
                     {
                         this._Zones.Items.Add(item);
@@ -142,9 +167,9 @@ namespace nuageVSDClientMain
                 }
 
                 List<NuagePolicyGroup> pg = rest_client.GetPolicyGroupsInDomain(domain.ID);
-                if (pg != null)
+                this._PolicyGroup.Items.Clear();
+                if (pg != null && pg.Count() > 0)
                 {
-                    this._PolicyGroup.Items.Clear();
                     foreach (NuagePolicyGroup item in pg)
                     {
                         this._PolicyGroup.Items.Add(item);
@@ -153,9 +178,9 @@ namespace nuageVSDClientMain
                 }
 
                 List<NuageInboundACL> inACL = rest_client.GetL3DomainIngressACLTmpltsInDomain(domain.ID);
-                if (inACL != null)
+                this._IngressPolicy.Items.Clear();
+                if (inACL != null && inACL.Count() > 0)
                 {
-                    this._IngressPolicy.Items.Clear();
                     foreach (NuageInboundACL item in inACL)
                     {
                         this._IngressPolicy.Items.Add(item);
@@ -164,9 +189,9 @@ namespace nuageVSDClientMain
                 }
 
                 List<NuageOutboundACL> outACL = rest_client.GetL3DomainEgressACLTmpltsInDomain(domain.ID);
-                if (outACL != null)
+                this._EgressPolicy.Items.Clear();
+                if (outACL != null && outACL.Count() > 0)
                 {
-                    this._EgressPolicy.Items.Clear();
                     foreach (NuageOutboundACL item in outACL)
                     {
                         this._EgressPolicy.Items.Add(item);
@@ -193,9 +218,9 @@ namespace nuageVSDClientMain
             try
             {
                 List<NuageSubnet> subnets = rest_client.GetSubnetsInZone(zone.ID);
-                if (subnets != null)
+                this._CommonElement.Items.Clear();
+                if (subnets != null && subnets.Count() > 0)
                 {
-                    this._CommonElement.Items.Clear();
                     foreach (NuageSubnet item in subnets)
                     {
                         this._CommonElement.Items.Add(item);
@@ -229,9 +254,9 @@ namespace nuageVSDClientMain
             try
             {
                 List<NuageACLRule> ingress_acl_rules = rest_client.GetRulesInACL(inACL.ID, "ingress");
-                if (ingress_acl_rules != null)
+                this._CommonElement.Items.Clear();
+                if (ingress_acl_rules != null && ingress_acl_rules.Count() > 0)
                 {
-                    this._CommonElement.Items.Clear();
                     foreach (NuageACLRule item in ingress_acl_rules)
                     {
                         this._CommonElement.Items.Add(item);
@@ -257,9 +282,9 @@ namespace nuageVSDClientMain
             try
             {
                 List<NuageACLRule> egress_acl_rules = rest_client.GetRulesInACL(outACL.ID, "egress");
-                if (egress_acl_rules != null)
+                this._CommonElement.Items.Clear();
+                if (egress_acl_rules != null && egress_acl_rules.Count() > 0)
                 {
-                    this._CommonElement.Items.Clear();
                     foreach (NuageACLRule item in egress_acl_rules)
                     {
                         this._CommonElement.Items.Add(item);
@@ -285,9 +310,9 @@ namespace nuageVSDClientMain
             try
             {
                 List<NuageVport> vports = rest_client.GetVportInPolicyGroup(pg.ID);
-                if (vports != null)
+                this._CommonElement.Items.Clear();
+                if (vports != null && vports.Count() > 0)
                 {
-                    this._CommonElement.Items.Clear();
                     foreach (NuageVport item in vports)
                     {
                         this._CommonElement.Items.Add(item);
@@ -327,6 +352,38 @@ namespace nuageVSDClientMain
                 this._CommonElement.Items.Clear();
 
         }
+
+        private void _Domains_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            this._Domains.UnselectAll();
+        }
+
+        private void _Zones_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            this._Zones.UnselectAll();
+        }
+
+        private void _PolicyGroup_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            this._PolicyGroup.UnselectAll();
+        }
+
+        private void _IngressPolicy_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            this._IngressPolicy.UnselectAll();
+        }
+
+        private void _EgressPolicy_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            this._EgressPolicy.UnselectAll();
+        }
+
+        private void _CommonElement_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            this._CommonElement.UnselectAll();
+        }
+
+
 
     }
 

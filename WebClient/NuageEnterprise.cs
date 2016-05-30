@@ -49,7 +49,11 @@ namespace Nuage.VSDClient
         public string post_data(Dictionary<string, string> create_params)
         {
             this.name = create_params["name"];
+            
             this.allowedForwardingClasses = new string[]{"E", "F", "G", "H"};
+
+            if (create_params.ContainsKey("description"))
+                this.description = create_params["description"];
 
             if(create_params.ContainsKey("fp_quota"))
                 this.floatingIPsQuota = create_params["fp_quota"];

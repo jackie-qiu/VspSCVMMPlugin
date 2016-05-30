@@ -36,12 +36,15 @@ namespace Nuage.VSDClient
             PROTO_NAME_TO_NUM.Add("icmp", "1");
         }
 
-        public NuageDomain CreateL3Domain(string ent_id, string name, string template_id)
+        public NuageDomain CreateL3Domain(string ent_id, string name, string description, string template_id)
         {
             NuageDomain domain = new NuageDomain();
             Dictionary<string, string> create_params = new Dictionary<string, string>();
             create_params.Add("name", name);
             create_params.Add("templateID", template_id);
+
+            if(description != null)
+                create_params.Add("description", description);
 
             List<NuageDomain> result = restproxy.CallRestPostAPI<NuageDomain>(
                                                  domain.post_resource(ent_id),
@@ -62,12 +65,6 @@ namespace Nuage.VSDClient
             NuageDomain domain = new NuageDomain();
 
             List<NuageDomain> result = restproxy.CallRestGetAPI<NuageDomain>(domain.get_all_resources(), filter);
-            if (result == null || result.Count() == 0)
-            {
-                string msg = string.Format("Get Domains Failed....");
-                logger.Error(msg);
-                throw new NuageException(msg);
-            }
 
             return result;
         }
@@ -77,12 +74,6 @@ namespace Nuage.VSDClient
             NuageDomain domain = new NuageDomain();
 
             List<NuageDomain> result = restproxy.CallRestGetAPI<NuageDomain>(domain.get_all_resources_in_parent(ent_id), filter);
-            if (result == null || result.Count() == 0)
-            {
-                string msg = string.Format("Get Domains in enterprise {0} Failed....", ent_id);
-                logger.Error(msg);
-                throw new NuageException(msg);
-            }
 
             return result;
         }
@@ -121,13 +112,6 @@ namespace Nuage.VSDClient
 
             List<NuageDomainTemplate> result = restproxy.CallRestGetAPI<NuageDomainTemplate>(
                                                          domain_template.get_all_resources_in_parent(ent_id), filter);
-            if (result == null || result.Count() == 0)
-            {
-                string msg = string.Format("Get Domains Template in enterprise {0} Failed....", ent_id);
-                logger.Error(msg);
-                throw new NuageException(msg);
-            }
-
             return result;
         }
 
@@ -164,12 +148,6 @@ namespace Nuage.VSDClient
             NuageZone zone = new NuageZone();
 
             List<NuageZone> result = restproxy.CallRestGetAPI<NuageZone>(zone.get_all_resources(), filter);
-            if (result == null || result.Count() == 0)
-            {
-                string msg = string.Format("Get zones Failed....");
-                logger.Error(msg);
-                throw new NuageException(msg);
-            }
 
             return result;
         }
@@ -179,12 +157,6 @@ namespace Nuage.VSDClient
             NuageZone zone = new NuageZone();
 
             List<NuageZone> result = restproxy.CallRestGetAPI<NuageZone>(zone.get_all_resources_in_parent(domain_id), filter);
-            if (result == null || result.Count() == 0)
-            {
-                string msg = string.Format("Get zones in domain {0} Failed....", domain_id);
-                logger.Error(msg);
-                throw new NuageException(msg);
-            }
 
             return result;
         }
@@ -225,12 +197,6 @@ namespace Nuage.VSDClient
             NuageSubnet Subnet = new NuageSubnet();
 
             List<NuageSubnet> result = restproxy.CallRestGetAPI<NuageSubnet>(Subnet.get_all_resources(), filter);
-            if (result == null || result.Count() == 0)
-            {
-                string msg = string.Format("Get Subnets Failed....");
-                logger.Error(msg);
-                throw new NuageException(msg);
-            }
 
             return result;
         }
@@ -240,12 +206,6 @@ namespace Nuage.VSDClient
             NuageSubnet Subnet = new NuageSubnet();
 
             List<NuageSubnet> result = restproxy.CallRestGetAPI<NuageSubnet>(Subnet.get_all_resources_in_domain(domain_id), filter);
-            if (result == null || result.Count() == 0)
-            {
-                string msg = string.Format("Get Subnets in domain {0} Failed....", domain_id);
-                logger.Error(msg);
-                throw new NuageException(msg);
-            }
 
             return result;
         }
@@ -255,12 +215,6 @@ namespace Nuage.VSDClient
             NuageSubnet Subnet = new NuageSubnet();
 
             List<NuageSubnet> result = restproxy.CallRestGetAPI<NuageSubnet>(Subnet.get_all_resources_in_parent(zone_id), filter);
-            if (result == null || result.Count() == 0)
-            {
-                string msg = string.Format("Get Subnets in zone {0} Failed....", zone_id);
-                logger.Error(msg);
-                throw new NuageException(msg);
-            }
 
             return result;
         }
@@ -299,12 +253,6 @@ namespace Nuage.VSDClient
             NuagePolicyGroup policy_group = new NuagePolicyGroup();
 
             List<NuagePolicyGroup> result = restproxy.CallRestGetAPI<NuagePolicyGroup>(policy_group.get_all_resources(), filter);
-            if (result == null || result.Count() == 0)
-            {
-                string msg = string.Format("Get PolicyGroups Failed....");
-                logger.Error(msg);
-                throw new NuageException(msg);
-            }
 
             return result;
         }
@@ -314,12 +262,6 @@ namespace Nuage.VSDClient
             NuagePolicyGroup policy_group = new NuagePolicyGroup();
 
             List<NuagePolicyGroup> result = restproxy.CallRestGetAPI<NuagePolicyGroup>(policy_group.get_all_resources_in_parent(domain_id), filter);
-            if (result == null || result.Count() == 0)
-            {
-                string msg = string.Format("Get PolicyGroups in domain {0} Failed....", domain_id);
-                logger.Error(msg);
-                throw new NuageException(msg);
-            }
 
             return result;
         }
@@ -337,12 +279,6 @@ namespace Nuage.VSDClient
             NuageVport vport = new NuageVport();
 
             List<NuageVport> result = restproxy.CallRestGetAPI<NuageVport>(vport.get_vports_for_vptag(policy_group_id), filter);
-            if (result == null || result.Count() == 0)
-            {
-                string msg = string.Format("Get PolicyGroups in policy group {0} Failed....", policy_group_id);
-                logger.Error(msg);
-                throw new NuageException(msg);
-            }
 
             return result;
         }
@@ -372,12 +308,6 @@ namespace Nuage.VSDClient
             NuageFloatingIP floatingip = new NuageFloatingIP();
 
             List<NuageFloatingIP> result = restproxy.CallRestGetAPI<NuageFloatingIP>(floatingip.get_all_resources(), filter);
-            if (result == null || result.Count() == 0)
-            {
-                string msg = string.Format("Get Floating IPs Failed....");
-                logger.Error(msg);
-                throw new NuageException(msg);
-            }
 
             return result;
         }
@@ -387,12 +317,6 @@ namespace Nuage.VSDClient
             NuageFloatingIP floatingip = new NuageFloatingIP();
 
             List<NuageFloatingIP> result = restproxy.CallRestGetAPI<NuageFloatingIP>(floatingip.get_all_resources_in_parent(domain_id), filter);
-            if (result == null || result.Count() == 0)
-            {
-                string msg = string.Format("Get Floating IPs in domain {0} Failed....", domain_id);
-                logger.Error(msg);
-                throw new NuageException(msg);
-            }
 
             return result;
         }
@@ -454,12 +378,6 @@ namespace Nuage.VSDClient
             NuageInboundACL L3DomainIngressACLTmplt = new NuageInboundACL();
 
             List<NuageInboundACL> result = restproxy.CallRestGetAPI<NuageInboundACL>(L3DomainIngressACLTmplt.get_all_resources_in_parent(domain_id), filter);
-            if (result == null || result.Count() == 0)
-            {
-                string msg = string.Format("Get L3 domain ingress acls in domain {0} Failed....", domain_id);
-                logger.Error(msg);
-                throw new NuageException(msg);
-            }
 
             return result;
         }
@@ -506,12 +424,6 @@ namespace Nuage.VSDClient
             NuageOutboundACL L3DomainEgressACLTmplt = new NuageOutboundACL();
 
             List<NuageOutboundACL> result = restproxy.CallRestGetAPI<NuageOutboundACL>(L3DomainEgressACLTmplt.get_all_resources(), filter);
-            if (result == null || result.Count() == 0)
-            {
-                string msg = string.Format("Get L3 domain egress acls Failed....");
-                logger.Error(msg);
-                throw new NuageException(msg);
-            }
 
             return result;
         }
@@ -521,12 +433,6 @@ namespace Nuage.VSDClient
             NuageOutboundACL L3DomainEgressACLTmplt = new NuageOutboundACL();
 
             List<NuageOutboundACL> result = restproxy.CallRestGetAPI<NuageOutboundACL>(L3DomainEgressACLTmplt.get_all_resources_in_parent(domain_id), filter);
-            if (result == null || result.Count() == 0)
-            {
-                string msg = string.Format("Get L3 domain egress acls in domain {0} Failed....", domain_id);
-                logger.Error(msg);
-                throw new NuageException(msg);
-            }
 
             return result;
         }
@@ -640,12 +546,6 @@ namespace Nuage.VSDClient
             }
 
             List<NuageACLRule> result = restproxy.CallRestGetAPI<NuageACLRule>(resource, filter);
-            if (result == null || result.Count() == 0)
-            {
-                string msg = string.Format("Get {0} acl rules Failed....", direction);
-                logger.Error(msg);
-                throw new NuageException(msg);
-            }
 
             return result;
         }
@@ -663,12 +563,6 @@ namespace Nuage.VSDClient
                 resource = rule.eg_get_all_resources_in_domain(domain_id);
             }
             List<NuageACLRule> result = restproxy.CallRestGetAPI<NuageACLRule>(resource, filter);
-            if (result == null || result.Count() == 0)
-            {
-                string msg = string.Format("Get {0} acl rules in domain {1} Failed....", direction, domain_id);
-                logger.Error(msg);
-                throw new NuageException(msg);
-            }
 
             return result;
         }
@@ -686,12 +580,6 @@ namespace Nuage.VSDClient
                 resource = rule.eg_get_all_resources_in_parent(acl_id);
             }
             List<NuageACLRule> result = restproxy.CallRestGetAPI<NuageACLRule>(resource, filter);
-            if (result == null || result.Count() == 0)
-            {
-                string msg = string.Format("Get {0} acl rules in ACL {1} Failed....", direction, acl_id);
-                logger.Error(msg);
-                throw new NuageException(msg);
-            }
 
             return result;
         }
