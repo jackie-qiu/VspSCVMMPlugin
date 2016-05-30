@@ -43,7 +43,7 @@ namespace Nuage.VSDClient
         
         public override string ToString()
         {
-            return name;
+            return name + "\r\n";
         }
 
         public string post_data(Dictionary<string, string> create_params)

@@ -332,6 +332,21 @@ namespace Nuage.VSDClient
 
         }
 
+        public List<NuageVport> GetVportInPolicyGroup(string policy_group_id, string filter)
+        {
+            NuageVport vport = new NuageVport();
+
+            List<NuageVport> result = restproxy.CallRestGetAPI<NuageVport>(vport.get_vports_for_vptag(policy_group_id), filter);
+            if (result == null || result.Count() == 0)
+            {
+                string msg = string.Format("Get PolicyGroups in policy group {0} Failed....", policy_group_id);
+                logger.Error(msg);
+                throw new NuageException(msg);
+            }
+
+            return result;
+        }
+
         public NuageFloatingIP CreateFloatingIP(string domain_id, string shared_netid)
         {
             NuageFloatingIP floatingip = new NuageFloatingIP();

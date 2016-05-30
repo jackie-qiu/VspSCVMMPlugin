@@ -12,9 +12,6 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-
-        <TextBlock Grid.Row="1" Text="Nuage VCS Networking Client"  Style="{StaticResource Header}" Margin="10" />
-
         <xcad:DockingManager Grid.Row="2"
                            AllowMixedOrientation="True"
                            BorderBrush="Gray"
@@ -30,40 +27,34 @@
             <xcad:LayoutRoot x:Name="_layoutRoot">
                 <xcad:LayoutPanel Orientation="Horizontal" x:Name="_layoutPanel">
                     <xcad:LayoutAnchorablePane DockWidth="200">
-                        <xcad:LayoutAnchorable x:Name="_layoutDomains" ContentId="domain" Title="Domain" CanHide="False" CanClose="False" CanAutoHide="False"
+                        <xcad:LayoutAnchorable x:Name="_layoutDomains" ContentId="domain" Title="Domain" CanHide="False" CanClose="False" CanAutoHide="True"
                                                CanFloat="False" AutoHideWidth="240">
-                            <ListBox BorderThickness="0" Name="_Domains" SelectionChanged="_Domains_SelectionChanged">
-                                <ListBoxItem>test</ListBoxItem>
+                            <ListBox BorderThickness="0" Name="_Domains" ItemContainerStyle="{StaticResource ListBoxStyleBold}" SelectionChanged="_Domains_SelectionChanged">
                             </ListBox>
                         </xcad:LayoutAnchorable>
                     </xcad:LayoutAnchorablePane>
                     <xcad:LayoutDocumentPaneGroup Orientation="Horizontal">
                         <xcad:LayoutDocumentPane DockWidth="50">
-                            <xcad:LayoutDocument x:Name="_layoutZones" ContentId="zone" Title="Zone" CanClose="False" CanFloat="False" IsSelected="True" IsSelectedChanged="_layoutDesighDocument_IsSelectedChanged">
-                                <ListBox BorderThickness="0" Name="_Zones" AllowDrop="True" SelectionChanged="_Zones_SelectionChanged">
-                                    <ListBoxItem>test</ListBoxItem>
+                            <xcad:LayoutDocument x:Name="_layoutZones" ContentId="zone" Title="Zone" CanClose="False" CanFloat="False" IsSelected="True" IsSelectedChanged="_layoutZoneDocument_IsSelectedChanged">
+                                <ListBox BorderThickness="0" Name="_Zones" ItemContainerStyle="{StaticResource ListBoxStyle}" AllowDrop="True" SelectionChanged="_Zones_SelectionChanged">
                                 </ListBox>
                             </xcad:LayoutDocument>
                             <xcad:LayoutDocument x:Name="_layoutPolicyGroup" ContentId="policy group" Title="Policy Group" CanClose="False" CanFloat="False" IsSelected="False" IsSelectedChanged="_layoutPolicyGroup_IsSelectedChanged">
-                                <ListBox BorderThickness="0" Name="_PolicyGroup" AllowDrop="True" SelectionChanged="_PolicyGroup_SelectionChanged">
-                                    <ListBoxItem>test</ListBoxItem>
+                                <ListBox BorderThickness="0" Name="_PolicyGroup" ItemContainerStyle="{StaticResource ListBoxStyle}" AllowDrop="True" SelectionChanged="_PolicyGroup_SelectionChanged">
                                 </ListBox>
                             </xcad:LayoutDocument>
                             <xcad:LayoutDocument x:Name="_layoutIngressPolicy" ContentId="ingress policy" Title="Ingress Policy" CanClose="False" CanFloat="False" IsSelected="False" IsSelectedChanged="_layoutPolicy_IsSelectedChanged">
-                                <ListBox BorderThickness="0" Name="_IngressPolicy" AllowDrop="True" SelectionChanged="_IngressPolicy_SelectionChanged">
-                                    <ListBoxItem>test</ListBoxItem>
+                                <ListBox BorderThickness="0" Name="_IngressPolicy" ItemContainerStyle="{StaticResource ListBoxStyle}" AllowDrop="True" SelectionChanged="_IngressPolicy_SelectionChanged">
                                 </ListBox>
                             </xcad:LayoutDocument>
                             <xcad:LayoutDocument x:Name="_layoutEgressPolicy" ContentId="egress policy" Title="Egress Policy" CanClose="False" CanFloat="False" IsSelected="False" IsSelectedChanged="_layoutPolicy_IsSelectedChanged">
-                                <ListBox BorderThickness="0" Name="_EgressPolicy" AllowDrop="True" SelectionChanged="_EgressPolicy_SelectionChanged">
-                                    <ListBoxItem>test</ListBoxItem>
+                                <ListBox BorderThickness="0" Name="_EgressPolicy" ItemContainerStyle="{StaticResource ListBoxStyle}" AllowDrop="True" SelectionChanged="_EgressPolicy_SelectionChanged">
                                 </ListBox>
                             </xcad:LayoutDocument>
                         </xcad:LayoutDocumentPane>
-                        <xcad:LayoutDocumentPane x:Name="_layoutDocumentPane">
-                            <xcad:LayoutDocument x:Name="_layoutSubnet" ContentId="subnet" Title="Subnet" CanClose="False" CanFloat="False">
-                                <ListBox BorderThickness="0" Name="_Subnets" AllowDrop="True" SelectionChanged="_Subnets_SelectionChanged">
-                                    <ListBoxItem>test</ListBoxItem>
+                        <xcad:LayoutDocumentPane x:Name="_layoutCommonElementPane">
+                            <xcad:LayoutDocument x:Name="_layoutCommonElement" ContentId="subnet" Title="Subnet" CanClose="False" CanFloat="False">
+                                <ListBox BorderThickness="0" Name="_CommonElement" ItemContainerStyle="{StaticResource ListBoxStyle}" AllowDrop="True" SelectionChanged="_CommonElement_SelectionChanged">
                                 </ListBox>
                             </xcad:LayoutDocument>
                         </xcad:LayoutDocumentPane>
@@ -87,9 +78,8 @@
                     <xcad:LayoutAnchorSide>
                         <xcad:LayoutAnchorGroup>
                             <xcad:LayoutAnchorable ContentId="enterprise" Title="Enterprise" CanHide="False" CanClose="False"
-                                            CanFloat="False" AutoHideWidth="240">
-                                <ListBox BorderThickness="0" Name="_Enterprises" SelectionChanged="_Enterprises_SelectionChanged">
-                                    <ListBoxItem>test</ListBoxItem>
+                                            CanFloat="False" AutoHideWidth="240" IsSelectedChanged="_layoutEnterprise_IsSelectedChanged" IsSelected="False">
+                                <ListBox BorderThickness="0" Name="_Enterprises" ItemContainerStyle="{StaticResource ListBoxStyleBold}" SelectionChanged="_Enterprises_SelectionChanged">
                                 </ListBox>
                             </xcad:LayoutAnchorable>
                         </xcad:LayoutAnchorGroup>

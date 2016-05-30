@@ -6,6 +6,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nuageVSDClient", "WebClient\nuageVSDClient.csproj", "{5C93D445-F17E-448D-B73B-BADB1263F7B3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nuageVSDClientMain", "nuageVSDClientMain\nuageVSDClientMain.csproj", "{F5ECB2AA-E4E9-4CC3-957B-7F8F32E2C8C4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5C93D445-F17E-448D-B73B-BADB1263F7B3} = {5C93D445-F17E-448D-B73B-BADB1263F7B3}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -34,7 +34,24 @@ namespace Nuage.VSDClient
 
         public override string ToString()
         {
-            return name;
+            string tostring = "";
+            tostring += name + "\r\n";
+            if (description == null)
+                tostring += "No description given" + "\r\n";
+            else
+                tostring += this.description + "\r\n";
+
+            if (defaultAllowIP)
+                tostring += "Allow IP Traffic by Default\r\n";
+            else
+                tostring += "Drop IP Traffic by Default\r\n";
+
+            if (defaultAllowNonIP)
+                tostring += "Allow non IP Traffic by Default\r\n";
+            else
+                tostring += "Drop non IP Traffic by Default\r\n";
+
+            return tostring;
         }
 
         public string post_data(Dictionary<string, string> create_params)

@@ -10,7 +10,7 @@ using log4net.Config;
 
 namespace Nuage.VSDClient
 {
-    public class NuageClient
+    public class NuageClient : INuageClient
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(NuageClient));
         private string default_l3domain_template_name { get; set; }
@@ -174,6 +174,11 @@ namespace Nuage.VSDClient
             return l3domain.GetSubnetsInZone(zone_id, null);
         }
 
+        public List<NuageSubnet> GetSubnetsInDomain(string domain_id)
+        {
+            return l3domain.GetSubnetsInDomain(domain_id, null);
+        }
+
         public bool DeleteSubnet(string id)
         {
             return l3domain.DeleteSubnet(id);
@@ -192,6 +197,11 @@ namespace Nuage.VSDClient
         public bool DeletePolicyGroup(string id)
         {
             return l3domain.DeletePolicyGroup(id);
+        }
+
+        public List<NuageVport> GetVportInPolicyGroup(string policy_group_id)
+        {
+            return l3domain.GetVportInPolicyGroup(policy_group_id, null);
         }
 
         public NuageFloatingIP CreateFloatingIP(string domain_id, string shared_netid)

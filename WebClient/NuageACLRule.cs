@@ -44,7 +44,14 @@ namespace Nuage.VSDClient
 
         public override string ToString()
         {
-            return description;
+            string tostring = "";
+            if (this.description == null)
+                tostring += "No description given\r\n";
+            else
+                tostring += this.description + "\r\n";
+
+            tostring += "Source Port: " + this.sourcePort + "to " + "Destination Port: " + this.destinationPort + " (EtherType: " + this.etherType + ".Protocol: " + this.protocol + ")" + "\r\n"; 
+            return tostring;
         }
 
         public string in_post_resource(string parent_id)
