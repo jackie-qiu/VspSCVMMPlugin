@@ -85,8 +85,7 @@ namespace Nuage.VSDClient.Main
         }
         private void _EnterpriseUpdate_Click(object sender, RoutedEventArgs e)
         {
-            string str = string.Format("{0}", this._Enterprises.SelectedItem);
-            MessageBox.Show(str);
+
         }
 
         private void _Enterprises_MouseDown(object sender, MouseButtonEventArgs e)
@@ -142,6 +141,43 @@ namespace Nuage.VSDClient.Main
                 string error = string.Format("Get domains from VSD failed with error {0}.", ex.Message);
                 MessageBox.Show(error, "Failed");
             }
+        }
+        
+        private void _DomainAdd_Click(object sender, RoutedEventArgs e)
+        {
+            if (_Enterprises.SelectedIndex == -1)
+            {
+                MessageBox.Show("Please select the organization.", "Warning");
+                return;
+            }
+
+            NuageEnterprise ent = (NuageEnterprise)this._Enterprises.SelectedItem;
+            Domain domain = new Domain(this.rest_client, ent.ID, this._Domains);
+            domain.Show();
+        }
+        private void _DomainDel_Click(object sender, RoutedEventArgs e)
+        {
+            if (_Domains.SelectedIndex == -1)
+            {
+                return;
+            }
+
+            NuageDomain domain = (NuageDomain)this._Domains.SelectedItem;
+            try
+            {
+                rest_client.DeleteL3Domain(domain.ID);
+            }
+            catch (NuageException)
+            {
+                MessageBox.Show("Domain is in use.Please detach the resource associated with it and retry.", "Error");
+                return;
+            }
+
+            _Domains.Items.RemoveAt(_Domains.SelectedIndex);
+        }
+        private void _DomainUpdate_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
         private void _Domains_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -207,7 +243,42 @@ namespace Nuage.VSDClient.Main
             }
 
         }
+        private void _ZoneAdd_Click(object sender, RoutedEventArgs e)
+        {
+            if (this._Domains.SelectedIndex == -1)
+            {
+                MessageBox.Show("Please select the domain.", "Warning");
+                return;
+            }
 
+            NuageDomain domain = (NuageDomain)this._Domains.SelectedItem;
+            Zone zone = new Zone(this.rest_client, domain.ID, this._Zones);
+            zone.Show();
+        }
+        private void _ZoneDel_Click(object sender, RoutedEventArgs e)
+        {
+            if (this._Zones.SelectedIndex == -1)
+            {
+                return;
+            }
+
+            NuageZone zone = (NuageZone)this._Zones.SelectedItem;
+            try
+            {
+                rest_client.DeleteZone(zone.ID);
+            }
+            catch (NuageException)
+            {
+                MessageBox.Show("Zone is in use.Please detach the resource associated with it and retry.", "Error");
+                return;
+            }
+
+            _Zones.Items.RemoveAt(_Zones.SelectedIndex);
+        }
+        private void _ZoneUpdate_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
         private void _Zones_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (this._Zones == null || this._Zones.SelectedItem == null)
@@ -235,6 +306,69 @@ namespace Nuage.VSDClient.Main
                 MessageBox.Show(error, "Failed");
             }
         }
+        private NuageSubnet SubnetAdd(NuageZone zone)
+        {
+            Subnet subnet = new Subnet(rest_client, zone.ID, this._CommonElement);
+            subnet.Show();
+            return null;
+        }
+        private Boolean SubnetDel(NuageSubnet subnet)
+        {
+
+            try
+            {
+                rest_client.DeleteSubnet(subnet.ID);
+            }
+            catch (NuageException)
+            {
+                MessageBox.Show("Subnet is in use.Please detach the resource associated with it and retry.", "Error");
+                return false;
+            }
+
+            return true;
+        }
+        private void SubnetUpdate()
+        {
+
+        }
+        private void _CommonElementAdd_Click(object sender, RoutedEventArgs e)
+        {
+            if (this._layoutCommonElement.Title.Equals("Subnet"))
+            {
+                if (this._Zones.SelectedIndex == -1)
+                {
+                    MessageBox.Show("Please select the zone.", "Warning");
+                    return;
+                }
+
+                NuageZone zone = (NuageZone)this._Zones.SelectedItem;
+                NuageSubnet subnet = this.SubnetAdd(zone);
+                if (subnet != null)
+                {
+                    _CommonElement.Items.Add(subnet);
+                }
+            }
+        }
+        private void _CommonElementDel_Click(object sender, RoutedEventArgs e)
+        {
+            if (this._CommonElement.SelectedIndex == -1)
+            {
+                return;
+            }
+
+            if (this._layoutCommonElement.Title.Equals("Subnet"))
+            {
+                NuageSubnet subnet = (NuageSubnet)this._CommonElement.SelectedItem;
+                if (this.SubnetDel(subnet))
+                {
+                    _CommonElement.Items.RemoveAt(_CommonElement.SelectedIndex);
+                }
+            }
+        }
+        private void _CommonElementUpdate_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
 
         private void _CommonElement_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -243,7 +377,18 @@ namespace Nuage.VSDClient.Main
             //NuageSubnet subnet = (NuageSubnet)this._CommonElement.SelectedItem;
             this._propertyGrid.DataContext = this._CommonElement.SelectedItem;
         }
+        private void _IngressPolicyAdd_Click(object sender, RoutedEventArgs e)
+        {
 
+        }
+        private void _IngressPolicyDel_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void _IngressPolicyUpdate_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
         private void _IngressPolicy_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (this._IngressPolicy == null || this._IngressPolicy.SelectedItem == null)
@@ -271,7 +416,18 @@ namespace Nuage.VSDClient.Main
                 MessageBox.Show(error, "Failed");
             }
         }
+        private void _EgressPolicyAdd_Click(object sender, RoutedEventArgs e)
+        {
 
+        }
+        private void _EgressPolicyDel_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void _EgressPolicyUpdate_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
         private void _EgressPolicy_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (this._EgressPolicy == null || this._EgressPolicy.SelectedItem == null)
@@ -299,7 +455,18 @@ namespace Nuage.VSDClient.Main
                 MessageBox.Show(error, "Failed");
             }
         }
+        private void _PolicyGroupAdd_Click(object sender, RoutedEventArgs e)
+        {
 
+        }
+        private void _PolicyGroupDel_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void _PolicyGroupUpdate_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
         private void _PolicyGroup_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (this._PolicyGroup == null || this._PolicyGroup.SelectedItem == null)

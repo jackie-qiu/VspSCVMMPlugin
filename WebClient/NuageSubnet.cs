@@ -67,6 +67,9 @@ namespace Nuage.VSDClient
             this.netmask = create_params["netmask"];
             this.gateway = create_params["gateway"];
 
+            if (create_params.ContainsKey("description"))
+                this.description = create_params["description"];
+
             string data = JsonConvert.SerializeObject(this);
 
             return data;

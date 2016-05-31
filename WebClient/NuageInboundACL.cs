@@ -64,8 +64,11 @@ namespace Nuage.VSDClient
             if (create_params.ContainsKey("name"))
             {
                 this.name = create_params["name"];
-                this.description = create_params["description"];
+                
             }
+            if (create_params.ContainsKey("description"))
+                this.description = create_params["description"];
+
             if (create_params.ContainsKey("priority"))
             {
                 this.priority = create_params["priority"];

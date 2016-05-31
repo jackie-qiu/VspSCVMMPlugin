@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,23 +10,26 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace Nuage.VSDClient.Main
 {
     /// <summary>
-    /// NewOrganization.xaml Logical
+    /// Domain.xaml Logical
     /// </summary>
-    public partial class Organization : Window
+    public partial class Domain : Window
     {
         INuageClient rest_client;
+        string ent_id;
         ListBox parent;
-        public string OrgName { set; get; }
-        public Organization(INuageClient client, ListBox parent)
+        public string DomainName { set; get; }
+
+        public Domain(INuageClient client, string ent_id, ListBox parent)
         {
             this.rest_client = client;
             this.parent = parent;
+            this.ent_id = ent_id;
+
             InitializeComponent();
             _nameBox.DataContext = this;
         }
@@ -43,21 +45,28 @@ namespace Nuage.VSDClient.Main
 
             try
             {
-                NuageEnterprise ent = rest_client.CreateEnterprise(this._nameBox.Text, desc);
-                if (ent != null)
+                NuageDomainTemplate domain_template = rest_client.GetDefaultL3DomainTemplate(this.ent_id);
+                if (domain_template == null)
                 {
-                    this.parent.Items.Add(ent);
+                    domain_template = rest_client.CreateDefaultL3DomainTemplate(this.ent_id);
+                }
+
+                NuageDomain domain = rest_client.CreateL3Domain(this.ent_id, _nameBox.Text, desc);
+                if (domain != null)
+                {
+                    this.parent.Items.Add(domain);
                     this.Close();
                 }
+
             }
-            catch(NuageException)
+            catch (NuageException)
             {
-                string error = string.Format("Another Enterprise with the same name = {0} exists.", this._nameBox.Text);
-                MessageBox.Show(error, "Error");
+                string error = string.Format("name({0}) is in use.Please retry with a different value.", this._nameBox.Text);
+                MessageBox.Show(error);
                 return;
             }
-           
         }
+
 
         private void _name_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -67,5 +76,4 @@ namespace Nuage.VSDClient.Main
                 _Create.IsEnabled = true;
         }
     }
-
 }

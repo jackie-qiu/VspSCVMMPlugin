@@ -40,6 +40,10 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Net.IPNetwork, Version=2.0.3.0, Culture=neutral, PublicKeyToken=764160545cf0d618, processorArchitecture=MSIL">
+      <HintPath>..\packages\IPNetwork2.2.0.3\lib\net40\System.Net.IPNetwork.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -137,6 +141,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Subnet.xaml.cs">
+      <DependentUpon>Subnet.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Validation.cs" />
+    <Compile Include="Zone.xaml.cs">
+      <DependentUpon>Zone.xaml</DependentUpon>
+    </Compile>
+    <Page Include="Domain.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -145,11 +160,22 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Domain.xaml.cs">
+      <DependentUpon>Domain.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Organization.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Subnet.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Zone.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -56,8 +56,10 @@ namespace Nuage.VSDClient
 
         public string post_data(Dictionary<string, string> create_params)
         {
-            this.name = create_params["name"];
-            this.description = create_params["description"];
+            if(create_params.ContainsKey("name"))
+                this.name = create_params["name"];
+            if(create_params.ContainsKey("description"))
+                this.description = create_params["description"];
             this.active = true;
             this.defaultAllowNonIP = false;
             this.defaultAllowIP = false;

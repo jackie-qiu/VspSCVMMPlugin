@@ -30,7 +30,14 @@
                         <xcad:LayoutAnchorable x:Name="_layoutDomains" ContentId="domain" Title="Domain" CanHide="False" CanClose="False" CanAutoHide="True"
                                                CanFloat="False" AutoHideWidth="240">
                             <ListBox BorderThickness="0" Name="_Domains" ItemContainerStyle="{StaticResource ListBoxStyleBold}" 
-                                     SelectionChanged="_Domains_SelectionChanged" MouseDown="_Domains_MouseDown">
+                                     SelectionChanged="_Domains_SelectionChanged">
+                                <ListBox.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Add"    Click="_DomainAdd_Click" />
+                                        <MenuItem Header="Delete" Click="_DomainDel_Click"/>
+                                        <MenuItem Header="Update" Click="_DomainUpdate_Click" IsEnabled="False"/>
+                                    </ContextMenu>
+                                </ListBox.ContextMenu>
                             </ListBox>
                         </xcad:LayoutAnchorable>
                     </xcad:LayoutAnchorablePane>
@@ -40,24 +47,52 @@
                                                  IsSelectedChanged="_layoutZoneDocument_IsSelectedChanged">
                                 <ListBox BorderThickness="0" Name="_Zones" ItemContainerStyle="{StaticResource ListBoxStyle}" AllowDrop="True" 
                                          SelectionChanged="_Zones_SelectionChanged" MouseDown="_Zones_MouseDown">
+                                    <ListBox.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Add"    Click="_ZoneAdd_Click" />
+                                            <MenuItem Header="Delete" Click="_ZoneDel_Click"/>
+                                            <MenuItem Header="Update" Click="_ZoneUpdate_Click" IsEnabled="False"/>
+                                        </ContextMenu>
+                                    </ListBox.ContextMenu>
                                 </ListBox>
                             </xcad:LayoutDocument>
                             <xcad:LayoutDocument x:Name="_layoutPolicyGroup" ContentId="policy group" Title="Policy Group" CanClose="False" CanFloat="False" IsSelected="False"
                                                  IsSelectedChanged="_layoutPolicyGroup_IsSelectedChanged">
                                 <ListBox BorderThickness="0" Name="_PolicyGroup" ItemContainerStyle="{StaticResource ListBoxStyle}" AllowDrop="True" 
                                          SelectionChanged="_PolicyGroup_SelectionChanged" MouseDown="_PolicyGroup_MouseDown">
+                                    <ListBox.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Add"    Click="_PolicyGroupAdd_Click" />
+                                            <MenuItem Header="Delete" Click="_PolicyGroupDel_Click"/>
+                                            <MenuItem Header="Update" Click="_PolicyGroupUpdate_Click" IsEnabled="False"/>
+                                        </ContextMenu>
+                                    </ListBox.ContextMenu>
                                 </ListBox>
                             </xcad:LayoutDocument>
                             <xcad:LayoutDocument x:Name="_layoutIngressPolicy" ContentId="ingress policy" Title="Ingress Policy" CanClose="False" CanFloat="False"
                                                  IsSelected="False" IsSelectedChanged="_layoutPolicy_IsSelectedChanged">
                                 <ListBox BorderThickness="0" Name="_IngressPolicy" ItemContainerStyle="{StaticResource ListBoxStyle}" AllowDrop="True"
                                          SelectionChanged="_IngressPolicy_SelectionChanged" MouseDown="_IngressPolicy_MouseDown">
+                                    <ListBox.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Add"    Click="_IngressPolicyAdd_Click" />
+                                            <MenuItem Header="Delete" Click="_IngressPolicyDel_Click"/>
+                                            <MenuItem Header="Update" Click="_IngressPolicyUpdate_Click" IsEnabled="False"/>
+                                        </ContextMenu>
+                                    </ListBox.ContextMenu>
                                 </ListBox>
                             </xcad:LayoutDocument>
                             <xcad:LayoutDocument x:Name="_layoutEgressPolicy" ContentId="egress policy" Title="Egress Policy" CanClose="False" CanFloat="False"
                                                  IsSelected="False" IsSelectedChanged="_layoutPolicy_IsSelectedChanged">
                                 <ListBox BorderThickness="0" Name="_EgressPolicy" ItemContainerStyle="{StaticResource ListBoxStyle}" AllowDrop="True"
                                          SelectionChanged="_EgressPolicy_SelectionChanged" MouseDown="_EgressPolicy_MouseDown">
+                                    <ListBox.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Add"    Click="_EgressPolicyAdd_Click" />
+                                            <MenuItem Header="Delete" Click="_EgressPolicyDel_Click"/>
+                                            <MenuItem Header="Update" Click="_EgressPolicyUpdate_Click" IsEnabled="False"/>
+                                        </ContextMenu>
+                                    </ListBox.ContextMenu>
                                 </ListBox>
                             </xcad:LayoutDocument>
                         </xcad:LayoutDocumentPane>
@@ -65,6 +100,13 @@
                             <xcad:LayoutDocument x:Name="_layoutCommonElement" ContentId="subnet" Title="Subnet" CanClose="False" CanFloat="False">
                                 <ListBox BorderThickness="0" Name="_CommonElement" ItemContainerStyle="{StaticResource ListBoxStyle}" AllowDrop="True"
                                          SelectionChanged="_CommonElement_SelectionChanged" MouseDown="_CommonElement_MouseDown">
+                                    <ListBox.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Add"    Click="_CommonElementAdd_Click" />
+                                            <MenuItem Header="Delete" Click="_CommonElementDel_Click"/>
+                                            <MenuItem Header="Update" Click="_CommonElementUpdate_Click" IsEnabled="False"/>
+                                        </ContextMenu>
+                                    </ListBox.ContextMenu>
                                 </ListBox>
                             </xcad:LayoutDocument>
                         </xcad:LayoutDocumentPane>
@@ -87,15 +129,15 @@
                 <xcad:LayoutRoot.LeftSide>
                     <xcad:LayoutAnchorSide>
                         <xcad:LayoutAnchorGroup>
-                            <xcad:LayoutAnchorable ContentId="enterprise" Title="Enterprise" CanHide="False" CanClose="False"
+                            <xcad:LayoutAnchorable ContentId="enterprise" Title="Organization" CanHide="False" CanClose="False"
                                             CanFloat="False" AutoHideWidth="240" IsSelectedChanged="_layoutEnterprise_IsSelectedChanged" IsSelected="False">
                                 <ListBox BorderThickness="0" Name="_Enterprises" ItemContainerStyle="{StaticResource ListBoxStyleBold}" 
-                                         SelectionChanged="_Enterprises_SelectionChanged" MouseDown="_Enterprises_MouseDown">
+                                         SelectionChanged="_Enterprises_SelectionChanged">
                                     <ListBox.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="Add" Click="_EnterpriseAdd_Click" />
                                             <MenuItem Header="Delete" Click="_EnterpriseDel_Click"/>
-                                            <MenuItem Header="Update" Click="_EnterpriseUpdate_Click" />
+                                            <MenuItem Header="Update" Click="_EnterpriseUpdate_Click" IsEnabled="False"/>
                                         </ContextMenu>
                                     </ListBox.ContextMenu>
                                 </ListBox>

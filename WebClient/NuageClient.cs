@@ -110,10 +110,11 @@ namespace Nuage.VSDClient
         }
         public NuageDomainTemplate GetDefaultL3DomainTemplate(string ent_id)
         {
-            string filter = string.Format("NAME IS '{0}'", this.default_l3domain_template_name);
+            string filter = string.Format("name is '{0}'", this.default_l3domain_template_name);
 
             List<NuageDomainTemplate> result = l3domain.GetL3DomainTemplates(ent_id, filter);
-
+            if (result.Count == 0)
+                return null;
             return result.First<NuageDomainTemplate>();
         }
 
@@ -139,9 +140,9 @@ namespace Nuage.VSDClient
             return l3domain.DeleteL3Domain(id);
         }
 
-        public NuageZone CreateZone(string domain_id, string name)
+        public NuageZone CreateZone(string domain_id, string name, string description)
         {
-            return l3domain.CreateZone(domain_id, name);
+            return l3domain.CreateZone(domain_id, name, description);
         }
 
         public List<NuageZone> GetZones()
@@ -159,9 +160,9 @@ namespace Nuage.VSDClient
             return l3domain.DeleteZone(id);
         }
 
-        public NuageSubnet CreateSubnet(string zone_id, string name, string ip, string netmask, string gateway)
+        public NuageSubnet CreateSubnet(string zone_id, string name, string description, string ip, string netmask, string gateway)
         {
-            return l3domain.CreateSubnet(zone_id, name, ip, netmask, gateway);
+            return l3domain.CreateSubnet(zone_id, name, description, ip, netmask, gateway);
         }
 
         public List<NuageSubnet> GetSubnets()
@@ -224,10 +225,10 @@ namespace Nuage.VSDClient
             return l3domain.DeleteFloatingIP(id);
         }
 
-        public NuageInboundACL CreateL3DomainIngressACLTmplt(string domain_id, string name, 
+        public NuageInboundACL CreateL3DomainIngressACLTmplt(string domain_id, string name, string description,
                                                     string priority, bool addr_spoof, bool allow_ip, bool allow_nonip)
         {
-            return l3domain.CreateL3DomainIngressACLTmplt(domain_id, name, priority, addr_spoof, allow_ip, allow_nonip);
+            return l3domain.CreateL3DomainIngressACLTmplt(domain_id, name, description, priority, addr_spoof, allow_ip, allow_nonip);
         }
 
         public List<NuageInboundACL> GetL3DomainIngressACLTmpltsInDomain(string domain_id)
@@ -240,10 +241,10 @@ namespace Nuage.VSDClient
             return l3domain.DeleteL3DomainIngressACLTmplt(id);
         }
 
-        public NuageOutboundACL CreateL3DomainEgressACLTmplt(string domain_id, string name,
+        public NuageOutboundACL CreateL3DomainEgressACLTmplt(string domain_id, string name, string description,
                                                      string priority, bool implicit_rule, bool allow_ip, bool allow_nonip)
         {
-            return l3domain.CreateL3DomainEgressACLTmplt(domain_id, name, priority, implicit_rule, allow_ip, allow_nonip);
+            return l3domain.CreateL3DomainEgressACLTmplt(domain_id, name, description, priority, implicit_rule, allow_ip, allow_nonip);
         }
 
         public List<NuageOutboundACL> GetL3DomainEgressACLTmpltsInDomain(string domain_id)

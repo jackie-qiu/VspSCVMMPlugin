@@ -123,11 +123,13 @@ namespace Nuage.VSDClient
 
         }
 
-        public NuageZone CreateZone(string domain_id, string name)
+        public NuageZone CreateZone(string domain_id, string name, string description)
         {
             NuageZone zone = new NuageZone();
             Dictionary<string, string> create_params = new Dictionary<string, string>();
             create_params.Add("name", name);
+            if(description != null)
+                create_params.Add("description", description);
 
             List<NuageZone> result = restproxy.CallRestPostAPI<NuageZone>(
                                                  zone.post_resource(domain_id),
@@ -169,7 +171,7 @@ namespace Nuage.VSDClient
 
         }
 
-        public NuageSubnet CreateSubnet(string zone_id, string name, string ip, string netmask, string gateway)
+        public NuageSubnet CreateSubnet(string zone_id, string name, string description, string ip, string netmask, string gateway)
         {
             NuageSubnet Subnet = new NuageSubnet();
             Dictionary<string, string> create_params = new Dictionary<string, string>();
@@ -177,6 +179,9 @@ namespace Nuage.VSDClient
             create_params.Add("ip", ip);
             create_params.Add("netmask", netmask);
             create_params.Add("gateway", gateway);
+
+            if (description != null)
+                create_params.Add("description", description);
 
             List<NuageSubnet> result = restproxy.CallRestPostAPI<NuageSubnet>(
                                                  Subnet.post_resource(zone_id),
@@ -329,15 +334,17 @@ namespace Nuage.VSDClient
 
         }
 
-        public NuageInboundACL CreateL3DomainIngressACLTmplt(string domain_id, string name, string priority, bool addr_spoof, bool allow_ip, bool allow_nonip)
+        public NuageInboundACL CreateL3DomainIngressACLTmplt(string domain_id, string name, string description, string priority, bool addr_spoof, bool allow_ip, bool allow_nonip)
         {
             NuageInboundACL L3DomainIngressACLTmplt = new NuageInboundACL();
             Dictionary<string, string> create_params = new Dictionary<string, string>();
             if (name != null)
             {
                 create_params.Add("name", name);
-                create_params.Add("description", name);
+                
             }
+            if (description != null)
+                create_params.Add("description", description);
 
             if (priority != null) create_params.Add("priority", priority);
             if (addr_spoof) create_params.Add("addressSpoof", "true");
@@ -390,15 +397,16 @@ namespace Nuage.VSDClient
 
         }
 
-        public NuageOutboundACL CreateL3DomainEgressACLTmplt(string domain_id, string name, string priority, bool implicit_rule, bool allow_ip, bool allow_nonip)
+        public NuageOutboundACL CreateL3DomainEgressACLTmplt(string domain_id, string name, string description, string priority, bool implicit_rule, bool allow_ip, bool allow_nonip)
         {
             NuageOutboundACL L3DomainEgressACLTmplt = new NuageOutboundACL();
             Dictionary<string, string> create_params = new Dictionary<string, string>();
             if (name != null)
             {
                 create_params.Add("name", name);
-                create_params.Add("description", name);
             }
+            if(description != null)
+                create_params.Add("description", description);
 
             if (priority != null) create_params.Add("priority", priority);
             if (implicit_rule) create_params.Add("installImplicitRules", "true");
