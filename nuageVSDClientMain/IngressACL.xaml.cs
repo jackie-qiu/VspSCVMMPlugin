@@ -15,59 +15,60 @@ using System.Windows.Shapes;
 namespace Nuage.VSDClient.Main
 {
     /// <summary>
-    /// Domain.xaml Logical
+    /// IngressACL.xaml 的交互逻辑
     /// </summary>
-    public partial class Domain : Window
+    public partial class IngressACL : Window
     {
         INuageClient rest_client;
-        string ent_id;
+        string domain_id;
         ListBox parent;
         public string IngressACLName { set; get; }
-
-        public Domain(INuageClient client, string ent_id, ListBox parent)
+        public IngressACL(INuageClient client, string domain_id, ListBox parent)
         {
             this.rest_client = client;
             this.parent = parent;
-            this.ent_id = ent_id;
+            this.domain_id = domain_id;
 
             InitializeComponent();
             _nameBox.DataContext = this;
         }
-
         private void Create_Click(object sender, RoutedEventArgs e)
         {
             string desc = null;
+            string priority = null;
+            if (this.parent.HasItems)
+            {
+                MessageBox.Show("Unable to create duplicate ACL template", "Error");
+                return;
+            }
 
             if (!string.IsNullOrEmpty(this._description.Text))
             {
                 desc = this._description.Text;
             }
 
+            if (!string.IsNullOrEmpty(this._priority.Text))
+            {
+                priority = this._priority.Text.Replace(" ", "");
+            }
+
             try
             {
-                NuageDomainTemplate domain_template = rest_client.GetDefaultL3DomainTemplate(this.ent_id);
-                if (domain_template == null)
+                NuageInboundACL ingress = rest_client.CreateL3DomainIngressACLTmplt(domain_id, _nameBox.Text, desc,
+                    priority, _addressSpoofing.IsChecked.Value, _allowIP.IsChecked.Value, _allowNonIP.IsChecked.Value);
+                if (ingress != null)
                 {
-                    domain_template = rest_client.CreateDefaultL3DomainTemplate(this.ent_id);
-                }
-
-                NuageDomain domain = rest_client.CreateL3Domain(this.ent_id, _nameBox.Text, desc);
-                if (domain != null)
-                {
-                    this.parent.Items.Add(domain);
+                    this.parent.Items.Add(ingress);
                     this.Close();
                 }
-
             }
             catch (NuageException)
             {
-                string error = string.Format("name({0}) is in use.Please retry with a different value.", this._nameBox.Text);
+                string error = string.Format("name = {0}, assocEntityType = domain is in use, retry with a different set of values.", this._nameBox.Text);
                 MessageBox.Show(error);
                 return;
             }
         }
-
-
         private void _name_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (System.Windows.Controls.Validation.GetHasError(_nameBox) == true)

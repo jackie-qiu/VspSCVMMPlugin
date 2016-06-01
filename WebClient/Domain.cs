@@ -232,12 +232,13 @@ namespace Nuage.VSDClient
 
         }
 
-        public NuagePolicyGroup CreatePolicyGroup(string domain_id, string name)
+        public NuagePolicyGroup CreatePolicyGroup(string domain_id, string name, string description)
         {
             NuagePolicyGroup policy_group = new NuagePolicyGroup();
             Dictionary<string, string> create_params = new Dictionary<string, string>();
             create_params.Add("name", name);
-            create_params.Add("description", name);
+            if(description != null)
+                create_params.Add("description", name);
 
             List<NuagePolicyGroup> result = restproxy.CallRestPostAPI<NuagePolicyGroup>(
                                                  policy_group.post_resource(domain_id),
@@ -288,6 +289,68 @@ namespace Nuage.VSDClient
             return result;
         }
 
+        public List<NuageVport> GetVportInDomain(string domain_id, string filter)
+        {
+            NuageVport vport = new NuageVport();
+
+            List<NuageVport> result = restproxy.CallRestGetAPI<NuageVport>(vport.get_all_resources_in_domain(domain_id), filter);
+
+            return result;
+        }
+
+        public List<NuagePolicyGroup> GetvPortAssociatePolicyGroups(string vport_id, string filter)
+        {
+            NuagePolicyGroup pg = new NuagePolicyGroup();
+
+            List<NuagePolicyGroup> result = restproxy.CallRestGetAPI<NuagePolicyGroup>(pg.get_vport_vptag_resource(vport_id), filter);
+
+            return result;
+        }
+
+        public bool AddvPortsToPolicyGroup(string policy_group_id, List<string> vport_id)
+        {
+            List<string> vports = new List<string>();
+
+            List<NuageVport> result = GetVportInPolicyGroup(policy_group_id, null);
+            if (result != null)
+            {
+                List<string> exists = new List<string>();
+                foreach (NuageVport item in result)
+                {
+                    exists.Add(item.ID);
+                }
+
+                vports = vport_id.Except(exists).ToList();
+                vports.AddRange(exists);
+            }
+            else
+            {
+                vports.AddRange(vport_id);
+            }
+
+            NuagePolicyGroup pg = new NuagePolicyGroup();
+
+            return restproxy.CallRestPutAPI<NuageVport>(pg.put_vport_resource(policy_group_id),
+                                                                           pg.put_data(vports));
+        }
+
+        public bool DeletevPortsFromPolicyGroup(string policy_group_id, string vport_id)
+        {
+            List<string> vports = new List<string>();
+
+            List<NuageVport> result = GetVportInPolicyGroup(policy_group_id, null);
+            foreach (NuageVport item in result)
+            {
+                if (item.ID.Equals(vport_id))
+                    continue;
+                vports.Add(item.ID);
+            }
+
+            NuagePolicyGroup pg = new NuagePolicyGroup();
+
+            return restproxy.CallRestPutAPI<NuageVport>(pg.put_vport_resource(policy_group_id),
+                                                                           pg.put_data(vports));
+        }
         public NuageFloatingIP CreateFloatingIP(string domain_id, string shared_netid)
         {
             NuageFloatingIP floatingip = new NuageFloatingIP();

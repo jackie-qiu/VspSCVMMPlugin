@@ -15,7 +15,7 @@ namespace Nuage.VSDClient
         NuageInboundACL CreateL3DomainIngressACLTmplt(string domain_id, string name, string description, string priority, bool addr_spoof, bool allow_ip, bool allow_nonip);
         NuageEnterpriseNetworks CreateNetworkMacro(string ent_id, string name, string address, string netmask);
         NuageNetworkMacroGroups CreateNetworkMacroGroup(string ent_id, string name);
-        NuagePolicyGroup CreatePolicyGroup(string domain_id, string name);
+        NuagePolicyGroup CreatePolicyGroup(string domain_id, string name, string description);
         NuageSubnet CreateSubnet(string zone_id, string name, string description, string ip, string netmask, string gateway);
         NuageZone CreateZone(string domain_id, string name, string description);
         bool DeleteACLRule(string id, string direction);
@@ -49,5 +49,9 @@ namespace Nuage.VSDClient
         List<NuageZone> GetZones();
         List<NuageZone> GetZonesInDomain(string domain_id);
         bool LoginVSD();
+        bool AddvPortsToPolicyGroup(string policy_group_id, List<string> vport_id);
+        bool DeletevPortsFromPolicyGroup(string policy_group_id, string vport_id);
+        List<NuagePolicyGroup> GetvPortAssociatePolicyGroups(string vport_id, string filter);
+        List<NuageVport> GetVportInDomain(string domain_id, string filter);
     }
 }

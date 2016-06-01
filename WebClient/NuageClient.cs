@@ -185,9 +185,9 @@ namespace Nuage.VSDClient
             return l3domain.DeleteSubnet(id);
         }
 
-        public NuagePolicyGroup CreatePolicyGroup(string domain_id, string name)
+        public NuagePolicyGroup CreatePolicyGroup(string domain_id, string name, string description)
         {
-            return l3domain.CreatePolicyGroup(domain_id, name);
+            return l3domain.CreatePolicyGroup(domain_id, name, description);
         }
 
         public List<NuagePolicyGroup> GetPolicyGroupsInDomain(string domain_id)
@@ -195,6 +195,10 @@ namespace Nuage.VSDClient
             return l3domain.GetPolicyGroupsInDomain(domain_id, null);
         }
 
+        public List<NuagePolicyGroup> GetvPortAssociatePolicyGroups(string vport_id, string filter)
+        {
+            return l3domain.GetvPortAssociatePolicyGroups(vport_id, filter);
+        }
         public bool DeletePolicyGroup(string id)
         {
             return l3domain.DeletePolicyGroup(id);
@@ -203,6 +207,21 @@ namespace Nuage.VSDClient
         public List<NuageVport> GetVportInPolicyGroup(string policy_group_id)
         {
             return l3domain.GetVportInPolicyGroup(policy_group_id, null);
+        }
+
+        public List<NuageVport> GetVportInDomain(string domain_id, string filter)
+        {
+            return l3domain.GetVportInDomain(domain_id, filter);
+        }
+
+        public bool AddvPortsToPolicyGroup(string policy_group_id, List<string> vport_id)
+        {
+            return l3domain.AddvPortsToPolicyGroup(policy_group_id, vport_id);
+        }
+
+        public bool DeletevPortsFromPolicyGroup(string policy_group_id, string vport_id)
+        {
+            return l3domain.DeletevPortsFromPolicyGroup(policy_group_id, vport_id);
         }
 
         public NuageFloatingIP CreateFloatingIP(string domain_id, string shared_netid)

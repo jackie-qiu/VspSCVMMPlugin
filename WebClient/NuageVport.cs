@@ -93,6 +93,11 @@ namespace Nuage.VSDClient
             return "/subnets/" + parent_id + "/vports";
         }
 
+        public string get_all_resources_in_domain(string domain_Id)
+        {
+            return "/domains/" + domain_Id + "/vports";
+        }
+
         public string get_vports_for_vptag(string vptag_id)
         {
             return "/policygroups/" + vptag_id + "/vports";
@@ -112,15 +117,6 @@ namespace Nuage.VSDClient
             return data;
         }
 
-        public string get_vport_vptag_resource(string id)
-        {
-            return "/vports/" + id + "/policygroups";
-        }
-
-        public string get_vport_redirect_target_resource(string id)
-        {
-            return "/vports/" + id + "/redirectiontargets";
-        }
     }
 
 

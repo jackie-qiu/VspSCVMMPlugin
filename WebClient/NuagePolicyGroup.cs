@@ -47,9 +47,17 @@ namespace Nuage.VSDClient
         {
             this.name = create_params["name"];
             this.type = "SOFTWARE";
-            this.description = create_params["description"];
+            if(create_params.ContainsKey("description"))
+                this.description = create_params["description"];
 
             string data = JsonConvert.SerializeObject(this);
+
+            return data;
+        }
+
+        public string put_data(List<string> put_params)
+        {
+            string data = JsonConvert.SerializeObject(put_params);
 
             return data;
         }
@@ -69,6 +77,11 @@ namespace Nuage.VSDClient
             return "/policygroups/" + id + "?responseChoice=1";
         }
 
+        public string put_vport_resource(string id)
+        {
+            return "/policygroups/" + id + "/vports" + "?responseChoice=1";
+        }
+
         public string get_all_resources()
         {
             return "/policygroups";
@@ -77,6 +90,11 @@ namespace Nuage.VSDClient
         public string get_all_resources_in_parent(string parent_id)
         {
             return "/domains/" + parent_id + "/policygroups";
+        }
+
+        public string get_vport_vptag_resource(string id)
+        {
+            return "/vports/" + id + "/policygroups";
         }
     }
 

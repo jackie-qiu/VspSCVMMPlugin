@@ -123,6 +123,8 @@
                                     </xctk:PropertyGrid.PropertyContainerStyle>
                                 </xctk:PropertyGrid>
                             </xcad:LayoutAnchorable>
+                            <xcad:LayoutAnchorable x:Name="_virtualMachineLayoutAnchroable" ContentId="virtualmachines" Title="Virtual Machines" CanClose="False" CanHide="False" CanFloat="False" AutoHideWidth="240">
+                            </xcad:LayoutAnchorable>
                         </xcad:LayoutAnchorablePane>
                     </xcad:LayoutAnchorablePaneGroup>
                 </xcad:LayoutPanel>

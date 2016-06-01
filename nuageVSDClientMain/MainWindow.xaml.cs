@@ -306,47 +306,98 @@ namespace Nuage.VSDClient.Main
                 MessageBox.Show(error, "Failed");
             }
         }
-        private NuageSubnet SubnetAdd(NuageZone zone)
+        private void SubnetAdd()
         {
+            if (this._Zones.SelectedIndex == -1)
+            {
+                MessageBox.Show("Please select the zone.", "Warning");
+                return;
+            }
+
+            NuageZone zone = (NuageZone)this._Zones.SelectedItem;
+
             Subnet subnet = new Subnet(rest_client, zone.ID, this._CommonElement);
             subnet.Show();
-            return null;
         }
-        private Boolean SubnetDel(NuageSubnet subnet)
+        private void SubnetDel()
         {
+            NuageSubnet subnet = (NuageSubnet)this._CommonElement.SelectedItem;
 
             try
             {
                 rest_client.DeleteSubnet(subnet.ID);
+                _CommonElement.Items.RemoveAt(_CommonElement.SelectedIndex);
             }
             catch (NuageException)
             {
                 MessageBox.Show("Subnet is in use.Please detach the resource associated with it and retry.", "Error");
-                return false;
+                return;
             }
 
-            return true;
+            return;
         }
         private void SubnetUpdate()
         {
 
         }
+
+        private void AddvPorttoPolicyGroup()
+        {
+            if (this._Domains.SelectedIndex == -1)
+            {
+                MessageBox.Show("Please select the domain.", "Warning");
+                return;
+            }
+            if (this._PolicyGroup.SelectedIndex == -1)
+            {
+                MessageBox.Show("Please select the policy group.", "Warning");
+                return;
+            }
+
+            NuageDomain domain = (NuageDomain)this._Domains.SelectedItem;
+            NuagePolicyGroup pg = (NuagePolicyGroup)this._PolicyGroup.SelectedItem;
+
+            PolicyGroupVports pg_vport = new PolicyGroupVports(rest_client, domain.ID, pg.ID, this._CommonElement);
+            pg_vport.Show();
+        }
+
+        private void RemovevPortfromPolicyGroup()
+        {
+            if (this._PolicyGroup.SelectedIndex == -1)
+            {
+                MessageBox.Show("Please select the policy group disassociate from.");
+                return;
+            }
+            NuageVport vport = (NuageVport)this._CommonElement.SelectedItem;
+            NuagePolicyGroup pg = (NuagePolicyGroup)this._PolicyGroup.SelectedItem;
+            try
+            {
+                rest_client.DeletevPortsFromPolicyGroup(pg.ID, vport.ID);
+                _CommonElement.Items.RemoveAt(_CommonElement.SelectedIndex);
+            }
+            catch (NuageException)
+            {
+                MessageBox.Show("Remove vport from policy group failed.", "Error");
+                return;
+            }
+
+            return;
+        }
+
         private void _CommonElementAdd_Click(object sender, RoutedEventArgs e)
         {
             if (this._layoutCommonElement.Title.Equals("Subnet"))
             {
-                if (this._Zones.SelectedIndex == -1)
-                {
-                    MessageBox.Show("Please select the zone.", "Warning");
-                    return;
-                }
+                SubnetAdd();
+            }
 
-                NuageZone zone = (NuageZone)this._Zones.SelectedItem;
-                NuageSubnet subnet = this.SubnetAdd(zone);
-                if (subnet != null)
-                {
-                    _CommonElement.Items.Add(subnet);
-                }
+            if (this._layoutCommonElement.Title.Equals("vPorts"))
+            {
+                AddvPorttoPolicyGroup();
+            }
+            if (this._layoutCommonElement.Title.Equals("Security Policy Entries"))
+            {
+
             }
         }
         private void _CommonElementDel_Click(object sender, RoutedEventArgs e)
@@ -358,12 +409,18 @@ namespace Nuage.VSDClient.Main
 
             if (this._layoutCommonElement.Title.Equals("Subnet"))
             {
-                NuageSubnet subnet = (NuageSubnet)this._CommonElement.SelectedItem;
-                if (this.SubnetDel(subnet))
-                {
-                    _CommonElement.Items.RemoveAt(_CommonElement.SelectedIndex);
-                }
+                SubnetDel();
             }
+            if (this._layoutCommonElement.Title.Equals("vPorts"))
+            {
+                RemovevPortfromPolicyGroup();
+            }
+
+            if (this._layoutCommonElement.Title.Equals("Security Policy Entries"))
+            {
+
+            }
+
         }
         private void _CommonElementUpdate_Click(object sender, RoutedEventArgs e)
         {
@@ -379,11 +436,35 @@ namespace Nuage.VSDClient.Main
         }
         private void _IngressPolicyAdd_Click(object sender, RoutedEventArgs e)
         {
+            if (this._Domains.SelectedIndex == -1)
+            {
+                MessageBox.Show("Please select the domain.", "Warning");
+                return;
+            }
 
+            NuageDomain domain = (NuageDomain)this._Domains.SelectedItem;
+            IngressACL acl = new IngressACL(this.rest_client, domain.ID, this._IngressPolicy);
+            acl.Show();
         }
         private void _IngressPolicyDel_Click(object sender, RoutedEventArgs e)
         {
+            if (this._IngressPolicy.SelectedIndex == -1)
+            {
+                return;
+            }
 
+            NuageInboundACL ingress = (NuageInboundACL)this._IngressPolicy.SelectedItem;
+            try
+            {
+                rest_client.DeleteL3DomainIngressACLTmplt(ingress.ID);
+            }
+            catch (NuageException)
+            {
+                MessageBox.Show("Delete ingress acl failed.", "Error");
+                return;
+            }
+
+            _IngressPolicy.Items.RemoveAt(_IngressPolicy.SelectedIndex);
         }
         private void _IngressPolicyUpdate_Click(object sender, RoutedEventArgs e)
         {
@@ -418,11 +499,35 @@ namespace Nuage.VSDClient.Main
         }
         private void _EgressPolicyAdd_Click(object sender, RoutedEventArgs e)
         {
+            if (this._Domains.SelectedIndex == -1)
+            {
+                MessageBox.Show("Please select the domain.", "Warning");
+                return;
+            }
 
+            NuageDomain domain = (NuageDomain)this._Domains.SelectedItem;
+            EgressACL acl = new EgressACL(this.rest_client, domain.ID, this._EgressPolicy);
+            acl.Show();
         }
         private void _EgressPolicyDel_Click(object sender, RoutedEventArgs e)
         {
+            if (this._EgressPolicy.SelectedIndex == -1)
+            {
+                return;
+            }
 
+            NuageOutboundACL egress = (NuageOutboundACL)this._EgressPolicy.SelectedItem;
+            try
+            {
+                rest_client.DeleteL3DomainEgressACLTmplt(egress.ID);
+            }
+            catch (NuageException)
+            {
+                MessageBox.Show("Delete egress acl failed.", "Error");
+                return;
+            }
+
+            _EgressPolicy.Items.RemoveAt(_EgressPolicy.SelectedIndex);
         }
         private void _EgressPolicyUpdate_Click(object sender, RoutedEventArgs e)
         {
@@ -457,11 +562,35 @@ namespace Nuage.VSDClient.Main
         }
         private void _PolicyGroupAdd_Click(object sender, RoutedEventArgs e)
         {
+            if (this._Domains.SelectedIndex == -1)
+            {
+                MessageBox.Show("Please select the domain.", "Warning");
+                return;
+            }
 
+            NuageDomain domain = (NuageDomain)this._Domains.SelectedItem;
+            PolicyGroup pg = new PolicyGroup(this.rest_client, domain.ID, this._PolicyGroup);
+            pg.Show();
         }
         private void _PolicyGroupDel_Click(object sender, RoutedEventArgs e)
         {
+            if (this._PolicyGroup.SelectedIndex == -1)
+            {
+                return;
+            }
 
+            NuagePolicyGroup pg = (NuagePolicyGroup)this._PolicyGroup.SelectedItem;
+            try
+            {
+                rest_client.DeletePolicyGroup(pg.ID);
+            }
+            catch (NuageException)
+            {
+                MessageBox.Show("Delete policy group failed.", "Error");
+                return;
+            }
+
+            _Zones.Items.RemoveAt(_Zones.SelectedIndex);
         }
         private void _PolicyGroupUpdate_Click(object sender, RoutedEventArgs e)
         {

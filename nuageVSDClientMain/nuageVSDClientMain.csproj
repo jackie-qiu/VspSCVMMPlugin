@@ -141,6 +141,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="EgressACL.xaml.cs">
+      <DependentUpon>EgressACL.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="IngressACL.xaml.cs">
+      <DependentUpon>IngressACL.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PolicyGroup.xaml.cs">
+      <DependentUpon>PolicyGroup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PolicyGroupVports.xaml.cs">
+      <DependentUpon>PolicyGroupVports.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Subnet.xaml.cs">
       <DependentUpon>Subnet.xaml</DependentUpon>
     </Compile>
@@ -149,6 +161,14 @@
       <DependentUpon>Zone.xaml</DependentUpon>
     </Compile>
     <Page Include="Domain.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="EgressACL.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="IngressACL.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -168,6 +188,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Organization.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PolicyGroup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PolicyGroupVports.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

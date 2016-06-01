@@ -194,11 +194,14 @@ namespace Nuage.VSDClient
             List<string> macro_group_list = new List<string>();
 
             List<NuageEnterpriseNetworks> result = GetNetworkMacrosInGroup(macro_group_id, null);
-            foreach (NuageEnterpriseNetworks item in result)
+            if (result != null)
             {
-                if (item.ID.Equals(network_macro_id))
-                    return true;
-                macro_group_list.Add(item.ID);
+                foreach (NuageEnterpriseNetworks item in result)
+                {
+                    if (item.ID.Equals(network_macro_id))
+                        return true;
+                    macro_group_list.Add(item.ID);
+                }
             }
 
             macro_group_list.Add(network_macro_id);

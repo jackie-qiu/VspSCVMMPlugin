@@ -15,25 +15,24 @@ using System.Windows.Shapes;
 namespace Nuage.VSDClient.Main
 {
     /// <summary>
-    /// Domain.xaml Logical
+    /// PolicyGroup.xaml Logical
     /// </summary>
-    public partial class Domain : Window
+    public partial class PolicyGroup : Window
     {
         INuageClient rest_client;
-        string ent_id;
+        string domain_id;
         ListBox parent;
-        public string IngressACLName { set; get; }
+        public string PGName { set; get; }
 
-        public Domain(INuageClient client, string ent_id, ListBox parent)
+        public PolicyGroup(INuageClient client, string domain_id, ListBox parent)
         {
             this.rest_client = client;
             this.parent = parent;
-            this.ent_id = ent_id;
+            this.domain_id = domain_id;
 
             InitializeComponent();
             _nameBox.DataContext = this;
         }
-
         private void Create_Click(object sender, RoutedEventArgs e)
         {
             string desc = null;
@@ -45,23 +44,17 @@ namespace Nuage.VSDClient.Main
 
             try
             {
-                NuageDomainTemplate domain_template = rest_client.GetDefaultL3DomainTemplate(this.ent_id);
-                if (domain_template == null)
+                NuagePolicyGroup pg = rest_client.CreatePolicyGroup(this.domain_id, _nameBox.Text, desc);
+                if (pg != null)
                 {
-                    domain_template = rest_client.CreateDefaultL3DomainTemplate(this.ent_id);
-                }
-
-                NuageDomain domain = rest_client.CreateL3Domain(this.ent_id, _nameBox.Text, desc);
-                if (domain != null)
-                {
-                    this.parent.Items.Add(domain);
+                    this.parent.Items.Add(pg);
                     this.Close();
                 }
 
             }
             catch (NuageException)
             {
-                string error = string.Format("name({0}) is in use.Please retry with a different value.", this._nameBox.Text);
+                string error = string.Format("Cannot create duplicate entity.Another PolicyGroup with the same name {0} exists.", this._nameBox.Text);
                 MessageBox.Show(error);
                 return;
             }

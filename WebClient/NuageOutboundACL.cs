@@ -44,12 +44,12 @@ namespace Nuage.VSDClient
             if (defaultAllowIP)
                 tostring += "Allow IP Traffic by Default\r\n";
             else
-                tostring += "Drop IP Traffic by Default\r\n";
+                tostring += "Not Allow IP Traffic by Default\r\n";
 
             if (defaultAllowNonIP)
                 tostring += "Allow non IP Traffic by Default\r\n";
             else
-                tostring += "Drop non IP Traffic by Default\r\n";
+                tostring += "Not Allow non IP Traffic by Default\r\n";
 
             return tostring;
         }

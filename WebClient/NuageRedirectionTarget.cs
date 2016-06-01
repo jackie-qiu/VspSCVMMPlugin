@@ -78,6 +78,7 @@ namespace Nuage.VSDClient
         {
             return "/vports/" + vport_id + "/redirectiontargets";
         }
+
     }
 
 
