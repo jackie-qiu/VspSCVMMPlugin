@@ -14,7 +14,7 @@ namespace Nuage.VSDClient
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(NuageClient));
         private RestProxy restproxy { get; set; }
-        private Dictionary<string, string> PROTO_NAME_TO_NUM = new Dictionary<string, string>();
+        
         private string[] NETWORK_TYPE = { "ANY", "ZONE", "SUBNET", "POLICYGROUP", "ENDPOINT_DOMAIN", "ENDPOINT_ZONE", "ENDPOINT_SUBNET", "ENTERPRISE_NETWORK", "NETWORK_MACRO_GROUP"};
         public Domain(RestProxy proxy)
         {
@@ -30,10 +30,7 @@ namespace Nuage.VSDClient
             }
             this.restproxy = proxy;
 
-            PROTO_NAME_TO_NUM.Add("any", "ANY");
-            PROTO_NAME_TO_NUM.Add("tcp", "6");
-            PROTO_NAME_TO_NUM.Add("udp", "17");
-            PROTO_NAME_TO_NUM.Add("icmp", "1");
+           
         }
 
         public NuageDomain CreateL3Domain(string ent_id, string name, string description, string template_id)
@@ -549,12 +546,6 @@ namespace Nuage.VSDClient
         {
             NuageACLRule rule = new NuageACLRule();
             Dictionary<string, string> create_params = new Dictionary<string, string>();
-            if (!PROTO_NAME_TO_NUM.ContainsKey(protocol))
-            {
-                string msg = string.Format("Unsupport protocol {0}", protocol);
-                logger.Error(msg);
-                throw new NuageException(msg);
-            }
 
             if (!NETWORK_TYPE.Contains(location_type) || !NETWORK_TYPE.Contains(network_type))
             {
@@ -578,8 +569,8 @@ namespace Nuage.VSDClient
 
             create_params["etherType"] = ether_type;
             create_params["DSCP"] = dscp;
-            create_params["protocol"] = PROTO_NAME_TO_NUM[protocol];
-            if (protocol.Equals("tcp") || protocol.Equals("udp"))
+            create_params["protocol"] = protocol;
+            if (protocol.Equals("6") || protocol.Equals("17"))
             {
                 create_params["sourcePort"] = src_port;
                 create_params["destPort"] = dest_port;

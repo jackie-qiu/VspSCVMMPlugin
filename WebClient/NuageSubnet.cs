@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Nuage.VSDClient
 {
-    public class NuageSubnet : NuageServerBaseClass
+    public class NuageSubnet : NuageBase, NuageServerBaseClass
     {
         public string children { get; set; }
         public string parentType { get; set; }

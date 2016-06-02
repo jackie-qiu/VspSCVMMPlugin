@@ -70,7 +70,7 @@
                                 </ListBox>
                             </xcad:LayoutDocument>
                             <xcad:LayoutDocument x:Name="_layoutIngressPolicy" ContentId="ingress policy" Title="Ingress Policy" CanClose="False" CanFloat="False"
-                                                 IsSelected="False" IsSelectedChanged="_layoutPolicy_IsSelectedChanged">
+                                                 IsSelected="False" IsSelectedChanged="_layoutIngressPolicy_IsSelectedChanged">
                                 <ListBox BorderThickness="0" Name="_IngressPolicy" ItemContainerStyle="{StaticResource ListBoxStyle}" AllowDrop="True"
                                          SelectionChanged="_IngressPolicy_SelectionChanged" MouseDown="_IngressPolicy_MouseDown">
                                     <ListBox.ContextMenu>
@@ -83,7 +83,7 @@
                                 </ListBox>
                             </xcad:LayoutDocument>
                             <xcad:LayoutDocument x:Name="_layoutEgressPolicy" ContentId="egress policy" Title="Egress Policy" CanClose="False" CanFloat="False"
-                                                 IsSelected="False" IsSelectedChanged="_layoutPolicy_IsSelectedChanged">
+                                                 IsSelected="False" IsSelectedChanged="_layoutEgressPolicy_IsSelectedChanged">
                                 <ListBox BorderThickness="0" Name="_EgressPolicy" ItemContainerStyle="{StaticResource ListBoxStyle}" AllowDrop="True"
                                          SelectionChanged="_EgressPolicy_SelectionChanged" MouseDown="_EgressPolicy_MouseDown">
                                     <ListBox.ContextMenu>

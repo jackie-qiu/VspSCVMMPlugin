@@ -384,6 +384,59 @@ namespace Nuage.VSDClient.Main
             return;
         }
 
+        private void AclRuleAdd(string direction)
+        {
+            string acl_id;
+            if (_Domains.SelectedIndex == -1)
+                return;
+
+            NuageDomain domain = (NuageDomain)_Domains.SelectedItem;
+            if (direction.Equals("ingress"))
+            {
+                if (this._IngressPolicy.SelectedIndex == -1)
+                {
+                    MessageBox.Show("Please select the ingress ACL.", "Warning");
+                    return;
+                }
+                acl_id = ((NuageInboundACL)this._IngressPolicy.SelectedItem).ID;
+            }
+            else
+            {
+                if (this._EgressPolicy.SelectedIndex == -1)
+                {
+                    MessageBox.Show("Please select the egress ACL.", "Warning");
+                    return;
+                }
+
+                acl_id = ((NuageOutboundACL)this._EgressPolicy.SelectedItem).ID;
+            }
+
+            ACLRule acl_rule = new ACLRule(direction, rest_client, domain.ID, acl_id, this._CommonElement);
+            acl_rule.Show();
+        }
+        private void AclRuleDel(string direction)
+        {
+            NuageACLRule acl_rule = (NuageACLRule)this._CommonElement.SelectedItem;
+
+            try
+            {
+                rest_client.DeleteACLRule(acl_rule.ID, direction);
+                _CommonElement.Items.RemoveAt(_CommonElement.SelectedIndex);
+            }
+            catch (NuageException)
+            {
+                string error = string.Format("Delete {0} ACL rule {1} failed.", direction, acl_rule.ID);
+                MessageBox.Show(error, "Error");
+                return;
+            }
+
+            return;
+        }
+        private void AclRuleUpdate(string direction)
+        {
+
+        }
+
         private void _CommonElementAdd_Click(object sender, RoutedEventArgs e)
         {
             if (this._layoutCommonElement.Title.Equals("Subnet"))
@@ -395,9 +448,15 @@ namespace Nuage.VSDClient.Main
             {
                 AddvPorttoPolicyGroup();
             }
-            if (this._layoutCommonElement.Title.Equals("Security Policy Entries"))
-            {
 
+            if (this._layoutCommonElement.Title.Equals("Ingress Security Policy Entries"))
+            {
+                AclRuleAdd("ingress");
+            }
+
+            if (this._layoutCommonElement.Title.Equals("Egress Security Policy Entries"))
+            {
+                AclRuleAdd("egress");
             }
         }
         private void _CommonElementDel_Click(object sender, RoutedEventArgs e)
@@ -416,9 +475,14 @@ namespace Nuage.VSDClient.Main
                 RemovevPortfromPolicyGroup();
             }
 
-            if (this._layoutCommonElement.Title.Equals("Security Policy Entries"))
+            if (this._layoutCommonElement.Title.Equals("Ingress Security Policy Entries"))
             {
+                AclRuleDel("ingress");
+            }
 
+            if (this._layoutCommonElement.Title.Equals("Egress Security Policy Entries"))
+            {
+                AclRuleDel("egress");
             }
 
         }
@@ -623,11 +687,19 @@ namespace Nuage.VSDClient.Main
                 MessageBox.Show(error, "Failed");
             }
         }
-        
-        private void _layoutPolicy_IsSelectedChanged(object sender, EventArgs e)
+
+        private void _layoutIngressPolicy_IsSelectedChanged(object sender, EventArgs e)
         {
             if (this._layoutCommonElement != null)
-                this._layoutCommonElement.Title = "Security Policy Entries";
+                this._layoutCommonElement.Title = "Ingress Security Policy Entries";
+            if (this._CommonElement != null && this._CommonElement.Items != null)
+                this._CommonElement.Items.Clear();
+        }
+
+        private void _layoutEgressPolicy_IsSelectedChanged(object sender, EventArgs e)
+        {
+            if (this._layoutCommonElement != null)
+                this._layoutCommonElement.Title = "Egress Security Policy Entries";
             if (this._CommonElement != null && this._CommonElement.Items != null)
                 this._CommonElement.Items.Clear();
         }

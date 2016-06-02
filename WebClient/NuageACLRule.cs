@@ -56,7 +56,7 @@ namespace Nuage.VSDClient
 
         public string in_post_resource(string parent_id)
         {
-            return "/ingressacltemplates/" + parent_id + "/ingressaclentrytemplates";
+            return "/ingressacltemplates/" + parent_id + "/ingressaclentrytemplates?responseChoice=1";
         }
 
         public string in_delete_resource(string id)
@@ -86,7 +86,7 @@ namespace Nuage.VSDClient
 
         public string eg_post_resource(string parent_id)
         {
-            return "/egressacltemplates/" + parent_id + "/egressaclentrytemplates";
+            return "/egressacltemplates/" + parent_id + "/egressaclentrytemplates?responseChoice=1";
         }
 
         public string eg_delete_resource(string id)
@@ -137,10 +137,12 @@ namespace Nuage.VSDClient
             }
 
             this.locationType = create_params["locationType"];
-            this.locationID = create_params["locationID"];
+            if(!this.locationType.Equals("ANY"))
+                this.locationID = create_params["locationID"];
 
             this.networkType = create_params["networkType"];
-            this.networkID = create_params["networkID"];
+            if (!this.networkType.Equals("ANY"))
+                this.networkID = create_params["networkID"];
 
             this.action = create_params["action"];
 
