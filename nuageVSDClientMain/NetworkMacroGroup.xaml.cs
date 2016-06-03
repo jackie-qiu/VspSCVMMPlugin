@@ -15,16 +15,16 @@ using System.Windows.Shapes;
 namespace Nuage.VSDClient.Main
 {
     /// <summary>
-    /// Domain.xaml Logical
+    /// NetworkMacroGroup.xaml Logical
     /// </summary>
-    public partial class Domain : Window
+    public partial class NetworkMacroGroup : Window
     {
         INuageClient rest_client;
         string ent_id;
         ListBox parent;
-        public string DomainName { set; get; }
+        public string NetworkMacroGroupName { set; get; }
 
-        public Domain(INuageClient client, string ent_id, ListBox parent)
+        public NetworkMacroGroup(INuageClient client, string ent_id, ListBox parent)
         {
             this.rest_client = client;
             this.parent = parent;
@@ -45,16 +45,10 @@ namespace Nuage.VSDClient.Main
 
             try
             {
-                NuageDomainTemplate domain_template = rest_client.GetDefaultL3DomainTemplate(this.ent_id);
-                if (domain_template == null)
+                NuageNetworkMacroGroups network_macro_group = rest_client.CreateNetworkMacroGroup(this.ent_id, _nameBox.Text, desc);
+                if (network_macro_group != null)
                 {
-                    domain_template = rest_client.CreateDefaultL3DomainTemplate(this.ent_id);
-                }
-
-                NuageDomain domain = rest_client.CreateL3Domain(this.ent_id, _nameBox.Text, desc);
-                if (domain != null)
-                {
-                    this.parent.Items.Add(domain);
+                    this.parent.Items.Add(network_macro_group);
                     this.Close();
                 }
 
@@ -66,7 +60,6 @@ namespace Nuage.VSDClient.Main
                 return;
             }
         }
-
 
         private void _name_TextChanged(object sender, TextChangedEventArgs e)
         {

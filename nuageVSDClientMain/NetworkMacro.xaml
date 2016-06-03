@@ -1,0 +1,53 @@
+﻿<Window x:Class="Nuage.VSDClient.Main.NetworkMacro"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:local="clr-namespace:Nuage.VSDClient.Main"        
+        Title="Network Macro" Height="200" Width="300" ResizeMode="NoResize">
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <StackPanel Orientation="Vertical" Margin="10,0,0,0">
+                <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="140" FontSize="12" >Name</TextBlock>
+                <TextBox HorizontalAlignment="Left" Margin="10,5,0,0" Width="250" Height="30" Name="_nameBox" FontSize="12" TextChanged="_name_TextChanged">
+                    <TextBox.Text>
+                        <Binding Path="MacroName" Mode="OneWayToSource" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <local:RequiredValidator/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+            </StackPanel>
+            <StackPanel Orientation="Vertical" Margin="10,0,0,0">
+                <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="140"  FontSize="12" >Network</TextBlock>
+                <TextBox HorizontalAlignment="Left" Margin="10,5,0,0" Width="250" Height="30" FontSize="12" Name="_cidr" 
+                         VerticalContentAlignment="Bottom" TextChanged="_name_TextChanged">
+                    <TextBox.Text>
+                        <Binding Path="Cidr" Mode="OneWayToSource" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <local:IpNetworkValidator/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button 
+                Height="23" 
+                HorizontalAlignment="Right" 
+                VerticalAlignment="Bottom" 
+                Name="_Create"
+                Width="75" 
+                Margin="0,0,5,0"
+                Click="Create_Click"
+                IsEnabled="False"
+                Content="_Create" />
+        </StackPanel>
+    </Grid>
+</Window>

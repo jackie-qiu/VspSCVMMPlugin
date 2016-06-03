@@ -61,12 +61,6 @@ namespace Nuage.VSDClient
             NuageEnterprise ent = new NuageEnterprise();
 
             List<NuageEnterprise> result = restproxy.CallRestGetAPI<NuageEnterprise>(ent.get_all_resources(), filter);
-            if (result == null || result.Count() == 0)
-            {
-                string msg = string.Format("Get Enterprises Failed....");
-                logger.Error(msg);
-                throw new NuageException(msg);
-            }
 
             return result;
         }
@@ -79,13 +73,14 @@ namespace Nuage.VSDClient
 
         }
 
-        public NuageNetworkMacroGroups CreateNetworkMacroGroup(string ent_id, string name)
+        public NuageNetworkMacroGroups CreateNetworkMacroGroup(string ent_id, string name, string description)
         {
             NuageNetworkMacroGroups macro_group = new NuageNetworkMacroGroups();
 
             Dictionary<string, string> create_params = new Dictionary<string, string>();
             create_params.Add("name", name);
-            create_params.Add("description", name);
+            if (description != null)
+                create_params.Add("description", description);
 
             List<NuageNetworkMacroGroups> result = restproxy.CallRestPostAPI<NuageNetworkMacroGroups>(
                                                  macro_group.post_resource(ent_id),
@@ -108,12 +103,6 @@ namespace Nuage.VSDClient
             NuageNetworkMacroGroups macro_group = new NuageNetworkMacroGroups();
 
             List<NuageNetworkMacroGroups> result = restproxy.CallRestGetAPI<NuageNetworkMacroGroups>(macro_group.get_all_resources_in_parent(ent_id), filter);
-            if (result == null || result.Count() == 0)
-            {
-                string msg = string.Format("Get network macro group from enterprise {0} Failed....", ent_id);
-                logger.Error(msg);
-                throw new NuageException(msg);
-            }
 
             return result;
         }
@@ -131,12 +120,6 @@ namespace Nuage.VSDClient
             NuageNetworkMacroGroups macro_group = new NuageNetworkMacroGroups();
 
             List<NuageEnterpriseNetworks> result = restproxy.CallRestGetAPI<NuageEnterpriseNetworks>(macro_group.get_network_macro_list(macro_group_id), filter);
-            if (result == null || result.Count() == 0)
-            {
-                string msg = string.Format("Get network macro list from group {0} Failed....", macro_group_id);
-                logger.Error(msg);
-                throw new NuageException(msg);
-            }
 
             return result;
         }
@@ -171,12 +154,6 @@ namespace Nuage.VSDClient
             NuageEnterpriseNetworks network_macro = new NuageEnterpriseNetworks();
 
             List<NuageEnterpriseNetworks> result = restproxy.CallRestGetAPI<NuageEnterpriseNetworks>(network_macro.get_all_resources_in_parent(ent_id), filter);
-            if (result == null || result.Count() == 0)
-            {
-                string msg = string.Format("Get network macro group from enterprise {0} Failed....", ent_id);
-                logger.Error(msg);
-                throw new NuageException(msg);
-            }
 
             return result;
         }

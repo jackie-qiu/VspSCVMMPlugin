@@ -76,6 +76,7 @@
     <Compile Include="NuageBase.cs" />
     <Compile Include="nuageBase64.cs" />
     <Compile Include="NuageClient.cs" />
+    <Compile Include="NuageCompare.cs" />
     <Compile Include="NuageDomain.cs" />
     <Compile Include="NuageDomainTemplate.cs" />
     <Compile Include="NuageEnterprise.cs" />

@@ -14,7 +14,7 @@ namespace Nuage.VSDClient
         NuageOutboundACL CreateL3DomainEgressACLTmplt(string domain_id, string name, string description, string priority, bool implicit_rule, bool allow_ip, bool allow_nonip);
         NuageInboundACL CreateL3DomainIngressACLTmplt(string domain_id, string name, string description, string priority, bool addr_spoof, bool allow_ip, bool allow_nonip);
         NuageEnterpriseNetworks CreateNetworkMacro(string ent_id, string name, string address, string netmask);
-        NuageNetworkMacroGroups CreateNetworkMacroGroup(string ent_id, string name);
+        NuageNetworkMacroGroups CreateNetworkMacroGroup(string ent_id, string name, string description);
         NuagePolicyGroup CreatePolicyGroup(string domain_id, string name, string description);
         NuageSubnet CreateSubnet(string zone_id, string name, string description, string ip, string netmask, string gateway);
         NuageZone CreateZone(string domain_id, string name, string description);

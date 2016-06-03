@@ -51,8 +51,8 @@ namespace Nuage.VSDClient.Main
 
                 if (vports_in_pg != null)
                 {
-                    compare comp = new compare();
-                    List<NuageVport> vport_not_in_pg = vports_in_domain.Except(vports_in_pg, comp).ToList();
+                    NuageCompare comp = new NuageCompare();
+                    List<NuageBase> vport_not_in_pg = vports_in_domain.Except(vports_in_pg, comp).ToList();
                     foreach (NuageVport item in vport_not_in_pg)
                     {
                         _vPorts.Items.Add(item);
@@ -126,18 +126,5 @@ namespace Nuage.VSDClient.Main
         }
     }
 
-    public class compare : IEqualityComparer<NuageVport>
-    {
 
-    
-        public bool Equals(NuageVport x, NuageVport y)
-        {
-            return x.ID.Equals(y.ID);
-        }
-
-        public int GetHashCode(NuageVport obj)
-        {
- 	        return 1;
-        }
-    }
 }

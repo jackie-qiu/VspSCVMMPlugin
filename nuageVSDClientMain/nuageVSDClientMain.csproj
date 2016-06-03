@@ -154,6 +154,12 @@
     <Compile Include="IngressACL.xaml.cs">
       <DependentUpon>IngressACL.xaml</DependentUpon>
     </Compile>
+    <Compile Include="NetworkMacro.xaml.cs">
+      <DependentUpon>NetworkMacro.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NetworkMacroGroup.xaml.cs">
+      <DependentUpon>NetworkMacroGroup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PolicyGroup.xaml.cs">
       <DependentUpon>PolicyGroup.xaml</DependentUpon>
     </Compile>
@@ -201,6 +207,14 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="NetworkMacro.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NetworkMacroGroup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Organization.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

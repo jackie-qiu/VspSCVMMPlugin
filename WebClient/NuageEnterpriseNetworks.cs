@@ -26,7 +26,12 @@ namespace Nuage.VSDClient
 
         public override string ToString()
         {
-            return name;
+            string tostring = "";
+            tostring += this.name + "\r\n";
+            tostring += "Network      " + this.address + "\r\n";
+            tostring += "Netmask      " + this.netmask + "\r\n";
+
+            return tostring;
         }
 
         public string post_data(Dictionary<string, string> create_params)

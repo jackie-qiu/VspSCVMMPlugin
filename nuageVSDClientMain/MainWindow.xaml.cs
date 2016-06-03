@@ -134,11 +134,33 @@ namespace Nuage.VSDClient.Main
                     }
                     
                 }
+
+                List<NuageEnterpriseNetworks> network_macros = rest_client.GetNetworkMacrosInEnterprise(ent.ID);
+                this._NetworkMacros.Items.Clear();
+                if (network_macros != null && network_macros.Count() != 0)
+                {
+                    foreach (NuageEnterpriseNetworks item in network_macros)
+                    {
+                        this._NetworkMacros.Items.Add(item);
+                    }
+
+                }
+
+                List<NuageNetworkMacroGroups> network_macro_groups = rest_client.GetNetworkMacroGroupsInEnterprise(ent.ID);
+                this._NetworkMacroGroups.Items.Clear();
+                if (network_macro_groups != null && network_macro_groups.Count() != 0)
+                {
+                    foreach (NuageNetworkMacroGroups item in network_macro_groups)
+                    {
+                        this._NetworkMacroGroups.Items.Add(item);
+                    }
+
+                }
                 
             }
             catch (NuageException ex)
             {
-                string error = string.Format("Get domains from VSD failed with error {0}.", ex.Message);
+                string error = string.Format("Get data from VSD failed with error {0}.", ex.Message);
                 MessageBox.Show(error, "Failed");
             }
         }
@@ -231,6 +253,202 @@ namespace Nuage.VSDClient.Main
                     foreach (NuageOutboundACL item in outACL)
                     {
                         this._EgressPolicy.Items.Add(item);
+                    }
+
+                }
+
+            }
+            catch (NuageException ex)
+            {
+                string error = string.Format("{0}.", ex.Message);
+                MessageBox.Show(error, "Failed");
+            }
+
+        }
+
+        private void _NetworkMacroAdd_Click(object sender, RoutedEventArgs e)
+        {
+            if (_Enterprises.SelectedIndex == -1)
+            {
+                MessageBox.Show("Please select the organization.", "Warning");
+                return;
+            }
+
+            NuageEnterprise ent = (NuageEnterprise)this._Enterprises.SelectedItem;
+            NetworkMacro macro = new NetworkMacro(this.rest_client, ent.ID, this._NetworkMacros);
+            macro.Show();
+        }
+        private void _NetworkMacroDel_Click(object sender, RoutedEventArgs e)
+        {
+            if (_NetworkMacros.SelectedIndex == -1)
+            {
+                return;
+            }
+
+            NuageEnterpriseNetworks macro = (NuageEnterpriseNetworks)this._NetworkMacros.SelectedItem;
+            try
+            {
+                rest_client.DeleteNetworkMacro(macro.ID);
+            }
+            catch (NuageException)
+            {
+                MessageBox.Show("Network macro is in use.Please detach the resource associated with it and retry.", "Error");
+                return;
+            }
+
+            _NetworkMacros.Items.RemoveAt(_NetworkMacros.SelectedIndex);
+        }
+        private void _NetworkMacroUpdate_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void _NetworkMacros_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (this._NetworkMacros == null || this._NetworkMacros.SelectedItem == null)
+                return;
+
+            NuageEnterpriseNetworks macro = (NuageEnterpriseNetworks)this._NetworkMacros.SelectedItem;
+            this._propertyGrid.DataContext = macro;
+
+        }
+        private void _NetworkMacroGroupsAdd_Click(object sender, RoutedEventArgs e)
+        {
+            if (_Enterprises.SelectedIndex == -1)
+            {
+                MessageBox.Show("Please select the organization.", "Warning");
+                return;
+            }
+
+            NuageEnterprise ent = (NuageEnterprise)this._Enterprises.SelectedItem;
+            NetworkMacroGroup macro_group = new NetworkMacroGroup(this.rest_client, ent.ID, this._NetworkMacroGroups);
+            macro_group.Show();
+        }
+        private void _NetworkMacroGroupsDel_Click(object sender, RoutedEventArgs e)
+        {
+            if (_NetworkMacroGroups.SelectedIndex == -1)
+            {
+                return;
+            }
+
+            NuageNetworkMacroGroups macro_group = (NuageNetworkMacroGroups)this._NetworkMacroGroups.SelectedItem;
+            try
+            {
+                rest_client.DeleteNetworkMacroGroups(macro_group.ID);
+            }
+            catch (NuageException)
+            {
+                MessageBox.Show("Network macro group is in use.Please detach the resource associated with it and retry.", "Error");
+                return;
+            }
+
+            _NetworkMacroGroups.Items.RemoveAt(_NetworkMacroGroups.SelectedIndex);
+        }
+        private void _NetworkMacroGroupsUpdate_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void AddMacrotoMacroGroup()
+        {
+            List<NuageBase> macros_candidate = null;
+            ListBox selected = new ListBox();
+
+            if (this._Enterprises.SelectedIndex == -1)
+            {
+                MessageBox.Show("Please select the organization.", "Warning");
+                return;
+            }
+            if (this._NetworkMacroGroups.SelectedIndex == -1)
+            {
+                MessageBox.Show("Please select the network macro group.", "Warning");
+                return;
+            }
+            NuageNetworkMacroGroups macro_group = (NuageNetworkMacroGroups)this._NetworkMacroGroups.SelectedItem;
+            NuageEnterprise ent = (NuageEnterprise)this._Enterprises.SelectedItem;
+            try
+            {
+                List<NuageEnterpriseNetworks> macros_in_enterprise = this.rest_client.GetNetworkMacrosInEnterprise(ent.ID);
+                List<NuageEnterpriseNetworks> macros_in_group = this.rest_client.GetNetworkMacrosInGroup(macro_group.ID);
+                
+                if (macros_in_enterprise != null)
+                {
+                    NuageCompare comp = new NuageCompare();
+                    macros_candidate = macros_in_enterprise.Except(macros_in_group, comp).ToList();
+                }
+            }
+            catch (NuageException)
+            {
+                string error = String.Format("Get network macros from  organization {0} failed", ent.name);
+                MessageBox.Show("error", "Failed");
+                return;
+            }
+            SelectWin macro_win = new SelectWin(macros_candidate, selected, "Network Macro");
+            macro_win.ShowDialog();
+
+            if (selected.HasItems)
+            {
+                selected.SelectedIndex = 0;
+                NuageEnterpriseNetworks selected_macro = (NuageEnterpriseNetworks)selected.SelectedItem;
+                
+                try
+                {
+                    this.rest_client.AddNetworkMacrosToGroup(macro_group.ID, selected_macro.ID);
+                    _CommonElement.Items.Add(selected_macro);
+                }
+                catch (NuageException)
+                {
+                    string error = String.Format("Add network macros {0} from group {1} failed", selected_macro.name, macro_group.name);
+                    MessageBox.Show("error", "Failed");
+                    return;
+                }
+            }
+
+
+        }
+
+        private void RemoveMacrofromMacroGroup()
+        {
+            if (this._NetworkMacroGroups.SelectedIndex == -1)
+            {
+                MessageBox.Show("Please select the network macro group.");
+                return;
+            }
+
+            if (this._CommonElement.SelectedIndex == -1)
+            {
+                return;
+            }
+            NuageEnterpriseNetworks macro = (NuageEnterpriseNetworks)this._CommonElement.SelectedItem;
+            NuageNetworkMacroGroups macro_group = (NuageNetworkMacroGroups)this._NetworkMacroGroups.SelectedItem;
+            try
+            {
+                rest_client.DeleteNetworkMacrosFromGroup(macro_group.ID, macro.ID);
+                _CommonElement.Items.RemoveAt(_CommonElement.SelectedIndex);
+            }
+            catch (NuageException)
+            {
+                MessageBox.Show("Remove network macro from macro group failed.", "Error");
+                return;
+            }
+
+            return;
+        }
+        private void _NetworkMacroGroups_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (this._NetworkMacroGroups == null || this._NetworkMacroGroups.SelectedItem == null)
+                return;
+
+            NuageNetworkMacroGroups macro_group = (NuageNetworkMacroGroups)this._NetworkMacroGroups.SelectedItem;
+            this._propertyGrid.DataContext = macro_group;
+            try
+            {
+
+                List<NuageEnterpriseNetworks> network_macros = rest_client.GetNetworkMacrosInGroup(macro_group.ID);
+                this._CommonElement.Items.Clear();
+                if (network_macros != null && network_macros.Count() > 0)
+                {
+                    foreach (NuageEnterpriseNetworks item in network_macros)
+                    {
+                        this._CommonElement.Items.Add(item);
                     }
 
                 }
@@ -458,6 +676,13 @@ namespace Nuage.VSDClient.Main
             {
                 AclRuleAdd("egress");
             }
+
+            if (this._layoutCommonElement.Title.Equals("Network Macros"))
+            {
+                AddMacrotoMacroGroup();
+            }
+            
+            
         }
         private void _CommonElementDel_Click(object sender, RoutedEventArgs e)
         {
@@ -484,6 +709,12 @@ namespace Nuage.VSDClient.Main
             {
                 AclRuleDel("egress");
             }
+
+            if (this._layoutCommonElement.Title.Equals("Network Macros"))
+            {
+                RemoveMacrofromMacroGroup();
+            }
+            
 
         }
         private void _CommonElementUpdate_Click(object sender, RoutedEventArgs e)
@@ -720,7 +951,15 @@ namespace Nuage.VSDClient.Main
                 this._CommonElement.Items.Clear();
 
         }
+        private void _layoutNetworkMacroGroupDocument_IsSelectedChanged(object sender, EventArgs e)
+        {
+            if (this._layoutCommonElement != null)
+                this._layoutCommonElement.Title = "Network Macros";
+            if (this._CommonElement != null && this._CommonElement.Items != null)
+                this._CommonElement.Items.Clear();
 
+        }
+        
         private void _Domains_MouseDown(object sender, MouseButtonEventArgs e)
         {
             this._Domains.UnselectAll();
@@ -751,7 +990,15 @@ namespace Nuage.VSDClient.Main
             this._CommonElement.UnselectAll();
         }
 
+        private void _NetworkMacro_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            this._NetworkMacros.UnselectAll();
+        }
 
+        private void _NetworkMacroGroup_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            this._NetworkMacroGroups.UnselectAll();
+        }
 
     }
 

@@ -203,21 +203,21 @@ namespace Nuage.VSDClient.Main
                 {
                     List<NuageZone> zones = rest_client.GetZonesInDomain(this.domain_id);
                     SelectWin selectwin = new SelectWin(zones, _selectedOrigin, origin_type);
-                    selectwin.Show();
+                    selectwin.ShowDialog();
                 }
 
                 if (origin_type.Equals("Subnet"))
                 {
                     List<NuageSubnet> subnets = rest_client.GetSubnetsInDomain(this.domain_id);
                     SelectWin selectwin = new SelectWin(subnets, _selectedOrigin, origin_type);
-                    selectwin.Show();
+                    selectwin.ShowDialog();
                 }
 
                 if (origin_type.Equals("Policy Group"))
                 {
                     List<NuagePolicyGroup> pg = rest_client.GetPolicyGroupsInDomain(this.domain_id);
                     SelectWin selectwin = new SelectWin(pg, _selectedOrigin, origin_type);
-                    selectwin.Show();
+                    selectwin.ShowDialog();
                 }
             }
             catch (NuageException)
@@ -242,21 +242,21 @@ namespace Nuage.VSDClient.Main
                 {
                     List<NuageZone> zones = rest_client.GetZonesInDomain(this.domain_id);
                     SelectWin selectwin = new SelectWin(zones, _selectedDestination, dst_type);
-                    selectwin.Show();
+                    selectwin.ShowDialog();
                 }
 
                 if (dst_type.Equals("Subnet"))
                 {
                     List<NuageSubnet> subnets = rest_client.GetSubnetsInDomain(this.domain_id);
                     SelectWin selectwin = new SelectWin(subnets, _selectedDestination, dst_type);
-                    selectwin.Show();
+                    selectwin.ShowDialog();
                 }
 
                 if (dst_type.Equals("Policy Group"))
                 {
                     List<NuagePolicyGroup> pg = rest_client.GetPolicyGroupsInDomain(this.domain_id);
                     SelectWin selectwin = new SelectWin(pg, _selectedDestination, dst_type);
-                    selectwin.Show();
+                    selectwin.ShowDialog();
                 }
             }
             catch (NuageException)

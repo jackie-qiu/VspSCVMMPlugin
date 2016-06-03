@@ -28,7 +28,7 @@
                 <xcad:LayoutPanel Orientation="Horizontal" x:Name="_layoutPanel">
                     <xcad:LayoutAnchorablePane DockWidth="200">
                         <xcad:LayoutAnchorable x:Name="_layoutDomains" ContentId="domain" Title="Domain" CanHide="False" CanClose="False" CanAutoHide="True"
-                                               CanFloat="False" AutoHideWidth="240">
+                                               CanFloat="False" AutoHideWidth="240" IsSelectedChanged="_layoutZoneDocument_IsSelectedChanged">
                             <ListBox BorderThickness="0" Name="_Domains" ItemContainerStyle="{StaticResource ListBoxStyleBold}" 
                                      SelectionChanged="_Domains_SelectionChanged">
                                 <ListBox.ContextMenu>
@@ -36,6 +36,32 @@
                                         <MenuItem Header="Add"    Click="_DomainAdd_Click" />
                                         <MenuItem Header="Delete" Click="_DomainDel_Click"/>
                                         <MenuItem Header="Update" Click="_DomainUpdate_Click" IsEnabled="False"/>
+                                    </ContextMenu>
+                                </ListBox.ContextMenu>
+                            </ListBox>
+                        </xcad:LayoutAnchorable>
+                        <xcad:LayoutAnchorable x:Name="_layoutNetworkMacros" ContentId="NetwrokMacro" Title="Network Macros" CanHide="False" CanClose="False" CanAutoHide="True"
+                                               CanFloat="False" AutoHideWidth="240">
+                            <ListBox BorderThickness="0" Name="_NetworkMacros" ItemContainerStyle="{StaticResource ListBoxStyleBold}" SelectionChanged="_NetworkMacros_SelectionChanged"
+                                     MouseDown="_NetworkMacro_MouseDown">
+                                <ListBox.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Add"    Click="_NetworkMacroAdd_Click" />
+                                        <MenuItem Header="Delete" Click="_NetworkMacroDel_Click"/>
+                                        <MenuItem Header="Update" Click="_NetworkMacroUpdate_Click" IsEnabled="False"/>
+                                    </ContextMenu>
+                                </ListBox.ContextMenu>
+                            </ListBox>
+                        </xcad:LayoutAnchorable>
+                        <xcad:LayoutAnchorable x:Name="_layoutNetworkMacroGroups" ContentId="NetworkMacroGroup" Title="Network Macro Groups" CanHide="False" CanClose="False" CanAutoHide="True"
+                                               CanFloat="False" AutoHideWidth="240" IsSelectedChanged="_layoutNetworkMacroGroupDocument_IsSelectedChanged">
+                            <ListBox BorderThickness="0" Name="_NetworkMacroGroups" ItemContainerStyle="{StaticResource ListBoxStyleBold}" SelectionChanged="_NetworkMacroGroups_SelectionChanged"
+                                     MouseDown="_NetworkMacroGroup_MouseDown">
+                                <ListBox.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Add"    Click="_NetworkMacroGroupsAdd_Click" />
+                                        <MenuItem Header="Delete" Click="_NetworkMacroGroupsDel_Click"/>
+                                        <MenuItem Header="Update" Click="_NetworkMacroGroupsUpdate_Click" IsEnabled="False"/>
                                     </ContextMenu>
                                 </ListBox.ContextMenu>
                             </ListBox>

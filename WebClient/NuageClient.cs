@@ -59,9 +59,9 @@ namespace Nuage.VSDClient
             return enterprise.DeleteEnterprise(id);
         }
 
-        public NuageNetworkMacroGroups CreateNetworkMacroGroup(string ent_id, string name)
+        public NuageNetworkMacroGroups CreateNetworkMacroGroup(string ent_id, string name, string description)
         {
-            return enterprise.CreateNetworkMacroGroup(ent_id, name);
+            return enterprise.CreateNetworkMacroGroup(ent_id, name, description);
         }
 
         public List<NuageNetworkMacroGroups> GetNetworkMacroGroupsInEnterprise(string ent_id)
@@ -71,7 +71,7 @@ namespace Nuage.VSDClient
 
         public bool DeleteNetworkMacroGroups(string id)
         {
-            return enterprise.DeleteEnterprise(id);
+            return enterprise.DeleteNetworkMacroGroups(id);
         }
 
         public NuageEnterpriseNetworks CreateNetworkMacro(string ent_id, string name, string address, string netmask)
@@ -91,7 +91,7 @@ namespace Nuage.VSDClient
 
         public bool DeleteNetworkMacro(string id)
         {
-            return enterprise.DeleteEnterprise(id);
+            return enterprise.DeleteNetworkMacro(id);
         }
 
         public bool AddNetworkMacrosToGroup(string macro_group_id, string network_macro_id)
