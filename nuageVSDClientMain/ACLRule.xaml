@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:Nuage.VSDClient.Main"
-        Title="Security Policy Entry" Height="500" Width="450" ResizeMode="NoResize" Name="_ACLRuleWin">
+        Title="Security Policy Entry" Height="500" Width="450" ResizeMode="NoResize" Name="_ACLRuleWin" FocusManager.FocusedElement="{Binding ElementName=_description}">
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -13,12 +13,12 @@
         <StackPanel Grid.Row="0" Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
                 <TextBlock VerticalAlignment="Center" Margin="10,0,0,0" Width="45" FontSize="12" >Name</TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="10,5,0,0" Width="350" Height="30" Name="_description"></TextBox>
+                <TextBox HorizontalAlignment="Left" Margin="10,5,0,0" Width="350" Height="30" Name="_description" Style="{StaticResource TextBoxStyle}"></TextBox>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="10,2,0,0">
                 <TextBlock VerticalAlignment="Center" Margin="10,0,0,0" Width="45" FontSize="12" >Priority</TextBlock>
-                <xctk:MaskedTextBox Name="_priority" Mask="0##################" PromptChar=" " VerticalContentAlignment="Bottom"
-                                    HorizontalAlignment="Left" Width="350" Height="30" Margin="10,0,0,0" FontSize="12">
+                <xctk:MaskedTextBox Name="_priority" Mask="0##################" PromptChar=" " VerticalContentAlignment="Bottom" MouseDoubleClick="_MouseDoubleClick"
+                                    HorizontalAlignment="Left" Width="350" Height="30" Margin="10,0,0,0" Style="{StaticResource TextBoxStyle}">
 
                 </xctk:MaskedTextBox>
             </StackPanel>
@@ -31,8 +31,8 @@
                 <TextBlock HorizontalAlignment="Left" Margin="10,5,0,0" FontSize="12" Width="60">Ether Type</TextBlock>
                 <ComboBox  HorizontalAlignment="Left" Margin="30,5,0,0" Name="_etherType" Width="115"/>
                 <TextBlock HorizontalAlignment="Left" Margin="10,5,0,0" FontSize="12" Width="95">Source Port</TextBlock>
-                <xctk:MaskedTextBox Name="_sourcePort" Mask="0##################" PromptChar=" " VerticalContentAlignment="Bottom"
-                                    HorizontalAlignment="Left"  Margin="0,0,0,0" FontSize="12" Width="90">
+                <xctk:MaskedTextBox Name="_sourcePort" Mask="0##################" PromptChar=" " VerticalContentAlignment="Bottom" MouseDoubleClick="_MouseDoubleClick"
+                                    HorizontalAlignment="Left"  Margin="0,0,0,0" Width="90" Style="{StaticResource TextBoxStyle}">
 
                 </xctk:MaskedTextBox>             
             </StackPanel>
@@ -40,8 +40,8 @@
                 <TextBlock HorizontalAlignment="Left" Margin="10,5,0,0" FontSize="12" Width="60">Protocol</TextBlock>
                 <ComboBox  HorizontalAlignment="Left" Margin="30,5,0,0" Name="_protocol" Width="115" SelectionChanged="_protocol_SelectionChanged"/>
                 <TextBlock HorizontalAlignment="Left" Margin="10,5,0,0" FontSize="12" Width="95">Destination Port</TextBlock>
-                <xctk:MaskedTextBox Name="_dstPort" Mask="0##################" PromptChar=" " VerticalContentAlignment="Bottom"
-                                    HorizontalAlignment="Left"  Margin="0,0,0,0" FontSize="12" Width="90">
+                <xctk:MaskedTextBox Name="_dstPort" Mask="0##################" PromptChar=" " VerticalContentAlignment="Bottom" MouseDoubleClick="_MouseDoubleClick"
+                                    HorizontalAlignment="Left"  Margin="0,0,0,0" Width="90" Style="{StaticResource TextBoxStyle}">
 
                 </xctk:MaskedTextBox>
             </StackPanel>

@@ -22,6 +22,7 @@ namespace Nuage.VSDClient.Main
     {
         INuageClient rest_client;
         string acl_id;
+        string ent_id;
         string domain_id;
         ListBox parent;
         string direction;
@@ -32,7 +33,7 @@ namespace Nuage.VSDClient.Main
         List<string> PROTOCOL_TYPE = new List<string>() { "ANY", "TCP - 6", "UDP - 17", "ICMP - 1" };
         private Dictionary<string, string> PROTO_NAME_TO_NUM = new Dictionary<string, string>();
         private Dictionary<string, string> NETWORK_TYPE_MAP = new Dictionary<string, string>();
-        public ACLRule(string direction, INuageClient client, string domain_id, string acl_id, ListBox parent)
+        public ACLRule(string direction, INuageClient client, string ent_id, string domain_id, string acl_id, ListBox parent)
         {
             PROTO_NAME_TO_NUM.Add("ANY", "ANY");
             PROTO_NAME_TO_NUM.Add("TCP - 6", "6");
@@ -53,6 +54,7 @@ namespace Nuage.VSDClient.Main
             this.rest_client = client;
             this.parent = parent;
             this.acl_id = acl_id;
+            this.ent_id = ent_id;
             this.domain_id = domain_id;
 
             InitializeComponent();
@@ -203,6 +205,8 @@ namespace Nuage.VSDClient.Main
                 {
                     List<NuageZone> zones = rest_client.GetZonesInDomain(this.domain_id);
                     SelectWin selectwin = new SelectWin(zones, _selectedOrigin, origin_type);
+                    selectwin.Owner = Application.Current.MainWindow;
+                    selectwin.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                     selectwin.ShowDialog();
                 }
 
@@ -210,6 +214,8 @@ namespace Nuage.VSDClient.Main
                 {
                     List<NuageSubnet> subnets = rest_client.GetSubnetsInDomain(this.domain_id);
                     SelectWin selectwin = new SelectWin(subnets, _selectedOrigin, origin_type);
+                    selectwin.Owner = Application.Current.MainWindow;
+                    selectwin.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                     selectwin.ShowDialog();
                 }
 
@@ -217,8 +223,30 @@ namespace Nuage.VSDClient.Main
                 {
                     List<NuagePolicyGroup> pg = rest_client.GetPolicyGroupsInDomain(this.domain_id);
                     SelectWin selectwin = new SelectWin(pg, _selectedOrigin, origin_type);
+                    selectwin.Owner = Application.Current.MainWindow;
+                    selectwin.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                     selectwin.ShowDialog();
                 }
+
+                if (origin_type.Equals("Network Macro"))
+                {
+                    List<NuageEnterpriseNetworks> macros = rest_client.GetNetworkMacrosInEnterprise(this.ent_id);
+                    SelectWin selectwin = new SelectWin(macros, _selectedOrigin, origin_type);
+                    selectwin.Owner = Application.Current.MainWindow;
+                    selectwin.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    selectwin.ShowDialog();
+                }
+
+                if (origin_type.Equals("Network Macro Group"))
+                {
+                    List<NuageNetworkMacroGroups> macro_groups = rest_client.GetNetworkMacroGroupsInEnterprise(this.ent_id);
+                    SelectWin selectwin = new SelectWin(macro_groups, _selectedOrigin, origin_type);
+                    selectwin.Owner = Application.Current.MainWindow;
+                    selectwin.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    selectwin.ShowDialog();
+                }
+
+               
             }
             catch (NuageException)
             {
@@ -242,6 +270,8 @@ namespace Nuage.VSDClient.Main
                 {
                     List<NuageZone> zones = rest_client.GetZonesInDomain(this.domain_id);
                     SelectWin selectwin = new SelectWin(zones, _selectedDestination, dst_type);
+                    selectwin.Owner = Application.Current.MainWindow;
+                    selectwin.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                     selectwin.ShowDialog();
                 }
 
@@ -249,6 +279,8 @@ namespace Nuage.VSDClient.Main
                 {
                     List<NuageSubnet> subnets = rest_client.GetSubnetsInDomain(this.domain_id);
                     SelectWin selectwin = new SelectWin(subnets, _selectedDestination, dst_type);
+                    selectwin.Owner = Application.Current.MainWindow;
+                    selectwin.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                     selectwin.ShowDialog();
                 }
 
@@ -256,6 +288,26 @@ namespace Nuage.VSDClient.Main
                 {
                     List<NuagePolicyGroup> pg = rest_client.GetPolicyGroupsInDomain(this.domain_id);
                     SelectWin selectwin = new SelectWin(pg, _selectedDestination, dst_type);
+                    selectwin.Owner = Application.Current.MainWindow;
+                    selectwin.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    selectwin.ShowDialog();
+                }
+
+                if (dst_type.Equals("Network Macro"))
+                {
+                    List<NuageEnterpriseNetworks> macros = rest_client.GetNetworkMacrosInEnterprise(this.ent_id);
+                    SelectWin selectwin = new SelectWin(macros, _selectedDestination, dst_type);
+                    selectwin.Owner = Application.Current.MainWindow;
+                    selectwin.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    selectwin.ShowDialog();
+                }
+
+                if (dst_type.Equals("Network Macro Group"))
+                {
+                    List<NuageNetworkMacroGroups> macro_groups = rest_client.GetNetworkMacroGroupsInEnterprise(this.ent_id);
+                    SelectWin selectwin = new SelectWin(macro_groups, _selectedDestination, dst_type);
+                    selectwin.Owner = Application.Current.MainWindow;
+                    selectwin.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                     selectwin.ShowDialog();
                 }
             }
@@ -334,6 +386,11 @@ namespace Nuage.VSDClient.Main
             else
                 _StatefulPannel.Visibility = System.Windows.Visibility.Hidden;
 
+        }
+
+        private void _MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            ((Xceed.Wpf.Toolkit.MaskedTextBox)sender).Select(0, 0);
         }
         
 

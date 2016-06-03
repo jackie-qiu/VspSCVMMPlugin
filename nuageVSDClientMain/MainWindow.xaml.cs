@@ -61,6 +61,8 @@ namespace Nuage.VSDClient.Main
         private void _EnterpriseAdd_Click(object sender, RoutedEventArgs e)
         {
             Organization org = new Organization(this.rest_client, this._Enterprises);
+            org.Owner = Application.Current.MainWindow;
+            org.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             org.Show();
         }
         private void _EnterpriseDel_Click(object sender, RoutedEventArgs e)
@@ -175,6 +177,8 @@ namespace Nuage.VSDClient.Main
 
             NuageEnterprise ent = (NuageEnterprise)this._Enterprises.SelectedItem;
             Domain domain = new Domain(this.rest_client, ent.ID, this._Domains);
+            domain.Owner = Application.Current.MainWindow;
+            domain.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             domain.Show();
         }
         private void _DomainDel_Click(object sender, RoutedEventArgs e)
@@ -276,6 +280,8 @@ namespace Nuage.VSDClient.Main
 
             NuageEnterprise ent = (NuageEnterprise)this._Enterprises.SelectedItem;
             NetworkMacro macro = new NetworkMacro(this.rest_client, ent.ID, this._NetworkMacros);
+            macro.Owner = Application.Current.MainWindow;
+            macro.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             macro.Show();
         }
         private void _NetworkMacroDel_Click(object sender, RoutedEventArgs e)
@@ -321,6 +327,8 @@ namespace Nuage.VSDClient.Main
 
             NuageEnterprise ent = (NuageEnterprise)this._Enterprises.SelectedItem;
             NetworkMacroGroup macro_group = new NetworkMacroGroup(this.rest_client, ent.ID, this._NetworkMacroGroups);
+            macro_group.Owner = Application.Current.MainWindow;
+            macro_group.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             macro_group.Show();
         }
         private void _NetworkMacroGroupsDel_Click(object sender, RoutedEventArgs e)
@@ -382,6 +390,8 @@ namespace Nuage.VSDClient.Main
                 return;
             }
             SelectWin macro_win = new SelectWin(macros_candidate, selected, "Network Macro");
+            macro_win.Owner = Application.Current.MainWindow;
+            macro_win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             macro_win.ShowDialog();
 
             if (selected.HasItems)
@@ -471,6 +481,8 @@ namespace Nuage.VSDClient.Main
 
             NuageDomain domain = (NuageDomain)this._Domains.SelectedItem;
             Zone zone = new Zone(this.rest_client, domain.ID, this._Zones);
+            zone.Owner = Application.Current.MainWindow;
+            zone.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             zone.Show();
         }
         private void _ZoneDel_Click(object sender, RoutedEventArgs e)
@@ -535,6 +547,8 @@ namespace Nuage.VSDClient.Main
             NuageZone zone = (NuageZone)this._Zones.SelectedItem;
 
             Subnet subnet = new Subnet(rest_client, zone.ID, this._CommonElement);
+            subnet.Owner = Application.Current.MainWindow;
+            subnet.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             subnet.Show();
         }
         private void SubnetDel()
@@ -576,6 +590,8 @@ namespace Nuage.VSDClient.Main
             NuagePolicyGroup pg = (NuagePolicyGroup)this._PolicyGroup.SelectedItem;
 
             PolicyGroupVports pg_vport = new PolicyGroupVports(rest_client, domain.ID, pg.ID, this._CommonElement);
+            pg_vport.Owner = Application.Current.MainWindow;
+            pg_vport.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             pg_vport.Show();
         }
 
@@ -629,7 +645,9 @@ namespace Nuage.VSDClient.Main
                 acl_id = ((NuageOutboundACL)this._EgressPolicy.SelectedItem).ID;
             }
 
-            ACLRule acl_rule = new ACLRule(direction, rest_client, domain.ID, acl_id, this._CommonElement);
+            ACLRule acl_rule = new ACLRule(direction, rest_client, domain.parentID, domain.ID, acl_id, this._CommonElement);
+            acl_rule.Owner = Application.Current.MainWindow;
+            acl_rule.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             acl_rule.Show();
         }
         private void AclRuleDel(string direction)
@@ -739,6 +757,8 @@ namespace Nuage.VSDClient.Main
 
             NuageDomain domain = (NuageDomain)this._Domains.SelectedItem;
             IngressACL acl = new IngressACL(this.rest_client, domain.ID, this._IngressPolicy);
+            acl.Owner = Application.Current.MainWindow;
+            acl.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             acl.Show();
         }
         private void _IngressPolicyDel_Click(object sender, RoutedEventArgs e)
@@ -802,6 +822,8 @@ namespace Nuage.VSDClient.Main
 
             NuageDomain domain = (NuageDomain)this._Domains.SelectedItem;
             EgressACL acl = new EgressACL(this.rest_client, domain.ID, this._EgressPolicy);
+            acl.Owner = Application.Current.MainWindow;
+            acl.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             acl.Show();
         }
         private void _EgressPolicyDel_Click(object sender, RoutedEventArgs e)
@@ -865,6 +887,8 @@ namespace Nuage.VSDClient.Main
 
             NuageDomain domain = (NuageDomain)this._Domains.SelectedItem;
             PolicyGroup pg = new PolicyGroup(this.rest_client, domain.ID, this._PolicyGroup);
+            pg.Owner = Application.Current.MainWindow;
+            pg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             pg.Show();
         }
         private void _PolicyGroupDel_Click(object sender, RoutedEventArgs e)

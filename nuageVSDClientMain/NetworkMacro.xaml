@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:Nuage.VSDClient.Main"        
-        Title="Network Macro" Height="200" Width="300" ResizeMode="NoResize">
+        Title="Network Macro" Height="200" Width="300" ResizeMode="NoResize" FocusManager.FocusedElement="{Binding ElementName=_nameBox}">
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -13,7 +13,7 @@
         <StackPanel Grid.Row="0" Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <StackPanel Orientation="Vertical" Margin="10,0,0,0">
                 <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="140" FontSize="12" >Name</TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="10,5,0,0" Width="250" Height="30" Name="_nameBox" FontSize="12" TextChanged="_name_TextChanged">
+                <TextBox HorizontalAlignment="Left" Margin="10,5,0,0" Width="250" Height="30" Name="_nameBox" TextChanged="_name_TextChanged" Style="{StaticResource TextBoxStyle}">
                     <TextBox.Text>
                         <Binding Path="MacroName" Mode="OneWayToSource" UpdateSourceTrigger="PropertyChanged">
                             <Binding.ValidationRules>
@@ -25,8 +25,8 @@
             </StackPanel>
             <StackPanel Orientation="Vertical" Margin="10,0,0,0">
                 <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="140"  FontSize="12" >Network</TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="10,5,0,0" Width="250" Height="30" FontSize="12" Name="_cidr" 
-                         VerticalContentAlignment="Bottom" TextChanged="_name_TextChanged">
+                <TextBox HorizontalAlignment="Left" Margin="10,5,0,0" Width="250" Height="30" Name="_cidr" 
+                         VerticalContentAlignment="Bottom" TextChanged="_name_TextChanged" Style="{StaticResource TextBoxStyle}">
                     <TextBox.Text>
                         <Binding Path="Cidr" Mode="OneWayToSource" UpdateSourceTrigger="PropertyChanged">
                             <Binding.ValidationRules>

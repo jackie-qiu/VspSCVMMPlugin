@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:Nuage.VSDClient.Main"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-        Title="Ingress Security Policy" Height="300" Width="300" ResizeMode="NoResize">
+        Title="Ingress Security Policy" Height="300" Width="300" ResizeMode="NoResize" FocusManager.FocusedElement="{Binding ElementName=_nameBox}">
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -13,7 +13,7 @@
         <StackPanel Grid.Row="0" Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <StackPanel Orientation="Vertical" Margin="10,0,0,0">
                 <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="140" FontSize="12" >Name</TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="10,5,0,0" Width="250" Height="30" Name="_nameBox" TextChanged="_name_TextChanged">
+                <TextBox HorizontalAlignment="Left" Margin="10,5,0,0" Width="250" Height="30" Name="_nameBox" TextChanged="_name_TextChanged" Style="{StaticResource TextBoxStyle}">
                     <TextBox.Text>
                         <Binding Path="IngressACLName" Mode="OneWayToSource" UpdateSourceTrigger="PropertyChanged">
                             <Binding.ValidationRules>
@@ -25,12 +25,12 @@
             </StackPanel>
             <StackPanel Orientation="Vertical" Margin="10,0,0,0">
                 <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="140"  FontSize="12" >Description</TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="10,5,0,0" Width="250" Height="30" Name="_description"></TextBox>
+                <TextBox HorizontalAlignment="Left" Margin="10,5,0,0" Width="250" Height="30" Name="_description" Style="{StaticResource TextBoxStyle}"></TextBox>
             </StackPanel>
             <StackPanel Orientation="Vertical" Margin="10,0,0,0">
                 <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="140"  FontSize="12" >Priority</TextBlock>
                 <xctk:MaskedTextBox Name="_priority" Mask="0#########" PromptChar=" " VerticalContentAlignment="Bottom"
-                                    HorizontalAlignment="Left" Width="250" Height="30" Margin="10,0,0,0" FontSize="12">
+                                    HorizontalAlignment="Left" Width="250" Height="30" Margin="10,0,0,0" Style="{StaticResource TextBoxStyle}">
 
                 </xctk:MaskedTextBox>
             </StackPanel>
