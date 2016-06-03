@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace Nuage.VSDClient
 {
-    public class NuageBase
+    public abstract class NuageBase
     {
-        public string ID { get; set; }
+        abstract public string ID { get; set; }
+        abstract public string parentType { get; set; }
+        abstract public string parentID { get; set; }
+        abstract public string externalID { get; set; }
     }
 }

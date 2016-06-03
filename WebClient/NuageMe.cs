@@ -21,7 +21,7 @@ namespace Nuage.VSDClient
         public string avatarData {get;set;}
         public string entityScope {get;set;}
         public string externalId {get;set;}
-        public string ID {get;set;}
+        public string ID { get; set; }
         public string APIKey {get;set;}
         public string APIKeyExpiry {get;set;}
         public string enterpriseID {get;set;}

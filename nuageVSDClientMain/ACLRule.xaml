@@ -17,7 +17,7 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="10,2,0,0">
                 <TextBlock VerticalAlignment="Center" Margin="10,0,0,0" Width="45" FontSize="12" >Priority</TextBlock>
-                <xctk:MaskedTextBox Name="_priority" Mask="0#########" PromptChar=" " VerticalContentAlignment="Bottom"
+                <xctk:MaskedTextBox Name="_priority" Mask="0##################" PromptChar=" " VerticalContentAlignment="Bottom"
                                     HorizontalAlignment="Left" Width="350" Height="30" Margin="10,0,0,0" FontSize="12">
 
                 </xctk:MaskedTextBox>
@@ -31,7 +31,7 @@
                 <TextBlock HorizontalAlignment="Left" Margin="10,5,0,0" FontSize="12" Width="60">Ether Type</TextBlock>
                 <ComboBox  HorizontalAlignment="Left" Margin="30,5,0,0" Name="_etherType" Width="115"/>
                 <TextBlock HorizontalAlignment="Left" Margin="10,5,0,0" FontSize="12" Width="95">Source Port</TextBlock>
-                <xctk:MaskedTextBox Name="_sourcePort" Mask="0#########" PromptChar=" " VerticalContentAlignment="Bottom"
+                <xctk:MaskedTextBox Name="_sourcePort" Mask="0##################" PromptChar=" " VerticalContentAlignment="Bottom"
                                     HorizontalAlignment="Left"  Margin="0,0,0,0" FontSize="12" Width="90">
 
                 </xctk:MaskedTextBox>             
@@ -40,7 +40,7 @@
                 <TextBlock HorizontalAlignment="Left" Margin="10,5,0,0" FontSize="12" Width="60">Protocol</TextBlock>
                 <ComboBox  HorizontalAlignment="Left" Margin="30,5,0,0" Name="_protocol" Width="115" SelectionChanged="_protocol_SelectionChanged"/>
                 <TextBlock HorizontalAlignment="Left" Margin="10,5,0,0" FontSize="12" Width="95">Destination Port</TextBlock>
-                <xctk:MaskedTextBox Name="_dstPort" Mask="0#########" PromptChar=" " VerticalContentAlignment="Bottom"
+                <xctk:MaskedTextBox Name="_dstPort" Mask="0##################" PromptChar=" " VerticalContentAlignment="Bottom"
                                     HorizontalAlignment="Left"  Margin="0,0,0,0" FontSize="12" Width="90">
 
                 </xctk:MaskedTextBox>
@@ -57,7 +57,8 @@
                     <StackPanel Orientation="Horizontal" Margin="0">
                         <Button HorizontalAlignment="Left" Name="_OriginTypeButton" Margin="0" Click="_AddOrigin" Width="10" Height="70"></Button>
                         <ListBox HorizontalAlignment="Left" Margin="0" Name="_selectedOrigin" Height="70" Width="135"
-                                 ItemContainerStyle="{StaticResource ListBoxStyle}" ></ListBox>
+                                 ItemContainerStyle="{StaticResource ListBoxStyleSmallFont}" ScrollViewer.VerticalScrollBarVisibility="Hidden" 
+                                 ScrollViewer.HorizontalScrollBarVisibility="Hidden" ></ListBox>
                     </StackPanel>
                 </StackPanel>
                 <Separator Margin="0" Width="110" Background="#FF41D914" BorderThickness="0"/>
@@ -67,7 +68,8 @@
                     <StackPanel Orientation="Horizontal" Margin="0">
                         <Button HorizontalAlignment="Left" Name="_DstTypeButton" Margin="0" Click="_AddDestination" Width="10" Height="70"></Button>
                         <ListBox HorizontalAlignment="Left" Margin="0" Name="_selectedDestination" Height="70" Width="135"
-                                 ItemContainerStyle="{StaticResource ListBoxStyle}" ></ListBox>
+                                 ItemContainerStyle="{StaticResource ListBoxStyleSmallFont}" ScrollViewer.VerticalScrollBarVisibility="Hidden" 
+                                 ScrollViewer.HorizontalScrollBarVisibility="Hidden"></ListBox>
                     </StackPanel>
                 </StackPanel>
             </StackPanel>

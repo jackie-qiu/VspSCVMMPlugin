@@ -12,7 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-
+using NetTools;
 namespace Nuage.VSDClient.Main
 {
     /// <summary>
@@ -57,6 +57,13 @@ namespace Nuage.VSDClient.Main
                 return;
             }
 
+            var ipRange = IPAddressRange.Parse(cidr);
+            if (!ipRange.Contains(IPAddress.Parse(gateway)))
+            {
+                string error = string.Format("Network Gateway IP Address {0} is out of range.", gateway);
+                MessageBox.Show(error);
+                return;
+            }
             string desc = null;
 
             if (!string.IsNullOrEmpty(this._description.Text))

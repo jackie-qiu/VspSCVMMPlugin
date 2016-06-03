@@ -7,10 +7,10 @@ using Newtonsoft.Json;
 
 namespace Nuage.VSDClient
 {
-    public class NuageACLRule : NuageServerBaseClass
+    public class NuageACLRule : NuageBase, NuageServerBaseClass
     {
         public string children { get; set; }
-        public string parentType { get; set; }
+        public override string parentType { get; set; }
         public string entityScope { get; set; }
         public string lastUpdatedBy { get; set; }
         public string lastUpdatedDate { get; set; }
@@ -30,9 +30,9 @@ namespace Nuage.VSDClient
         public string statsLoggingEnabled { get; set; }
         public string flowLoggingEnabled { get; set; }
         public string owner { get; set; }
-        public string ID { get; set; }
-        public string parentID { get; set; }
-        public string externalID { get; set; }
+        public override string ID { get; set; }
+        public override string parentID { get; set; }
+        public override string externalID { get; set; }
         public string associatedLiveEntityID { get; set; }
         public string locationID { get; set; }
         public string networkID { get; set; }
@@ -44,13 +44,20 @@ namespace Nuage.VSDClient
 
         public override string ToString()
         {
+            Dictionary<string, string> PROTO_NUM_TO_NAME = new Dictionary<string, string>();
+            PROTO_NUM_TO_NAME.Add("ANY", "ANY");
+            PROTO_NUM_TO_NAME.Add("6", "TCP - 6");
+            PROTO_NUM_TO_NAME.Add("17", "UDP - 17");
+            PROTO_NUM_TO_NAME.Add("1", "ICMP - 1");
+
             string tostring = "";
             if (this.description == null)
                 tostring += "No description given\r\n";
             else
                 tostring += this.description + "\r\n";
 
-            tostring += "Source Port: " + this.sourcePort + "to " + "Destination Port: " + this.destinationPort + " (EtherType: " + this.etherType + ".Protocol: " + this.protocol + ")" + "\r\n"; 
+            tostring += "Source Port: " + this.sourcePort + " to " + "Destination Port: " + this.destinationPort + " (EtherType: " + this.etherType + ".Protocol: " + PROTO_NUM_TO_NAME[this.protocol] + ")" + "\r\n"; 
+
             return tostring;
         }
 

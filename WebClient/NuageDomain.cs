@@ -7,10 +7,10 @@ using Newtonsoft.Json;
 
 namespace Nuage.VSDClient
 {
-    public class NuageDomain : NuageServerBaseClass
+    public class NuageDomain : NuageBase, NuageServerBaseClass
     {
         public string children { get; set; }
-        public string parentType { get; set; }
+        public override string parentType { get; set; }
         public string entityScope { get; set; }
         public string lastUpdatedBy { get; set; }
         public string lastUpdatedDate { get; set; }
@@ -30,9 +30,9 @@ namespace Nuage.VSDClient
         public string exportRouteTarget { get; set; }
         public string encryption { get; set; }
         public string owner { get; set; }
-        public string ID { get; set; }
-        public string parentID { get; set; }
-        public string externalID { get; set; }
+        public override string ID { get; set; }
+        public override string parentID { get; set; }
+        public override string externalID { get; set; }
         public string serviceID { get; set; }
         public string customerID { get; set; }
         public string DHCPBehavior { get; set; }

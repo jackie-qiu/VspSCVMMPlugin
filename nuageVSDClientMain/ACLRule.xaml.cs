@@ -102,8 +102,8 @@ namespace Nuage.VSDClient.Main
             {
                 desc = this._description.Text;
             }
-            
-            if(!string.IsNullOrEmpty(this._description.Text))
+
+            if (!string.IsNullOrEmpty(this._priority.Text))
             {
                 priority = this._priority.Text.Replace(" ", "");
             }
@@ -163,9 +163,22 @@ namespace Nuage.VSDClient.Main
             ether_type = (string)this._etherType.SelectedItem;
             try
             {
-                NuageACLRule acl = rest_client.CreateACLRule(acl_id, direction, desc, action, priority, ether_type,
-                                          protocol, src_port, dest_port, "", location_type, location_id,
-                                          network_type, network_id);
+                NuageACLRule acl;
+
+                if (direction.Equals("ingress"))
+                {
+                     acl = rest_client.CreateACLRule(acl_id, direction, desc, action, priority, ether_type,
+                                              protocol, src_port, dest_port, "", location_type, location_id,
+                                              network_type, network_id);
+                }
+                else
+                {
+                    //swap the network and location when direction is egress
+                    acl = rest_client.CreateACLRule(acl_id, direction, desc, action, priority, ether_type,
+                                             protocol, src_port, dest_port, "", network_type, network_id,
+                                             location_type, location_id);
+                }
+
                 parent.Items.Add(acl);
                 this.Close();
             }
