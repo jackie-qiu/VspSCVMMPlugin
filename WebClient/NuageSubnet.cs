@@ -105,15 +105,6 @@ namespace Nuage.VSDClient
             return "/domains/" + domain_id + "/subnets";
         }
 
-        public string get_all_vports(string id)
-        {
-            return "/subnets/" + id + "/vports";
-        }
-
-        public string vm_get_resource(string id)
-        {
-            return "/subnets/" + id + "/vms";
-        }
     }
 
 }

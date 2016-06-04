@@ -42,7 +42,17 @@ namespace Nuage.VSDClient
 
         public override string ToString()
         {
-            return name;
+            string tostring = "";
+            tostring += this.name + "\r\n";
+            tostring += "Status          " + this.status + "\r\n";
+            tostring += "Hypervisor      " + this.hypervisorIP + "\r\n";
+            tostring += "VM UUID         " + this.UUID + "\r\n";
+            if (interfaces != null && interfaces.Count > 0)
+            {
+                tostring += "IP Address      " + this.interfaces.First().IPAddress + "\r\n";
+            }
+
+            return tostring;
         }
 
         public string post_data(Dictionary<string, string> create_params)
@@ -93,6 +103,12 @@ namespace Nuage.VSDClient
         {
             throw new NotImplementedException();
         }
+
+        public string get_all_resources_in_subnet(string subnet_id)
+        {
+            return "/subnets/" + subnet_id + "/vms";
+        }
+
     }
 
 }

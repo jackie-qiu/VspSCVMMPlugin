@@ -17,6 +17,7 @@ namespace Nuage.VSDClient
         private RestProxy restproxy { get; set; }
         private Enterprise enterprise { get; set; }
         private Domain l3domain { get; set; }
+        private VirtualMachine vm { get; set; }
 
         public NuageClient(string username, string password, string organization, Uri baseUrl, string version)
         {
@@ -37,6 +38,7 @@ namespace Nuage.VSDClient
 
             l3domain = new Domain(restproxy);
             enterprise = new Enterprise(restproxy);
+            vm = new VirtualMachine(restproxy);
         }
 
         public Boolean LoginVSD()
@@ -298,6 +300,11 @@ namespace Nuage.VSDClient
         public List<NuageSharedNetworkResource> GetSharedNetworkResourceInEnterprise(string ent_id, string filter)
         {
             return enterprise.GetSharedNetworkResourceInEnterprise(ent_id, filter);
+        }
+
+        public List<NuageVms> GetVirtualMachinesInSubnet(string subnet_id, string filter)
+        {
+            return vm.GetVirtualMachinesInSubnet(subnet_id, filter);
         }
     }
 }

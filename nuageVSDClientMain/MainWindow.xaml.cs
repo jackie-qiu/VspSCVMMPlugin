@@ -688,7 +688,30 @@ namespace Nuage.VSDClient.Main
                 return;
 
             this._propertyGrid.DataContext = this._Subnets.SelectedItem;
+
+            _layoutZoneDocument_IsSelectedChanged(sender, e);
+
+            //Get virtual machines in the subnet
+            try
+            {
+                List<NuageVms> vms = rest_client.GetVirtualMachinesInSubnet(((NuageSubnet)this._Subnets.SelectedItem).ID, null);
+                this._CommonElement.Items.Clear();
+                if (vms != null && vms.Count() > 0)
+                {
+                    foreach (NuageVms item in vms)
+                    {
+                        this._CommonElement.Items.Add(item);
+                    }
+
+                }
+            }
+            catch (NuageException)
+            {
+                string error = string.Format("Get virtualmachine from VSD in subnets {0} failed.", ((NuageSubnet)this._Subnets.SelectedItem).name);
+                MessageBox.Show(error, "Failed");
+            }
         }
+
         private void SubnetAdd()
         {
             if (this._Zones.SelectedIndex == -1)

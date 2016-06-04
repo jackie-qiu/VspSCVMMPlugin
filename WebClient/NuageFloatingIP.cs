@@ -16,7 +16,7 @@ namespace Nuage.VSDClient
         public string lastUpdatedDate { get; set; }
         public string creationDate { get; set; }
         public string address { get; set; }
-        public string assigned { get; set; }
+        public bool assigned { get; set; }
         public string assignedToObjectType { get; set; }
         public string accessControl { get; set; }
         public string owner { get; set; }
@@ -29,7 +29,7 @@ namespace Nuage.VSDClient
         {
             string tostring = "IP           " + address + "\r\n";
             
-            if (this.assigned == null)
+            if (!this.assigned)
                 tostring +=   "Status       Not assigned" + "\r\n";
             else
                 tostring +=   "Status       Assigned" + "\r\n";

@@ -98,6 +98,11 @@ namespace Nuage.VSDClient
             return "/domains/" + domain_Id + "/vports";
         }
 
+        public string get_all_resources_in_subnet(string subnet_id)
+        {
+            return "/subnets/" + subnet_id + "/vports";
+        }
+
         public string get_vports_for_vptag(string vptag_id)
         {
             return "/policygroups/" + vptag_id + "/vports";
