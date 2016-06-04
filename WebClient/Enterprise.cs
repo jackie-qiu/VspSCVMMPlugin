@@ -207,5 +207,14 @@ namespace Nuage.VSDClient
                                                                            macro_group.put_data(macro_group_list));
         }
 
+        public List<NuageSharedNetworkResource> GetSharedNetworkResourceInEnterprise(string ent_id, string filter)
+        {
+            NuageSharedNetworkResource shared = new NuageSharedNetworkResource();
+
+            List<NuageSharedNetworkResource> result = restproxy.CallRestGetAPI<NuageSharedNetworkResource>(shared.get_all_resources_in_enterprise(ent_id), filter);
+
+            return result;
+        }
+
     }
 }

@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:Nuage.VSDClient.Main"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-        Title="Egress Security Policy" Height="300" Width="300" ResizeMode="NoResize" FocusManager.FocusedElement="{Binding ElementName=_nameBox}">
+        Title="Egress Security Policy" Height="300" Width="300" ResizeMode="NoResize" FocusManager.FocusedElement="{Binding ElementName=_nameBox}" KeyDown="Window_KeyDown">
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />

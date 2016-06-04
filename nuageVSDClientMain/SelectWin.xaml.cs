@@ -56,5 +56,11 @@ namespace Nuage.VSDClient.Main
             if (_selectObjects.SelectedIndex != -1)
                 _Select.IsEnabled = true;
         }
+
+        private void _selectWin_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter && _Select.IsEnabled)
+                Select_Click(sender, e);
+        }
     }
 }

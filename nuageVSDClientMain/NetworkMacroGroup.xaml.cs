@@ -68,5 +68,11 @@ namespace Nuage.VSDClient.Main
             else
                 _Create.IsEnabled = true;
         }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter && _Create.IsEnabled)
+                Create_Click(sender, e);
+        }
     }
 }

@@ -357,7 +357,6 @@ namespace Nuage.VSDClient.Main
                     {
                         this._Zones.Items.Add(item);
                     }
-
                 }
 
                 List<NuagePolicyGroup> pg = rest_client.GetPolicyGroupsInDomain(domain.ID);
@@ -368,7 +367,6 @@ namespace Nuage.VSDClient.Main
                     {
                         this._PolicyGroup.Items.Add(item);
                     }
-
                 }
 
                 List<NuageInboundACL> inACL = rest_client.GetL3DomainIngressACLTmpltsInDomain(domain.ID);
@@ -379,7 +377,6 @@ namespace Nuage.VSDClient.Main
                     {
                         this._IngressPolicy.Items.Add(item);
                     }
-
                 }
 
                 List<NuageOutboundACL> outACL = rest_client.GetL3DomainEgressACLTmpltsInDomain(domain.ID);
@@ -390,7 +387,6 @@ namespace Nuage.VSDClient.Main
                     {
                         this._EgressPolicy.Items.Add(item);
                     }
-
                 }
 
             }
@@ -1227,6 +1223,106 @@ namespace Nuage.VSDClient.Main
             this._Policies.Foreground = new SolidColorBrush(Colors.Blue);
 
 
+        }
+
+        private void _floatingIpLayoutAnchroable_IsSelectedChanged(object sender, EventArgs e)
+        {
+            if (this._Domains.SelectedIndex == -1)
+                return;
+
+            try
+            {
+                List<NuageFloatingIP> floatings = rest_client.GetFloatingIPsInDomain(((NuageDomain)this._Domains.SelectedItem).ID);
+                this._floatingIPs.Items.Clear();
+                if (floatings != null && floatings.Count() > 0)
+                {
+                    foreach (NuageFloatingIP item in floatings)
+                    {
+                        this._floatingIPs.Items.Add(item);
+                    }
+                }
+            }
+            catch(NuageException)
+            {
+                string error = String.Format("Get floating ip from domain {0} failed", ((NuageDomain)this._Domains.SelectedItem).name);
+                MessageBox.Show(error, "Error");
+            }
+        }
+
+        private void _FloatingIpAdd_Click(object sender, RoutedEventArgs e)
+        {
+            
+            if (this._Enterprises.SelectedIndex == -1)
+            {
+                MessageBox.Show("Please select the organization.", "Warning");
+                return;
+            }
+
+            if (this._Domains.SelectedIndex == -1)
+            {
+                MessageBox.Show("Please select the domain.", "Warning");
+                return;
+            }
+
+            ListBox selected = new ListBox();
+            List<NuageSharedNetworkResource> shared_networks = null;
+            NuageEnterprise ent = (NuageEnterprise)this._Enterprises.SelectedItem;
+            try
+            {
+                shared_networks = this.rest_client.GetSharedNetworkResourceInEnterprise(ent.ID, null);
+
+            }
+            catch (NuageException)
+            {
+                string error = String.Format("Get shared network resources from  organization {0} failed", ent.name);
+                MessageBox.Show("error", "Failed");
+                return;
+            }
+            SelectWin share_win = new SelectWin(shared_networks, selected, "Shared Network");
+            share_win.Owner = Application.Current.MainWindow;
+            share_win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            share_win.ShowDialog();
+
+            if (selected.HasItems)
+            {
+                selected.SelectedIndex = 0;
+                NuageSharedNetworkResource selected_shared_network = (NuageSharedNetworkResource)selected.SelectedItem;
+
+                try
+                {
+                    NuageFloatingIP floating_ip = this.rest_client.CreateFloatingIP(((NuageDomain)this._Domains.SelectedItem).ID, selected_shared_network.ID);
+                    _floatingIPs.Items.Add(floating_ip);
+                }
+                catch (NuageException)
+                {
+                    string error = String.Format("Claim floating ip from shared network {0} failed.", selected_shared_network.name);
+                    MessageBox.Show("error", "Failed");
+                    return;
+                }
+            }
+
+
+        }
+
+        private void _FloatingIpDel_Click(object sender, RoutedEventArgs e)
+        {
+            if (this._floatingIPs.SelectedIndex == -1)
+            {
+                return;
+            }
+
+            NuageFloatingIP floatIp = (NuageFloatingIP)this._floatingIPs.SelectedItem;
+            try
+            {
+                rest_client.DeleteFloatingIP(floatIp.ID);
+            }
+            catch (NuageException)
+            {
+                MessageBox.Show("Delete floating ip failed.", "Error");
+                return;
+            }
+
+            _floatingIPs.Items.RemoveAt(_floatingIPs.SelectedIndex);
         }
     }
 

@@ -295,5 +295,9 @@ namespace Nuage.VSDClient
             return l3domain.DeleteACLRule(id, direction);
         }
 
+        public List<NuageSharedNetworkResource> GetSharedNetworkResourceInEnterprise(string ent_id, string filter)
+        {
+            return enterprise.GetSharedNetworkResourceInEnterprise(ent_id, filter);
+        }
     }
 }

@@ -124,6 +124,12 @@ namespace Nuage.VSDClient.Main
             if (_vPorts.SelectedIndex != -1)
                 _Select.IsEnabled = true;
         }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter && _Select.IsEnabled)
+                Select_Click(sender, e);
+        }
     }
 
 

@@ -392,6 +392,12 @@ namespace Nuage.VSDClient.Main
         {
             ((Xceed.Wpf.Toolkit.MaskedTextBox)sender).Select(0, 0);
         }
+
+        private void _ACLRuleWin_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+                Create_Click(sender, e);
+        }
         
 
     }

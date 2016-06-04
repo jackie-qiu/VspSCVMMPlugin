@@ -92,6 +92,7 @@
     <Compile Include="NuageRedirectionTarget.cs" />
     <Compile Include="NuageResyncInfo.cs" />
     <Compile Include="NuageServerBaseClass.cs" />
+    <Compile Include="NuageSharedNetworkResource.cs" />
     <Compile Include="NuageSubnet.cs" />
     <Compile Include="NuageVmInterface.cs" />
     <Compile Include="NuageVms.cs" />

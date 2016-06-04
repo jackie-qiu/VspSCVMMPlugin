@@ -53,5 +53,6 @@ namespace Nuage.VSDClient
         bool DeletevPortsFromPolicyGroup(string policy_group_id, string vport_id);
         List<NuagePolicyGroup> GetvPortAssociatePolicyGroups(string vport_id, string filter);
         List<NuageVport> GetVportInDomain(string domain_id, string filter);
+        List<NuageSharedNetworkResource> GetSharedNetworkResourceInEnterprise(string ent_id, string filter);
     }
 }

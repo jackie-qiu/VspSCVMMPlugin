@@ -27,7 +27,14 @@ namespace Nuage.VSDClient
 
         public override string ToString()
         {
-            return address;
+            string tostring = "IP           " + address + "\r\n";
+            
+            if (this.assigned == null)
+                tostring +=   "Status       Not assigned" + "\r\n";
+            else
+                tostring +=   "Status       Assigned" + "\r\n";
+
+            return tostring;
         }
 
         public string post_data(Dictionary<string, string> create_params)
