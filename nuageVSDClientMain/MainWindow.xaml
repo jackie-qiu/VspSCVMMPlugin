@@ -12,6 +12,11 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="5" HorizontalAlignment="Center">
+            <Button Height="23" Name="_Design" Width="75"  Margin="0" Click="Design_Click" Foreground="Blue" Background="Transparent" BorderThickness="0" Content="_Design"/>
+            <Button Height="23" Name="_Policies" Width="75"  Margin="10,0,0,0" Click="Policies_Click" Foreground="Gray" Background="Transparent" BorderThickness="0" Content="_Policies" />
+        </StackPanel>
+        
         <xcad:DockingManager Grid.Row="2"
                            AllowMixedOrientation="True"
                            BorderBrush="Gray"
@@ -68,77 +73,27 @@
                         </xcad:LayoutAnchorable>
                     </xcad:LayoutAnchorablePane>
                     <xcad:LayoutDocumentPaneGroup Orientation="Horizontal">
-                        <xcad:LayoutDocumentPane DockWidth="50">
-                            <xcad:LayoutDocument x:Name="_layoutZones" ContentId="zone" Title="Zone" CanClose="False" CanFloat="False" IsSelected="True" 
-                                                 IsSelectedChanged="_layoutZoneDocument_IsSelectedChanged">
-                                <ListBox BorderThickness="0" Name="_Zones" ItemContainerStyle="{StaticResource ListBoxStyle}" AllowDrop="True" 
-                                         SelectionChanged="_Zones_SelectionChanged" MouseDown="_Zones_MouseDown">
-                                    <ListBox.ContextMenu>
-                                        <ContextMenu>
-                                            <MenuItem Header="Add"    Click="_ZoneAdd_Click" />
-                                            <MenuItem Header="Delete" Click="_ZoneDel_Click"/>
-                                            <MenuItem Header="Update" Click="_ZoneUpdate_Click" IsEnabled="False"/>
-                                        </ContextMenu>
-                                    </ListBox.ContextMenu>
-                                </ListBox>
-                            </xcad:LayoutDocument>
-                            <xcad:LayoutDocument x:Name="_layoutPolicyGroup" ContentId="policy group" Title="Policy Group" CanClose="False" CanFloat="False" IsSelected="False"
-                                                 IsSelectedChanged="_layoutPolicyGroup_IsSelectedChanged">
-                                <ListBox BorderThickness="0" Name="_PolicyGroup" ItemContainerStyle="{StaticResource ListBoxStyle}" AllowDrop="True" 
-                                         SelectionChanged="_PolicyGroup_SelectionChanged" MouseDown="_PolicyGroup_MouseDown">
-                                    <ListBox.ContextMenu>
-                                        <ContextMenu>
-                                            <MenuItem Header="Add"    Click="_PolicyGroupAdd_Click" />
-                                            <MenuItem Header="Delete" Click="_PolicyGroupDel_Click"/>
-                                            <MenuItem Header="Update" Click="_PolicyGroupUpdate_Click" IsEnabled="False"/>
-                                        </ContextMenu>
-                                    </ListBox.ContextMenu>
-                                </ListBox>
-                            </xcad:LayoutDocument>
-                            <xcad:LayoutDocument x:Name="_layoutIngressPolicy" ContentId="ingress policy" Title="Ingress Policy" CanClose="False" CanFloat="False"
-                                                 IsSelected="False" IsSelectedChanged="_layoutIngressPolicy_IsSelectedChanged">
-                                <ListBox BorderThickness="0" Name="_IngressPolicy" ItemContainerStyle="{StaticResource ListBoxStyle}" AllowDrop="True"
-                                         SelectionChanged="_IngressPolicy_SelectionChanged" MouseDown="_IngressPolicy_MouseDown">
-                                    <ListBox.ContextMenu>
-                                        <ContextMenu>
-                                            <MenuItem Header="Add"    Click="_IngressPolicyAdd_Click" />
-                                            <MenuItem Header="Delete" Click="_IngressPolicyDel_Click"/>
-                                            <MenuItem Header="Update" Click="_IngressPolicyUpdate_Click" IsEnabled="False"/>
-                                        </ContextMenu>
-                                    </ListBox.ContextMenu>
-                                </ListBox>
-                            </xcad:LayoutDocument>
-                            <xcad:LayoutDocument x:Name="_layoutEgressPolicy" ContentId="egress policy" Title="Egress Policy" CanClose="False" CanFloat="False"
-                                                 IsSelected="False" IsSelectedChanged="_layoutEgressPolicy_IsSelectedChanged">
-                                <ListBox BorderThickness="0" Name="_EgressPolicy" ItemContainerStyle="{StaticResource ListBoxStyle}" AllowDrop="True"
-                                         SelectionChanged="_EgressPolicy_SelectionChanged" MouseDown="_EgressPolicy_MouseDown">
-                                    <ListBox.ContextMenu>
-                                        <ContextMenu>
-                                            <MenuItem Header="Add"    Click="_EgressPolicyAdd_Click" />
-                                            <MenuItem Header="Delete" Click="_EgressPolicyDel_Click"/>
-                                            <MenuItem Header="Update" Click="_EgressPolicyUpdate_Click" IsEnabled="False"/>
-                                        </ContextMenu>
-                                    </ListBox.ContextMenu>
-                                </ListBox>
-                            </xcad:LayoutDocument>
-                        </xcad:LayoutDocumentPane>
-                        <xcad:LayoutDocumentPane x:Name="_layoutCommonElementPane">
-                            <xcad:LayoutDocument x:Name="_layoutCommonElement" ContentId="subnet" Title="Subnet" CanClose="False" CanFloat="False">
-                                <ListBox BorderThickness="0" Name="_CommonElement" ItemContainerStyle="{StaticResource ListBoxStyle}" AllowDrop="True"
-                                         SelectionChanged="_CommonElement_SelectionChanged" MouseDown="_CommonElement_MouseDown">
-                                    <ListBox.ContextMenu>
-                                        <ContextMenu>
-                                            <MenuItem Header="Add"    Click="_CommonElementAdd_Click" />
-                                            <MenuItem Header="Delete" Click="_CommonElementDel_Click"/>
-                                            <MenuItem Header="Update" Click="_CommonElementUpdate_Click" IsEnabled="False"/>
-                                        </ContextMenu>
-                                    </ListBox.ContextMenu>
-                                </ListBox>
-                            </xcad:LayoutDocument>
-                        </xcad:LayoutDocumentPane>
+                        <xcad:LayoutDocumentPaneGroup Orientation="Vertical" x:Name="_designPaneGroup">
+                        </xcad:LayoutDocumentPaneGroup>
+                        <xcad:LayoutDocumentPaneGroup Orientation="Vertical">
+                            <xcad:LayoutDocumentPane x:Name="_layoutCommonElementPane">
+                                <xcad:LayoutDocument x:Name="_layoutCommonElement" ContentId="virtualmachine" Title="Virtual Machine" CanClose="False" CanFloat="False">
+                                    <ListBox BorderThickness="0" Name="_CommonElement" ItemContainerStyle="{StaticResource ListBoxStyle}" AllowDrop="True"
+                                             SelectionChanged="_CommonElement_SelectionChanged" MouseDown="_CommonElement_MouseDown">
+                                        <ListBox.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Header="Add"    Click="_CommonElementAdd_Click" />
+                                                <MenuItem Header="Delete" Click="_CommonElementDel_Click"/>
+                                                <MenuItem Header="Update" Click="_CommonElementUpdate_Click" IsEnabled="False"/>
+                                            </ContextMenu>
+                                        </ListBox.ContextMenu>
+                                    </ListBox>
+                                </xcad:LayoutDocument>
+                            </xcad:LayoutDocumentPane>
+                        </xcad:LayoutDocumentPaneGroup>
                     </xcad:LayoutDocumentPaneGroup>
                     <xcad:LayoutAnchorablePaneGroup DockWidth="240">
-                        <xcad:LayoutAnchorablePane>
+                        <xcad:LayoutAnchorablePane x:Name="_propertyLayoutAnchorablePane">
                             <xcad:LayoutAnchorable x:Name="_propertyLayoutAnchroable" ContentId="properties" Title="Properties" CanClose="False" CanHide="False" CanFloat="False" AutoHideWidth="240">
                                 <xctk:PropertyGrid x:Name="_propertyGrid" NameColumnWidth="110" SelectedObject="{Binding Mode=OneWay}" PreparePropertyItem="OnPreparePropertyItem">
                                     <xctk:PropertyGrid.PropertyContainerStyle>
@@ -149,7 +104,7 @@
                                     </xctk:PropertyGrid.PropertyContainerStyle>
                                 </xctk:PropertyGrid>
                             </xcad:LayoutAnchorable>
-                            <xcad:LayoutAnchorable x:Name="_virtualMachineLayoutAnchroable" ContentId="virtualmachines" Title="Virtual Machines" CanClose="False" CanHide="False" CanFloat="False" AutoHideWidth="240">
+                            <xcad:LayoutAnchorable x:Name="_floatingIpLayoutAnchroable" ContentId="floatingip" Title="Floating IP" CanClose="False" CanHide="False" CanFloat="False" AutoHideWidth="240">
                             </xcad:LayoutAnchorable>
                         </xcad:LayoutAnchorablePane>
                     </xcad:LayoutAnchorablePaneGroup>
