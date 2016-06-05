@@ -88,42 +88,6 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero, Version=3.0.16174.17450, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xceed.Wpf.AvalonDock.Themes.Aero.3.0.16174.17450\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro, Version=3.0.16174.17450, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xceed.Wpf.AvalonDock.Themes.Metro.3.0.16174.17450\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock.Themes.MetroAccent, Version=3.0.16174.17450, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xceed.Wpf.AvalonDock.Themes.MetroAccent.3.0.16174.17450\lib\net40\Xceed.Wpf.AvalonDock.Themes.MetroAccent.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Office2007, Version=3.0.16174.17450, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xceed.Wpf.AvalonDock.Themes.Office2007.3.0.16174.17450\lib\net40\Xceed.Wpf.AvalonDock.Themes.Office2007.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010, Version=3.0.16174.17450, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xceed.Wpf.AvalonDock.Themes.VS2010.3.0.16174.17450\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Xceed.Wpf.Themes, Version=3.0.16174.17450, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xceed.Wpf.Themes.3.0.16174.17450\lib\net40\Xceed.Wpf.Themes.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Xceed.Wpf.Themes.Metro, Version=3.0.16174.17450, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xceed.Wpf.Themes.Metro.3.0.16174.17450\lib\net40\Xceed.Wpf.Themes.Metro.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Xceed.Wpf.Themes.Office2007, Version=3.0.16174.17450, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xceed.Wpf.Themes.Office2007.3.0.16174.17450\lib\net40\Xceed.Wpf.Themes.Office2007.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Xceed.Wpf.Toolkit, Version=3.0.16174.17450, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xceed.Wpf.Toolkit.3.0.16174.17450\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="VspMetaData.cs" />
@@ -170,6 +134,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\nuageVSDClientMain\nuageVSDClientMain.csproj">
+      <Project>{f5ecb2aa-e4e9-4cc3-957b-7f8f32e2c8c4}</Project>
+      <Name>nuageVSDClientMain</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WebClient\nuageVSDClient.csproj">
       <Project>{5c93d445-f17e-448d-b73b-badb1263f7b3}</Project>
       <Name>nuageVSDClient</Name>

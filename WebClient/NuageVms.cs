@@ -61,7 +61,11 @@ namespace Nuage.VSDClient
             List<NuageVmInterface> vmInterfaces = new List<NuageVmInterface>();
 
             intf.MAC = create_params["mac"];
-            intf.VPortID = create_params["vport_id"];
+            if(create_params.ContainsKey("vport_id") && !create_params.ContainsKey("attached_network"))
+                intf.VPortID = create_params["vport_id"];
+            else
+                intf.attachedNetworkID = create_params["attached_network"];
+
             intf.externalID = create_params["external_id"];
 
             if (create_params.ContainsKey("ip"))
@@ -97,6 +101,11 @@ namespace Nuage.VSDClient
         public string get_all_resources()
         {
             return "/vms";
+        }
+
+        public string get_resources(string id)
+        {
+            return "/vms/" + id;
         }
 
         public string get_all_resources_in_parent(string parent_id)

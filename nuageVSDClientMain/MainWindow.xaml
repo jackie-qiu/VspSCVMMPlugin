@@ -5,6 +5,13 @@
                  xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
                  xmlns:s="clr-namespace:System;assembly=mscorlib"
                  Title="Nuage VCS Networking">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources.xaml"></ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid Margin="5" >
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -34,7 +41,7 @@
                     <xcad:LayoutAnchorablePane DockWidth="200">
                         <xcad:LayoutAnchorable x:Name="_layoutDomains" ContentId="domain" Title="Domain" CanHide="False" CanClose="False" CanAutoHide="True"
                                                CanFloat="False" AutoHideWidth="240" IsSelectedChanged="_layoutZoneDocument_IsSelectedChanged">
-                            <ListBox BorderThickness="0" Name="_Domains" ItemContainerStyle="{StaticResource ListBoxStyleBold}" 
+                            <ListBox BorderThickness="0" Name="_Domains" ItemContainerStyle="{StaticResource  ListBoxStyleBold}" 
                                      SelectionChanged="_Domains_SelectionChanged">
                                 <ListBox.ContextMenu>
                                     <ContextMenu>
@@ -95,7 +102,7 @@
                     <xcad:LayoutAnchorablePaneGroup DockWidth="240">
                         <xcad:LayoutAnchorablePane x:Name="_propertyLayoutAnchorablePane">
                             <xcad:LayoutAnchorable x:Name="_propertyLayoutAnchroable" ContentId="properties" Title="Properties" CanClose="False" CanHide="False" CanFloat="False" AutoHideWidth="240">
-                                <xctk:PropertyGrid x:Name="_propertyGrid" NameColumnWidth="110" SelectedObject="{Binding Mode=OneWay}" PreparePropertyItem="OnPreparePropertyItem">
+                                <xctk:PropertyGrid x:Name="_propertyGrid" NameColumnWidth="110" SelectedObject="{Binding Mode=OneWay}" PreparePropertyItem="OnPreparePropertyItem" IsReadOnly="True">
                                     <xctk:PropertyGrid.PropertyContainerStyle>
                                         <!--This style will be set to all PropertyItem instances (direct and expanded) in the property grid. -->
                                         <Style TargetType="{x:Type xctk:PropertyItemBase}">

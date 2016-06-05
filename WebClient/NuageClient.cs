@@ -211,11 +211,6 @@ namespace Nuage.VSDClient
             return l3domain.GetVportInPolicyGroup(policy_group_id, null);
         }
 
-        public List<NuageVport> GetVportInDomain(string domain_id, string filter)
-        {
-            return l3domain.GetVportInDomain(domain_id, filter);
-        }
-
         public bool AddvPortsToPolicyGroup(string policy_group_id, List<string> vport_id)
         {
             return l3domain.AddvPortsToPolicyGroup(policy_group_id, vport_id);
@@ -305,6 +300,42 @@ namespace Nuage.VSDClient
         public List<NuageVms> GetVirtualMachinesInSubnet(string subnet_id, string filter)
         {
             return vm.GetVirtualMachinesInSubnet(subnet_id, filter);
+        }
+
+        public NuageVms CreateVirtualMachine(string name, string uuid, string external_id, string vport_id, string ip, string mac)
+        {
+            return vm.CreateVirtualMachine(name, uuid, external_id, vport_id, ip, mac);
+
+        }
+
+        public bool DeleteVirtualMachine(string id)
+        {
+            return vm.DeleteVirtualMachine(id);
+        }
+
+        public NuageVms GetVirtualMachine(string vm_id, string filter)
+        {
+            return vm.GetVirtualMachine(vm_id, filter);
+        }
+
+        public NuageVport GetvPort(string vport_id, string filter)
+        {
+            return vm.GetvPort(vport_id, filter);
+        }
+
+        public List<NuageVport> GetVportInDomain(string domain_id, string filter)
+        {
+            return vm.GetVportInDomain(domain_id, filter);
+        }
+
+        public NuageVport CreatevPort(string name, string description, string external_id, string subnet_id)
+        {
+            return vm.CreatevPort(name, description, external_id, subnet_id);
+        }
+
+        public bool DeletevPort(string id)
+        {
+            return vm.DeletevPort(id);
         }
     }
 }

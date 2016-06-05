@@ -286,15 +286,6 @@ namespace Nuage.VSDClient
             return result;
         }
 
-        public List<NuageVport> GetVportInDomain(string domain_id, string filter)
-        {
-            NuageVport vport = new NuageVport();
-
-            List<NuageVport> result = restproxy.CallRestGetAPI<NuageVport>(vport.get_all_resources_in_domain(domain_id), filter);
-
-            return result;
-        }
-
         public List<NuagePolicyGroup> GetvPortAssociatePolicyGroups(string vport_id, string filter)
         {
             NuagePolicyGroup pg = new NuagePolicyGroup();

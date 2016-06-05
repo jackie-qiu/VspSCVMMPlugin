@@ -19,6 +19,12 @@ using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 using Xceed.Wpf.Toolkit.PropertyGrid;
 using Nuage.VSDClient;
 
+using Microsoft.SystemCenter.VirtualMachineManager;
+using Microsoft.SystemCenter.VirtualMachineManager.Cmdlets;
+using Microsoft.SystemCenter.VirtualMachineManager.UIAddIns.PowerShell;
+using Microsoft.SystemCenter.VirtualMachineManager.UIAddIns.ContextTypes;
+using Microsoft.SystemCenter.VirtualMachineManager.Remoting;
+
 namespace Nuage.VSDClient.Main
 {
     /// <summary>
@@ -26,6 +32,7 @@ namespace Nuage.VSDClient.Main
     /// </summary>
     public partial class MainWindow : Window
     {
+        private PowerShellContext psConext;
         INuageClient rest_client;
         List<NuageEnterprise> enterprises;
         LayoutDocumentPane _zone_panel;
@@ -44,13 +51,27 @@ namespace Nuage.VSDClient.Main
 
         public MainWindow()
         {
+            InitializeComponent(); 
+            this.Loaded += new RoutedEventHandler(OnLoaded);
+        }
+
+        public MainWindow(PowerShellContext psConext)
+        {
             InitializeComponent();
             this.Loaded += new RoutedEventHandler(OnLoaded);
+            this.psConext = psConext;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs args)
         {
-
+            try
+            {
+                Style lisboxStyle = FindResource("ListBoxStyle") as Style;
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("FindResource throw exception");
+            }
             try
             {
                 rest_client = new NuageClient("csproot", "csproot", "csp", new Uri("https://192.168.239.12:8443/"), "3.2");
@@ -73,112 +94,133 @@ namespace Nuage.VSDClient.Main
 
         private void InitZonePanel()
         {
-            _zone_panel = new LayoutDocumentPane { DockWidth = new GridLength(50) };
-            _layoutZones = new LayoutDocument { ContentId = "zone", Title = "Zone", CanClose = false, CanFloat = false, IsSelected = true };
-            _layoutZones.IsSelectedChanged += new EventHandler(_layoutZoneDocument_IsSelectedChanged);
-            _Zones = new ListBox { BorderThickness = new Thickness(0), ItemContainerStyle = App.Current.Resources["ListBoxStyle"] as Style, AllowDrop = true };
-            _Zones.SelectionChanged += new SelectionChangedEventHandler(_Zones_SelectionChanged);
-            _Zones.MouseDown += new MouseButtonEventHandler(_Zones_MouseDown);
-            ContextMenu context_menu = new ContextMenu { };
-            MenuItem add_item = new MenuItem { Header = "Add" };
-            add_item.Click += _ZoneAdd_Click;
-            context_menu.Items.Add(add_item);
-            MenuItem del_item = new MenuItem { Header = "Delete" };
-            del_item.Click += _ZoneDel_Click;
-            context_menu.Items.Add(del_item);
-            MenuItem update_item = new MenuItem { Header = "Update", IsEnabled = false };
-            update_item.Click += _ZoneUpdate_Click;
-            context_menu.Items.Add(update_item);
-            _Zones.ContextMenu = context_menu;
-            _layoutZones.Content = _Zones;
-            _zone_panel.Children.Add(_layoutZones);
+            try
+            {
+                _zone_panel = new LayoutDocumentPane { DockWidth = new GridLength(50) };
+                _layoutZones = new LayoutDocument { ContentId = "zone", Title = "Zone", CanClose = false, CanFloat = false, IsSelected = true };
+                _layoutZones.IsSelectedChanged += new EventHandler(_layoutZoneDocument_IsSelectedChanged);
+                _Zones = new ListBox { BorderThickness = new Thickness(0), ItemContainerStyle = FindResource("ListBoxStyle") as Style, AllowDrop = true };
+                _Zones.SelectionChanged += new SelectionChangedEventHandler(_Zones_SelectionChanged);
+                _Zones.MouseDown += new MouseButtonEventHandler(_Zones_MouseDown);
+                ContextMenu context_menu = new ContextMenu { };
+                MenuItem add_item = new MenuItem { Header = "Add" };
+                add_item.Click += _ZoneAdd_Click;
+                context_menu.Items.Add(add_item);
+                MenuItem del_item = new MenuItem { Header = "Delete" };
+                del_item.Click += _ZoneDel_Click;
+                context_menu.Items.Add(del_item);
+                MenuItem update_item = new MenuItem { Header = "Update", IsEnabled = false };
+                update_item.Click += _ZoneUpdate_Click;
+                context_menu.Items.Add(update_item);
+                _Zones.ContextMenu = context_menu;
+                _layoutZones.Content = _Zones;
+                _zone_panel.Children.Add(_layoutZones);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void InitSubnetPanel()
         {
-            _subnet_panel = new LayoutDocumentPane { DockWidth = new GridLength(50) };
-            _LayoutSubnet = new LayoutDocument { ContentId = "subnets", Title = "Subnet", CanClose = false, CanFloat = false, IsSelected = false };
-            _Subnets = new ListBox { BorderThickness = new Thickness(0), ItemContainerStyle = App.Current.Resources["ListBoxStyle"] as Style, AllowDrop = true };
-            _Subnets.SelectionChanged += new SelectionChangedEventHandler(_Subnet_SelectionChanged);
-            _Subnets.MouseDown += new MouseButtonEventHandler(_Subnet_MouseDown);
-            ContextMenu context_menu = new ContextMenu { };
-            MenuItem add_item = new MenuItem { Header = "Add" };
-            add_item.Click += _SubnetAdd_Click;
-            context_menu.Items.Add(add_item);
-            MenuItem del_item = new MenuItem { Header = "Delete" };
-            del_item.Click += _SubnetDel_Click;
-            context_menu.Items.Add(del_item);
-            MenuItem update_item = new MenuItem { Header = "Update", IsEnabled = false };
-            update_item.Click += _SubnetUpdate_Click;
-            context_menu.Items.Add(update_item);
-            _Subnets.ContextMenu = context_menu;
-            _LayoutSubnet.Content = _Subnets;
-            _subnet_panel.Children.Add(_LayoutSubnet);
+            try
+            {
+                _subnet_panel = new LayoutDocumentPane { DockWidth = new GridLength(50) };
+                _LayoutSubnet = new LayoutDocument { ContentId = "subnets", Title = "Subnet", CanClose = false, CanFloat = false, IsSelected = false };
+                _Subnets = new ListBox { BorderThickness = new Thickness(0), ItemContainerStyle = FindResource("ListBoxStyle") as Style, AllowDrop = true };
+                _Subnets.SelectionChanged += new SelectionChangedEventHandler(_Subnet_SelectionChanged);
+                _Subnets.MouseDown += new MouseButtonEventHandler(_Subnet_MouseDown);
+                ContextMenu context_menu = new ContextMenu { };
+                MenuItem add_item = new MenuItem { Header = "Add" };
+                add_item.Click += _SubnetAdd_Click;
+                context_menu.Items.Add(add_item);
+                MenuItem del_item = new MenuItem { Header = "Delete" };
+                del_item.Click += _SubnetDel_Click;
+                context_menu.Items.Add(del_item);
+                MenuItem update_item = new MenuItem { Header = "Update", IsEnabled = false };
+                update_item.Click += _SubnetUpdate_Click;
+                context_menu.Items.Add(update_item);
+                _Subnets.ContextMenu = context_menu;
+                _LayoutSubnet.Content = _Subnets;
+                _subnet_panel.Children.Add(_LayoutSubnet);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void InitPolicyPanel()
         {
-            _policy_panel = new LayoutDocumentPane { DockWidth = new GridLength(50) };
+            try
+            {
+                _policy_panel = new LayoutDocumentPane { DockWidth = new GridLength(50) };
 
-            /*policy group layout document*/
-            _layoutPolicyGroup = new LayoutDocument { ContentId = "policy group", Title = "Policy Group", CanClose = false, CanFloat = false, IsSelected = true };
-            _layoutPolicyGroup.IsSelectedChanged += new EventHandler(_layoutPolicyGroup_IsSelectedChanged);
-            _PolicyGroup = new ListBox { BorderThickness = new Thickness(0), ItemContainerStyle = App.Current.Resources["ListBoxStyle"] as Style, AllowDrop = true };
-            _PolicyGroup.SelectionChanged += new SelectionChangedEventHandler(_PolicyGroup_SelectionChanged);
-            _PolicyGroup.MouseDown += new MouseButtonEventHandler(_PolicyGroup_MouseDown);
-            ContextMenu context_menu = new ContextMenu { };
-            MenuItem add_item = new MenuItem { Header = "Add" };
-            add_item.Click += _PolicyGroupAdd_Click;
-            context_menu.Items.Add(add_item);
-            MenuItem del_item = new MenuItem { Header = "Delete" };
-            del_item.Click += _PolicyGroupDel_Click;
-            context_menu.Items.Add(del_item);
-            MenuItem update_item = new MenuItem { Header = "Update", IsEnabled = false };
-            update_item.Click += _PolicyGroupUpdate_Click;
-            context_menu.Items.Add(update_item);
-            _PolicyGroup.ContextMenu = context_menu;
-            _layoutPolicyGroup.Content = _PolicyGroup;
-            _policy_panel.Children.Add(_layoutPolicyGroup);
+                /*policy group layout document*/
+                _layoutPolicyGroup = new LayoutDocument { ContentId = "policy group", Title = "Policy Group", CanClose = false, CanFloat = false, IsSelected = true };
+                _layoutPolicyGroup.IsSelectedChanged += new EventHandler(_layoutPolicyGroup_IsSelectedChanged);
+                _PolicyGroup = new ListBox { BorderThickness = new Thickness(0), ItemContainerStyle = FindResource("ListBoxStyle") as Style, AllowDrop = true };
+                _PolicyGroup.SelectionChanged += new SelectionChangedEventHandler(_PolicyGroup_SelectionChanged);
+                _PolicyGroup.MouseDown += new MouseButtonEventHandler(_PolicyGroup_MouseDown);
+                ContextMenu context_menu = new ContextMenu { };
+                MenuItem add_item = new MenuItem { Header = "Add" };
+                add_item.Click += _PolicyGroupAdd_Click;
+                context_menu.Items.Add(add_item);
+                MenuItem del_item = new MenuItem { Header = "Delete" };
+                del_item.Click += _PolicyGroupDel_Click;
+                context_menu.Items.Add(del_item);
+                MenuItem update_item = new MenuItem { Header = "Update", IsEnabled = false };
+                update_item.Click += _PolicyGroupUpdate_Click;
+                context_menu.Items.Add(update_item);
+                _PolicyGroup.ContextMenu = context_menu;
+                _layoutPolicyGroup.Content = _PolicyGroup;
+                _policy_panel.Children.Add(_layoutPolicyGroup);
 
-            /*ingress policy layout document*/
-            _layoutIngressPolicy = new LayoutDocument { ContentId = "ingress policy", Title = "Ingress Policy", CanClose = false, CanFloat = false, IsSelected = false };
-            _layoutIngressPolicy.IsSelectedChanged += new EventHandler(_layoutIngressPolicy_IsSelectedChanged);
-            _IngressPolicy = new ListBox { BorderThickness = new Thickness(0), ItemContainerStyle = App.Current.Resources["ListBoxStyle"] as Style, AllowDrop = true };
-            _IngressPolicy.SelectionChanged += new SelectionChangedEventHandler(_IngressPolicy_SelectionChanged);
-            _IngressPolicy.MouseDown += new MouseButtonEventHandler(_IngressPolicy_MouseDown);
-            context_menu = new ContextMenu { };
-            add_item = new MenuItem { Header = "Add" };
-            add_item.Click += _IngressPolicyAdd_Click;
-            context_menu.Items.Add(add_item);
-            del_item = new MenuItem { Header = "Delete" };
-            del_item.Click += _IngressPolicyDel_Click;
-            context_menu.Items.Add(del_item);
-            update_item = new MenuItem { Header = "Update", IsEnabled = false };
-            update_item.Click += _IngressPolicyUpdate_Click;
-            context_menu.Items.Add(update_item);
-            _IngressPolicy.ContextMenu = context_menu;
-            _layoutIngressPolicy.Content = _IngressPolicy;
-            _policy_panel.Children.Add(_layoutIngressPolicy);
+                /*ingress policy layout document*/
+                _layoutIngressPolicy = new LayoutDocument { ContentId = "ingress policy", Title = "Ingress Policy", CanClose = false, CanFloat = false, IsSelected = false };
+                _layoutIngressPolicy.IsSelectedChanged += new EventHandler(_layoutIngressPolicy_IsSelectedChanged);
+                _IngressPolicy = new ListBox { BorderThickness = new Thickness(0), ItemContainerStyle = FindResource("ListBoxStyle") as Style, AllowDrop = true };
+                _IngressPolicy.SelectionChanged += new SelectionChangedEventHandler(_IngressPolicy_SelectionChanged);
+                _IngressPolicy.MouseDown += new MouseButtonEventHandler(_IngressPolicy_MouseDown);
+                context_menu = new ContextMenu { };
+                add_item = new MenuItem { Header = "Add" };
+                add_item.Click += _IngressPolicyAdd_Click;
+                context_menu.Items.Add(add_item);
+                del_item = new MenuItem { Header = "Delete" };
+                del_item.Click += _IngressPolicyDel_Click;
+                context_menu.Items.Add(del_item);
+                update_item = new MenuItem { Header = "Update", IsEnabled = false };
+                update_item.Click += _IngressPolicyUpdate_Click;
+                context_menu.Items.Add(update_item);
+                _IngressPolicy.ContextMenu = context_menu;
+                _layoutIngressPolicy.Content = _IngressPolicy;
+                _policy_panel.Children.Add(_layoutIngressPolicy);
 
-            /*egress policy layout document*/
-            _layoutEgressPolicy = new LayoutDocument { ContentId = "egress policy", Title = "Egress Policy", CanClose = false, CanFloat = false, IsSelected = false };
-            _layoutEgressPolicy.IsSelectedChanged += new EventHandler(_layoutEgressPolicy_IsSelectedChanged);
-            _EgressPolicy = new ListBox { BorderThickness = new Thickness(0), ItemContainerStyle = App.Current.Resources["ListBoxStyle"] as Style, AllowDrop = true };
-            _EgressPolicy.SelectionChanged += new SelectionChangedEventHandler(_EgressPolicy_SelectionChanged);
-            _EgressPolicy.MouseDown += new MouseButtonEventHandler(_EgressPolicy_MouseDown);
-            context_menu = new ContextMenu { };
-            add_item = new MenuItem { Header = "Add" };
-            add_item.Click += _EgressPolicyAdd_Click;
-            context_menu.Items.Add(add_item);
-            del_item = new MenuItem { Header = "Delete" };
-            del_item.Click += _EgressPolicyDel_Click;
-            context_menu.Items.Add(del_item);
-            update_item = new MenuItem { Header = "Update", IsEnabled = false };
-            update_item.Click += _EgressPolicyUpdate_Click;
-            context_menu.Items.Add(update_item);
-            _EgressPolicy.ContextMenu = context_menu;
-            _layoutEgressPolicy.Content = _EgressPolicy;
-            _policy_panel.Children.Add(_layoutEgressPolicy);
+                /*egress policy layout document*/
+                _layoutEgressPolicy = new LayoutDocument { ContentId = "egress policy", Title = "Egress Policy", CanClose = false, CanFloat = false, IsSelected = false };
+                _layoutEgressPolicy.IsSelectedChanged += new EventHandler(_layoutEgressPolicy_IsSelectedChanged);
+                _EgressPolicy = new ListBox { BorderThickness = new Thickness(0), ItemContainerStyle = FindResource("ListBoxStyle") as Style, AllowDrop = true };
+                _EgressPolicy.SelectionChanged += new SelectionChangedEventHandler(_EgressPolicy_SelectionChanged);
+                _EgressPolicy.MouseDown += new MouseButtonEventHandler(_EgressPolicy_MouseDown);
+                context_menu = new ContextMenu { };
+                add_item = new MenuItem { Header = "Add" };
+                add_item.Click += _EgressPolicyAdd_Click;
+                context_menu.Items.Add(add_item);
+                del_item = new MenuItem { Header = "Delete" };
+                del_item.Click += _EgressPolicyDel_Click;
+                context_menu.Items.Add(del_item);
+                update_item = new MenuItem { Header = "Update", IsEnabled = false };
+                update_item.Click += _EgressPolicyUpdate_Click;
+                context_menu.Items.Add(update_item);
+                _EgressPolicy.ContextMenu = context_menu;
+                _layoutEgressPolicy.Content = _EgressPolicy;
+                _policy_panel.Children.Add(_layoutEgressPolicy);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void InitWindowsElement()
@@ -198,7 +240,7 @@ namespace Nuage.VSDClient.Main
         private void _EnterpriseAdd_Click(object sender, RoutedEventArgs e)
         {
             Organization org = new Organization(this.rest_client, this._Enterprises);
-            org.Owner = Application.Current.MainWindow;
+            org.Owner = this;
             org.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             org.Show();
         }
@@ -309,7 +351,7 @@ namespace Nuage.VSDClient.Main
 
             NuageEnterprise ent = (NuageEnterprise)this._Enterprises.SelectedItem;
             Domain domain = new Domain(this.rest_client, ent.ID, this._Domains);
-            domain.Owner = Application.Current.MainWindow;
+            domain.Owner = this;
             domain.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             domain.Show();
         }
@@ -408,7 +450,7 @@ namespace Nuage.VSDClient.Main
 
             NuageEnterprise ent = (NuageEnterprise)this._Enterprises.SelectedItem;
             NetworkMacro macro = new NetworkMacro(this.rest_client, ent.ID, this._NetworkMacros);
-            macro.Owner = Application.Current.MainWindow;
+            macro.Owner = this;
             macro.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             macro.Show();
         }
@@ -455,7 +497,7 @@ namespace Nuage.VSDClient.Main
 
             NuageEnterprise ent = (NuageEnterprise)this._Enterprises.SelectedItem;
             NetworkMacroGroup macro_group = new NetworkMacroGroup(this.rest_client, ent.ID, this._NetworkMacroGroups);
-            macro_group.Owner = Application.Current.MainWindow;
+            macro_group.Owner = this;
             macro_group.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             macro_group.Show();
         }
@@ -518,7 +560,7 @@ namespace Nuage.VSDClient.Main
                 return;
             }
             SelectWin macro_win = new SelectWin(macros_candidate, selected, "Network Macro");
-            macro_win.Owner = Application.Current.MainWindow;
+            macro_win.Owner = this;
             macro_win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             macro_win.ShowDialog();
 
@@ -609,7 +651,7 @@ namespace Nuage.VSDClient.Main
 
             NuageDomain domain = (NuageDomain)this._Domains.SelectedItem;
             Zone zone = new Zone(this.rest_client, domain.ID, this._Zones);
-            zone.Owner = Application.Current.MainWindow;
+            zone.Owner = this;
             zone.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             zone.Show();
         }
@@ -723,7 +765,7 @@ namespace Nuage.VSDClient.Main
             NuageZone zone = (NuageZone)this._Zones.SelectedItem;
 
             Subnet subnet = new Subnet(rest_client, zone.ID, this._Subnets);
-            subnet.Owner = Application.Current.MainWindow;
+            subnet.Owner = this;
             subnet.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             subnet.Show();
         }
@@ -766,7 +808,7 @@ namespace Nuage.VSDClient.Main
             NuagePolicyGroup pg = (NuagePolicyGroup)this._PolicyGroup.SelectedItem;
 
             PolicyGroupVports pg_vport = new PolicyGroupVports(rest_client, domain.ID, pg.ID, this._CommonElement);
-            pg_vport.Owner = Application.Current.MainWindow;
+            pg_vport.Owner = this;
             pg_vport.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             pg_vport.Show();
         }
@@ -822,7 +864,7 @@ namespace Nuage.VSDClient.Main
             }
 
             ACLRule acl_rule = new ACLRule(direction, rest_client, domain.parentID, domain.ID, acl_id, this._CommonElement);
-            acl_rule.Owner = Application.Current.MainWindow;
+            acl_rule.Owner = this;
             acl_rule.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             acl_rule.Show();
         }
@@ -933,7 +975,7 @@ namespace Nuage.VSDClient.Main
 
             NuageDomain domain = (NuageDomain)this._Domains.SelectedItem;
             IngressACL acl = new IngressACL(this.rest_client, domain.ID, this._IngressPolicy);
-            acl.Owner = Application.Current.MainWindow;
+            acl.Owner = this;
             acl.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             acl.Show();
         }
@@ -998,7 +1040,7 @@ namespace Nuage.VSDClient.Main
 
             NuageDomain domain = (NuageDomain)this._Domains.SelectedItem;
             EgressACL acl = new EgressACL(this.rest_client, domain.ID, this._EgressPolicy);
-            acl.Owner = Application.Current.MainWindow;
+            acl.Owner = this;
             acl.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             acl.Show();
         }
@@ -1063,7 +1105,7 @@ namespace Nuage.VSDClient.Main
 
             NuageDomain domain = (NuageDomain)this._Domains.SelectedItem;
             PolicyGroup pg = new PolicyGroup(this.rest_client, domain.ID, this._PolicyGroup);
-            pg.Owner = Application.Current.MainWindow;
+            pg.Owner = this;
             pg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             pg.Show();
         }
@@ -1302,7 +1344,7 @@ namespace Nuage.VSDClient.Main
                 return;
             }
             SelectWin share_win = new SelectWin(shared_networks, selected, "Shared Network");
-            share_win.Owner = Application.Current.MainWindow;
+            share_win.Owner = this;
             share_win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             share_win.ShowDialog();
 

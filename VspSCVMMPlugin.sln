@@ -2,6 +2,9 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VspSCVMMPlugin", "VspSCVMMPlugin\VspSCVMMPlugin.csproj", "{2D1DA560-BDB8-4D74-806E-8DD744ADDF5F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F5ECB2AA-E4E9-4CC3-957B-7F8F32E2C8C4} = {F5ECB2AA-E4E9-4CC3-957B-7F8F32E2C8C4}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nuageVSDClient", "WebClient\nuageVSDClient.csproj", "{5C93D445-F17E-448D-B73B-BADB1263F7B3}"
 EndProject

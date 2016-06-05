@@ -54,18 +54,34 @@ namespace Nuage.VSDClient
         {
             this.type = "VM";
             this.name = create_params["name"];
-            this.description = create_params["description"];
             this.addressSpoofing = "INHERITED";
 
+            if (create_params.ContainsKey("description"))
+            {
+                this.description = create_params["description"];
+            }
             if (create_params.ContainsKey("floatingip"))
             {
                 this.associatedFloatingIPID = create_params["floatingip"];
+            }
+            if (create_params.ContainsKey("external_id"))
+            {
+                this.externalID = create_params["external_id"];
             }
 
             string data = JsonConvert.SerializeObject(this);
 
             return data;
 
+        }
+
+        public string fip_update_data(string fip_id)
+        {
+            this.associatedFloatingIPID = fip_id;
+
+            string data = JsonConvert.SerializeObject(this);
+
+            return data;
         }
 
         public string post_resource(string parent_id)
@@ -81,6 +97,11 @@ namespace Nuage.VSDClient
         public string put_resource(string id)
         {
             return "/vports/" + id + "?responseChoice=1";
+        }
+
+        public string get_resource(string id)
+        {
+            return "/vports/" + id;
         }
 
         public string get_all_resources()
@@ -113,14 +134,6 @@ namespace Nuage.VSDClient
             return "/floatingips/" + fip_id + "/vports";
         }
 
-        public string fip_update_data(string fip_id)
-        {
-            this.associatedFloatingIPID = fip_id;
-
-            string data = JsonConvert.SerializeObject(this);
-
-            return data;
-        }
 
     }
 

@@ -8,7 +8,7 @@ using Microsoft.SystemCenter.VirtualMachineManager.UIAddIns.ContextTypes;
 using System.Collections.Generic;
 using System.Linq;
 using System.AddIn;
-
+using Nuage.VSDClient.Main;
 
 namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
 {
@@ -30,14 +30,12 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
         }
     }
 
-    [AddIn("Connect VSP")]
+    [AddIn("Nuage VCS Add-in")]
     public class NuageVSPNonContextual : ActionAddInBase
     {
         public override void PerformAction(IList<ContextObject> contextObjects)
         {
-            NuageVSPWindow mainWindow = new NuageVSPWindow(
-                this.PowerShellContext,
-                null);
+            MainWindow mainWindow = new MainWindow(this.PowerShellContext);
 
             mainWindow.Show();
         }

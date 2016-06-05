@@ -34,13 +34,26 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
+    <VmmAdminConsolePath>e:\Program Files\Microsoft System Center 2012 R2\Virtual Machine Manager\bin</VmmAdminConsolePath>
     <StartupObject>
     </StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Errors">
+      <HintPath>$(VmmAdminConsolePath)\Errors.dll</HintPath>
+    </Reference>
     <Reference Include="IPAddressRange, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\IPAddressRange.1.5.0.0\lib\net40\IPAddressRange.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.SystemCenter.VirtualMachineManager">
+      <HintPath>$(VmmAdminConsolePath)\Microsoft.SystemCenter.VirtualMachineManager.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SystemCenter.VirtualMachineManager.UIAddIns">
+      <HintPath>$(VmmAdminConsolePath)\AddInPipeline\AddInViews\Microsoft.SystemCenter.VirtualMachineManager.UIAddIns.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SystemCenter.VirtualMachineManager.UIAddIns.ContextTypes">
+      <HintPath>$(VmmAdminConsolePath)\Microsoft.SystemCenter.VirtualMachineManager.UIAddins.ContextTypes.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -55,6 +68,9 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="Utils">
+      <HintPath>$(VmmAdminConsolePath)\Utils.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -224,6 +240,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PolicyGroupVports.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
