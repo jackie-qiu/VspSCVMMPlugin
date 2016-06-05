@@ -16,7 +16,7 @@ using NetTools;
 namespace Nuage.VSDClient.Main
 {
     /// <summary>
-    /// Subnet.xaml 的交互逻辑
+    /// Subnet.xaml Logical
     /// </summary>
     public partial class Subnet : Window
     {

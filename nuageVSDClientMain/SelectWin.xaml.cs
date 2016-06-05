@@ -34,6 +34,8 @@ namespace Nuage.VSDClient.Main
         private void OnLoaded(object sender, RoutedEventArgs args)
         {
             _selectWin.Title += this.object_type;
+            if (objects == null)
+                return;
             foreach (object item in objects)
                 _selectObjects.Items.Add(item);
         }

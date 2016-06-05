@@ -302,6 +302,11 @@ namespace Nuage.VSDClient
             return vm.GetVirtualMachinesInSubnet(subnet_id, filter);
         }
 
+        public List<NuageVms> GetVirtualMachines(string filter)
+        {
+            return vm.GetVirtualMachines(filter);
+        }
+
         public NuageVms CreateVirtualMachine(string name, string uuid, string external_id, string vport_id, string ip, string mac)
         {
             return vm.CreateVirtualMachine(name, uuid, external_id, vport_id, ip, mac);

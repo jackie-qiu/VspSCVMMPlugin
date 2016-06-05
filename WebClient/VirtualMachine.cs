@@ -31,6 +31,15 @@ namespace Nuage.VSDClient
            
         }
 
+        public List<NuageVms> GetVirtualMachines(string filter)
+        {
+            NuageVms vm = new NuageVms();
+
+            List<NuageVms> result = restproxy.CallRestGetAPI<NuageVms>(vm.get_all_resources(), filter);
+
+            return result;
+        }
+
         public List<NuageVms> GetVirtualMachinesInSubnet(string subnet_id, string filter)
         {
             NuageVms vm = new NuageVms();

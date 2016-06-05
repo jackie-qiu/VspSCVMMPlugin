@@ -55,6 +55,7 @@ namespace Nuage.VSDClient
         List<NuageVport> GetVportInDomain(string domain_id, string filter);
         List<NuageSharedNetworkResource> GetSharedNetworkResourceInEnterprise(string ent_id, string filter);
         List<NuageVms> GetVirtualMachinesInSubnet(string subnet_id, string filter);
+        List<NuageVms> GetVirtualMachines(string filter);
         NuageVms CreateVirtualMachine(string name, string uuid, string external_id, string vport_id, string ip, string mac);
         bool DeleteVirtualMachine(string id);
         NuageVport GetvPort(string vport_id, string filter);

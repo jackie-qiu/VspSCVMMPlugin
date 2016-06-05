@@ -57,6 +57,10 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\WindowsPowerShell\3.0\System.Management.Automation.dll</HintPath>
+    </Reference>
     <Reference Include="System.Net.IPNetwork, Version=2.0.3.0, Culture=neutral, PublicKeyToken=764160545cf0d618, processorArchitecture=MSIL">
       <HintPath>..\packages\IPNetwork2.2.0.3\lib\net40\System.Net.IPNetwork.dll</HintPath>
       <Private>True</Private>
@@ -189,6 +193,9 @@
       <DependentUpon>Subnet.xaml</DependentUpon>
     </Compile>
     <Compile Include="Validation.cs" />
+    <Compile Include="VirtualMachine.xaml.cs">
+      <DependentUpon>VirtualMachine.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Zone.xaml.cs">
       <DependentUpon>Zone.xaml</DependentUpon>
     </Compile>
@@ -252,6 +259,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Subnet.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="VirtualMachine.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

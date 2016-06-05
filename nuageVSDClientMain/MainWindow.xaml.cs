@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -48,6 +49,7 @@ namespace Nuage.VSDClient.Main
         ListBox _PolicyGroup;
         ListBox _IngressPolicy;
         ListBox _EgressPolicy;
+
 
         public MainWindow()
         {
@@ -891,11 +893,55 @@ namespace Nuage.VSDClient.Main
 
         }
 
+        private void VirtualMachineAdd()
+        {
+            if (this.psConext == null)
+                return;
+
+            if (this._Subnets.SelectedIndex == -1)
+            {
+                MessageBox.Show("Please select the subnet.", "Warning");
+                return;
+            }
+
+            VirtualMachine vm_win = new VirtualMachine(this.rest_client,this.psConext, (NuageSubnet)this._Subnets.SelectedItem, this._CommonElement);
+            vm_win.Owner = this;
+            vm_win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            vm_win.ShowDialog();
+
+        }
+        private void VirtualMachineDel()
+        {
+            NuageVms vm = (NuageVms)this._CommonElement.SelectedItem;
+
+            try
+            {
+                 rest_client.DeleteVirtualMachine(vm.ID);
+                 foreach (NuageVmInterface vminterface in vm.interfaces)
+                 {
+                     rest_client.DeletevPort(vminterface.VPortID);
+                 }
+                _CommonElement.Items.RemoveAt(_CommonElement.SelectedIndex);
+            }
+            catch (NuageException)
+            {
+                string error = string.Format("Delete virtual machine {0} failed.", vm.name);
+                MessageBox.Show(error, "Error");
+                return;
+            }
+
+            return;
+        }
+        private void VirtualMachineUpdate(string direction)
+        {
+
+        }
+
         private void _CommonElementAdd_Click(object sender, RoutedEventArgs e)
         {
             if (this._layoutCommonElement.Title.Equals("Virtual Machine"))
             {
-                MessageBox.Show("add virtual machine");
+                VirtualMachineAdd();
             }
 
             if (this._layoutCommonElement.Title.Equals("vPorts"))
@@ -929,7 +975,7 @@ namespace Nuage.VSDClient.Main
 
             if (this._layoutCommonElement.Title.Equals("Virtual Machine"))
             {
-                MessageBox.Show("delete virtual machine");
+                VirtualMachineDel();
             }
             if (this._layoutCommonElement.Title.Equals("vPorts"))
             {
