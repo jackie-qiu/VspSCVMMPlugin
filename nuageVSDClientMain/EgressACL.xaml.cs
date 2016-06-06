@@ -85,5 +85,20 @@ namespace Nuage.VSDClient.Main
             if (e.Key == Key.Enter && _Create.IsEnabled)
                 Create_Click(sender, e);
         }
+
+        private void implicitRulesTextBlock_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            _implicitRules.IsChecked = !(_implicitRules.IsChecked);
+        }
+
+        private void allowIPTextBlock_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            _allowIP.IsChecked = !(_allowIP.IsChecked);
+        }
+
+        private void allowNonIPTextBlock_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            _allowNonIP.IsChecked = !(_allowNonIP.IsChecked);
+        }
     }
 }

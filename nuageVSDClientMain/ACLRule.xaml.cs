@@ -398,6 +398,16 @@ namespace Nuage.VSDClient.Main
             if (e.Key == Key.Enter)
                 Create_Click(sender, e);
         }
+
+        private void EnableLoggingTextBlock_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            _enableFLowLoggin.IsChecked = !(_enableFLowLoggin.IsChecked);
+        }
+
+        private void StatefulTextBlock_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            _Stateful.IsChecked = !(_Stateful.IsChecked);
+        }
         
 
     }

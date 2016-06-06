@@ -31,7 +31,7 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="10,2,0,0">
                 <CheckBox HorizontalAlignment="Left" Margin="10,5,0,0" Name="_enableFLowLoggin" IsChecked="False"/>
-                <TextBlock HorizontalAlignment="Left" Margin="10,5,0,0" Width="200"  FontSize="12" >Enable flow logging</TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="10,5,0,0" Width="200"  FontSize="12" MouseDown="EnableLoggingTextBlock_MouseDown" >Enable flow logging</TextBlock>
             </StackPanel>
             <TextBlock Margin="20,10,5,5" FontSize="14" Foreground="#FF1414D9">Traffic Type</TextBlock>
             <StackPanel Orientation="Horizontal" Margin="10,2,0,0">
@@ -89,7 +89,7 @@
         <StackPanel Grid.Row="1" Orientation="Horizontal" >
             <StackPanel Name="_StatefulPannel" Orientation="Horizontal" Margin="10,0,0,0" Width="330">
                 <CheckBox HorizontalAlignment="Left" Margin="10,5,0,0" x:Name="_Stateful" IsChecked="True"/>
-                <TextBlock HorizontalAlignment="Left" Margin="10,5,0,0" Width="200"  FontSize="12" ><Run Text="Stateful entry"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="10,5,0,0" Width="200"  FontSize="12" MouseDown="StatefulTextBlock_MouseDown" ><Run Text="Stateful entry"/></TextBlock>
             </StackPanel>
             <Button 
                 Height="23" 

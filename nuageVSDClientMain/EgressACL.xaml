@@ -43,15 +43,15 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
                 <CheckBox HorizontalAlignment="Left" Margin="10,5,0,0" Name="_implicitRules" IsChecked="True"/>
-                <TextBlock HorizontalAlignment="Left" Margin="10,5,0,0" Width="200"  FontSize="12" >Deploy implicit rules</TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="10,5,0,0" Width="200"  FontSize="12" MouseDown="implicitRulesTextBlock_MouseDown" >Deploy implicit rules</TextBlock>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
                 <CheckBox HorizontalAlignment="Left" Margin="10,5,0,0" Name="_allowIP"/>
-                <TextBlock HorizontalAlignment="Left" Margin="10,5,0,0" Width="200"  FontSize="12" >Forward IP traffic by default</TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="10,5,0,0" Width="200"  FontSize="12" MouseDown="allowIPTextBlock_MouseDown" >Forward IP traffic by default</TextBlock>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
                 <CheckBox HorizontalAlignment="Left" Margin="10,5,0,0" Name="_allowNonIP"/>
-                <TextBlock HorizontalAlignment="Left" Margin="10,5,0,0" Width="200"  FontSize="12" >Forward non IP traffic by default</TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="10,5,0,0" Width="200"  FontSize="12" MouseDown="allowNonIPTextBlock_MouseDown" >Forward non IP traffic by default</TextBlock>
             </StackPanel>
         </StackPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">

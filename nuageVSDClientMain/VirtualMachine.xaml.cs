@@ -183,9 +183,10 @@ namespace Nuage.VSDClient.Main
                 return;
             }
 
+            NuageVport vport = null;
             try
             {
-                NuageVport vport = rest_client.CreatevPort(selected_vnic.Name, null, null, subnet.ID);
+                vport = rest_client.CreatevPort(selected_vnic.Name, null, null, subnet.ID);
                 if (vport != null)
                 {
                     NuageVms vm = rest_client.CreateVirtualMachine(selected_vm.Name, selected_vm.ID.ToString(),
@@ -204,8 +205,11 @@ namespace Nuage.VSDClient.Main
             }
             catch (NuageException)
             {
+                if (vport != null)
+                    rest_client.DeletevPort(vport.ID);
+
                 string error = String.Format("Create virtual machine {0} on vsd failed", ((VM)this._vms.SelectedItem).Name);
-                MessageBox.Show("error", "Failed");
+                MessageBox.Show(error, "Failed");
                 return;
             }            
         }
@@ -245,6 +249,11 @@ namespace Nuage.VSDClient.Main
         private void _vms_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
 
+        }
+
+        private void restVMTextBlock_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            _isReboot.IsChecked = !(_isReboot.IsChecked);
         }
     }
 }
