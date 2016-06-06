@@ -66,6 +66,11 @@ namespace Nuage.VSDClient
             return "/floatingips";
         }
 
+        public string get_resource(string id)
+        {
+            return "/floatingips/" + id;
+        }
+
         public string get_all_resources_in_parent(string parent_id)
         {
             return "/domains/" + parent_id + "/floatingips";

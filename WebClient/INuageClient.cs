@@ -32,6 +32,7 @@ namespace Nuage.VSDClient
         bool DeleteZone(string id);
         NuageDomainTemplate GetDefaultL3DomainTemplate(string ent_id);
         List<NuageEnterprise> GetEnterprises();
+        NuageFloatingIP GetFloatingIP(string id);
         List<NuageFloatingIP> GetFloatingIPs();
         List<NuageFloatingIP> GetFloatingIPsInDomain(string domain_id);
         List<NuageOutboundACL> GetL3DomainEgressACLTmpltsInDomain(string domain_id);
@@ -61,5 +62,7 @@ namespace Nuage.VSDClient
         NuageVport GetvPort(string vport_id, string filter);
         NuageVport CreatevPort(string name, string description, string external_id, string subnet_id);
         bool DeletevPort(string id);
+        bool AssociatedFloatingIP(string vport_id, string fip_id);
+        bool DisassociatedFloatingIP(string vport_id);
     }
 }

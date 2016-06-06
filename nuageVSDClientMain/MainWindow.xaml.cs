@@ -44,11 +44,15 @@ namespace Nuage.VSDClient.Main
         LayoutDocument _layoutPolicyGroup;
         LayoutDocument _layoutIngressPolicy;
         LayoutDocument _layoutEgressPolicy;
+        LayoutAnchorable _domainFloatingIpLayoutAnchroable;
+        LayoutAnchorable _vmFloatingIpLayoutAnchroable;
         ListBox _Zones;
         ListBox _Subnets;
         ListBox _PolicyGroup;
         ListBox _IngressPolicy;
         ListBox _EgressPolicy;
+        ListBox _domainFloatingIPs;
+        ListBox _vmFloatingIP;
 
 
         public MainWindow()
@@ -225,12 +229,61 @@ namespace Nuage.VSDClient.Main
             }
         }
 
+        private void InitDomainPropertiesPanel()
+        {
+            try
+            {
+                _domainFloatingIpLayoutAnchroable = new LayoutAnchorable { ContentId = "floatingip", Title = "Floating IP", CanClose = false, CanFloat = false, CanHide = false, AutoHideWidth =240};
+                _domainFloatingIpLayoutAnchroable.IsSelectedChanged += _floatingIpLayoutAnchroable_IsSelectedChanged;
+                _domainFloatingIPs = new ListBox { BorderThickness = new Thickness(0), ItemContainerStyle = FindResource("ListBoxStyle") as Style, AllowDrop = true };
+                ContextMenu context_menu = new ContextMenu { };
+                MenuItem add_item = new MenuItem { Header = "Add" };
+                add_item.Click += _FloatingIpAdd_Click;
+                context_menu.Items.Add(add_item);
+                MenuItem del_item = new MenuItem { Header = "Delete" };
+                del_item.Click += _FloatingIpDel_Click;
+                context_menu.Items.Add(del_item);
+                _domainFloatingIPs.ContextMenu = context_menu;
+                _domainFloatingIpLayoutAnchroable.Content = _domainFloatingIPs;
+                
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void InitVmPropertiesPanel()
+        {
+            try
+            {
+                _vmFloatingIpLayoutAnchroable = new LayoutAnchorable { ContentId = "floatingip", Title = "Floating IP", CanClose = false, CanFloat = false, CanHide = false, AutoHideWidth = 240 };
+                _vmFloatingIP = new ListBox { BorderThickness = new Thickness(0), ItemContainerStyle = FindResource("ListBoxStyle") as Style, AllowDrop = true };
+                ContextMenu context_menu = new ContextMenu { };
+                MenuItem add_item = new MenuItem { Header = "Associate" };
+                add_item.Click += _FloatingIpAssociate_Click;
+                context_menu.Items.Add(add_item);
+                MenuItem del_item = new MenuItem { Header = "Disassociate" };
+                del_item.Click += _FloatingIpDisassociate_Click;
+                context_menu.Items.Add(del_item);
+                _vmFloatingIP.ContextMenu = context_menu;
+                _vmFloatingIpLayoutAnchroable.Content = _vmFloatingIP;
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
         private void InitWindowsElement()
         {
             InitZonePanel();
             InitSubnetPanel();
             InitPolicyPanel();
             DrawZoneandSubnetPanel();
+            InitDomainPropertiesPanel();
+            InitVmPropertiesPanel();
 
         }
 
@@ -432,6 +485,23 @@ namespace Nuage.VSDClient.Main
                         this._EgressPolicy.Items.Add(item);
                     }
                 }
+
+                if (this._domainFloatingIPs.HasItems)
+                    this._domainFloatingIPs.Items.Clear();
+
+                List<NuageFloatingIP> floatings = rest_client.GetFloatingIPsInDomain(domain.ID);
+                if (floatings != null && floatings.Count() > 0)
+                {
+                    foreach (NuageFloatingIP item in floatings)
+                    {
+                        this._domainFloatingIPs.Items.Add(item);
+                    }
+                }
+                /*Add domain layout anchroable*/
+                if (_propertyLayoutAnchorablePane.Children.Contains(_vmFloatingIpLayoutAnchroable))
+                    _propertyLayoutAnchorablePane.Children.Remove(_vmFloatingIpLayoutAnchroable);
+                if (!_propertyLayoutAnchorablePane.Children.Contains(_domainFloatingIpLayoutAnchroable))
+                    _propertyLayoutAnchorablePane.Children.Add(_domainFloatingIpLayoutAnchroable);
 
             }
             catch (NuageException ex)
@@ -1010,6 +1080,65 @@ namespace Nuage.VSDClient.Main
                 return;
             //NuageSubnet subnet = (NuageSubnet)this._CommonElement.SelectedItem;
             this._propertyGrid.DataContext = this._CommonElement.SelectedItem;
+
+            if (this._layoutCommonElement.Title.Equals("Virtual Machine"))
+            {
+                NuageVms vm = (NuageVms)this._CommonElement.SelectedItem;
+                NuageVport vport;
+                NuageFloatingIP fip;
+                try
+                {
+                    if (vm.interfaces != null)
+                    {
+                        vport = rest_client.GetvPort(vm.interfaces[0].VPortID, null);
+                        if (vport != null && vport.associatedFloatingIPID != null)
+                        {
+                            fip = rest_client.GetFloatingIP(vport.associatedFloatingIPID);
+                            if (fip != null)
+                            {
+                                if(_vmFloatingIP.HasItems)
+                                    _vmFloatingIP.Items.Clear();
+                                _vmFloatingIP.Items.Add(fip);
+                            }
+                        }
+                        
+                    }
+
+                }
+                catch (NuageException)
+                {
+                    MessageBox.Show(string.Format("Get floating ip for vm {0} failed", vm.name), "Failed");
+                    return;
+                }
+                finally
+                {
+                    /*Add vm layout anchroable*/
+                    if (_propertyLayoutAnchorablePane.Children.Contains(_domainFloatingIpLayoutAnchroable))
+                        _propertyLayoutAnchorablePane.Children.Remove(_domainFloatingIpLayoutAnchroable);
+                    if (!_propertyLayoutAnchorablePane.Children.Contains(_vmFloatingIpLayoutAnchroable))
+                        _propertyLayoutAnchorablePane.Children.Add(_vmFloatingIpLayoutAnchroable);
+                }
+            }
+
+            if (this._layoutCommonElement.Title.Equals("vPorts"))
+            {
+                
+            }
+
+            if (this._layoutCommonElement.Title.Equals("Ingress Security Policy Entries"))
+            {
+                
+            }
+
+            if (this._layoutCommonElement.Title.Equals("Egress Security Policy Entries"))
+            {
+                
+            }
+
+            if (this._layoutCommonElement.Title.Equals("Network Macros"))
+            {
+                
+            }
         }
         private void _IngressPolicyAdd_Click(object sender, RoutedEventArgs e)
         {
@@ -1341,23 +1470,6 @@ namespace Nuage.VSDClient.Main
             if (this._Domains.SelectedIndex == -1)
                 return;
 
-            try
-            {
-                List<NuageFloatingIP> floatings = rest_client.GetFloatingIPsInDomain(((NuageDomain)this._Domains.SelectedItem).ID);
-                this._floatingIPs.Items.Clear();
-                if (floatings != null && floatings.Count() > 0)
-                {
-                    foreach (NuageFloatingIP item in floatings)
-                    {
-                        this._floatingIPs.Items.Add(item);
-                    }
-                }
-            }
-            catch(NuageException)
-            {
-                string error = String.Format("Get floating ip from domain {0} failed", ((NuageDomain)this._Domains.SelectedItem).name);
-                MessageBox.Show(error, "Error");
-            }
         }
 
         private void _FloatingIpAdd_Click(object sender, RoutedEventArgs e)
@@ -1402,12 +1514,12 @@ namespace Nuage.VSDClient.Main
                 try
                 {
                     NuageFloatingIP floating_ip = this.rest_client.CreateFloatingIP(((NuageDomain)this._Domains.SelectedItem).ID, selected_shared_network.ID);
-                    _floatingIPs.Items.Add(floating_ip);
+                    _domainFloatingIPs.Items.Add(floating_ip);
                 }
                 catch (NuageException)
                 {
                     string error = String.Format("Claim floating ip from shared network {0} failed.", selected_shared_network.name);
-                    MessageBox.Show("error", "Failed");
+                    MessageBox.Show(error, "Failed");
                     return;
                 }
             }
@@ -1417,12 +1529,12 @@ namespace Nuage.VSDClient.Main
 
         private void _FloatingIpDel_Click(object sender, RoutedEventArgs e)
         {
-            if (this._floatingIPs.SelectedIndex == -1)
+            if (this._domainFloatingIPs.SelectedIndex == -1)
             {
                 return;
             }
 
-            NuageFloatingIP floatIp = (NuageFloatingIP)this._floatingIPs.SelectedItem;
+            NuageFloatingIP floatIp = (NuageFloatingIP)this._domainFloatingIPs.SelectedItem;
             try
             {
                 rest_client.DeleteFloatingIP(floatIp.ID);
@@ -1433,7 +1545,73 @@ namespace Nuage.VSDClient.Main
                 return;
             }
 
-            _floatingIPs.Items.RemoveAt(_floatingIPs.SelectedIndex);
+            _domainFloatingIPs.Items.RemoveAt(_domainFloatingIPs.SelectedIndex);
+        }
+
+        private void _FloatingIpAssociate_Click(object sender, RoutedEventArgs e)
+        {
+
+            NuageDomain domain = (NuageDomain)this._Domains.SelectedItem;
+            NuageVms vm = (NuageVms)this._CommonElement.SelectedItem;
+
+            if(vm == null || this._vmFloatingIP.HasItems)
+                return;
+
+            ListBox selected = new ListBox();
+            List<NuageFloatingIP> fips = null;
+            try
+            {
+                fips = this.rest_client.GetFloatingIPsInDomain(domain.ID);
+                fips.RemoveAll(fip => fip.assigned == true);
+            }
+            catch (NuageException)
+            {
+                string error = String.Format("Get floating ips in domain {0} failed", domain.name);
+                MessageBox.Show("error", "Failed");
+                return;
+            }
+            SelectWin share_win = new SelectWin(fips, selected, "Floating IP");
+            share_win.Owner = this;
+            share_win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            share_win.ShowDialog();
+
+            if (selected.HasItems)
+            {
+                selected.SelectedIndex = 0;
+                NuageFloatingIP selected_fip = (NuageFloatingIP)selected.SelectedItem;
+
+                try
+                {
+                    this.rest_client.AssociatedFloatingIP(vm.interfaces[0].VPortID, selected_fip.ID);
+                    this._vmFloatingIP.Items.Add(selected_fip);
+                }
+                catch (NuageException)
+                {
+                    string error = String.Format("Associate floating ip {0} to virtual machine {1} failed.", selected_fip.address, vm.name);
+                    MessageBox.Show(error, "Failed");
+                    return;
+                }
+            }
+        }
+
+        private void _FloatingIpDisassociate_Click(object sender, RoutedEventArgs e)
+        {
+            NuageVms vm = (NuageVms)this._CommonElement.SelectedItem;
+
+            if (vm == null || this._vmFloatingIP.SelectedIndex == -1 || !this._vmFloatingIP.HasItems)
+                return;
+
+            try
+            {
+                this.rest_client.DisassociatedFloatingIP(vm.interfaces[0].VPortID);
+                this._vmFloatingIP.Items.Clear();
+            }
+            catch (NuageException)
+            {
+                string error = String.Format("Disassociate floating ip from virtual machine {0} failed.", vm.name);
+                MessageBox.Show(error, "Failed");
+                return;
+            }
         }
     }
 

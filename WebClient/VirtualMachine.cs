@@ -156,5 +156,19 @@ namespace Nuage.VSDClient
 
         }
 
+
+        public bool AssociatedFloatingIP(string vport_id, string fip_id)
+        {
+            NuageVport vport = GetvPort(vport_id, null);
+            return restproxy.CallRestPutAPI<NuageVport>(vport.put_resource(vport_id), vport.fip_update_data(fip_id));
+        }
+
+        public bool DisassociatedFloatingIP(string vport_id)
+        {
+            NuageVport vport = GetvPort(vport_id, null);
+            return restproxy.CallRestPutAPI<NuageVport>(vport.put_resource(vport_id), vport.fip_update_data(null));
+
+        }
+
     }
 }

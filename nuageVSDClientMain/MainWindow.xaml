@@ -111,17 +111,6 @@
                                     </xctk:PropertyGrid.PropertyContainerStyle>
                                 </xctk:PropertyGrid>
                             </xcad:LayoutAnchorable>
-                            <xcad:LayoutAnchorable x:Name="_floatingIpLayoutAnchroable" ContentId="floatingip" Title="Floating IP" 
-                                                   CanClose="False" CanHide="False" CanFloat="False" AutoHideWidth="240" IsSelectedChanged="_floatingIpLayoutAnchroable_IsSelectedChanged">
-                                <ListBox BorderThickness="0" Name="_floatingIPs" ItemContainerStyle="{StaticResource ListBoxStyleBold}" >
-                                    <ListBox.ContextMenu>
-                                        <ContextMenu>
-                                            <MenuItem Header="Add" Click="_FloatingIpAdd_Click" />
-                                            <MenuItem Header="Delete" Click="_FloatingIpDel_Click"/>
-                                        </ContextMenu>
-                                    </ListBox.ContextMenu>
-                                </ListBox>
-                            </xcad:LayoutAnchorable>
                         </xcad:LayoutAnchorablePane>
                     </xcad:LayoutAnchorablePaneGroup>
                 </xcad:LayoutPanel>

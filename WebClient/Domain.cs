@@ -368,6 +368,19 @@ namespace Nuage.VSDClient
             return result;
         }
 
+        public NuageFloatingIP GetFloatingIP(string fip_id, string filter)
+        {
+            NuageFloatingIP floatingip = new NuageFloatingIP();
+
+            List<NuageFloatingIP> result = restproxy.CallRestGetAPI<NuageFloatingIP>(floatingip.get_resource(fip_id), filter);
+            if (result == null || result.Count() == 0)
+            {
+                return null;
+            }
+
+            return result.First();
+        }
+
         public List<NuageFloatingIP> GetFloatingIPsInDomain(string domain_id, string filter)
         {
             NuageFloatingIP floatingip = new NuageFloatingIP();

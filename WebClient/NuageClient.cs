@@ -231,6 +231,11 @@ namespace Nuage.VSDClient
             return l3domain.GetFloatingIPs(null);
         }
 
+        public NuageFloatingIP GetFloatingIP(string id)
+        {
+            return l3domain.GetFloatingIP(id, null);
+        }
+
         public List<NuageFloatingIP> GetFloatingIPsInDomain(string domain_id)
         {
             return l3domain.GetFloatingIPsInDomain(domain_id, null);
@@ -341,6 +346,16 @@ namespace Nuage.VSDClient
         public bool DeletevPort(string id)
         {
             return vm.DeletevPort(id);
+        }
+
+        public bool AssociatedFloatingIP(string vport_id, string fip_id)
+        {
+            return vm.AssociatedFloatingIP(vport_id, fip_id);
+        }
+
+        public bool DisassociatedFloatingIP(string vport_id)
+        {
+            return vm.DisassociatedFloatingIP(vport_id);
         }
     }
 }
