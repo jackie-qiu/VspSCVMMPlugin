@@ -26,6 +26,29 @@ namespace Nuage.VSDClient.Main
         }
     }
 
+    public class URLValidator : ValidationRule
+    {
+        public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
+        {
+            if (value == null)
+            {
+                return new ValidationResult(false, "Must not be empty");
+            }
+
+            if (string.IsNullOrEmpty(value.ToString()))
+            {
+                return new ValidationResult(false, "Must not be empty");
+            }
+
+            if (!(Uri.IsWellFormedUriString(value.ToString(), UriKind.Absolute)))
+            {
+                return new ValidationResult(false, "Invalid Url address");
+            }
+
+            return ValidationResult.ValidResult;
+        }
+    }
+
     public class IpAddressValidator : ValidationRule
     {
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)

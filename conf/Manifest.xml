@@ -5,24 +5,26 @@
   Author="Nuage" 
   Description="An add-in that configure the Nuage VCS networking." 
   FolderName="VspSCVMMPlugin">
+<!--
   <ActionAddIn 
-    Name="Nuage VCS Networking" 
+    Name="Nuage VCS Add-in" 
     Icon="VspSCVMMPlugin.ico" 
     Contexts="VM" 
     AssemblyName="Nuage.Vsp.SCVMMPlugin" 
     ActionType="Code">
     <ButtonLabel>
-      Nuage VCS Networking
+      Nuage VCS Add-in
     </ButtonLabel>
   </ActionAddIn>
+-->
   <ActionAddIn 
-    Name="Nuage VCS Add-in" 
+    Name="Nuage VCS Networking" 
     Icon="VspSCVMMPlugin.ico" 
     Contexts="AllHomeTabs" 
     AssemblyName="Nuage.Vsp.SCVMMPlugin" 
     ActionType="Code">
     <ButtonLabel>
-      Nuage VCS Add-in
+      Nuage VCS Networking
     </ButtonLabel>
   </ActionAddIn>
 

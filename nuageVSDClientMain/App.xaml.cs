@@ -9,9 +9,17 @@ using System.Windows;
 namespace Nuage.VSDClient.Main
 {
     /// <summary>
-    /// App.xaml 的交互逻辑
+    /// App.xaml Logical
     /// </summary>
     public partial class App : Application
     {
+        void App_Startup(object sender, StartupEventArgs e)
+        {
+            Login loginWindow = new Login(null);
+            if (!loginWindow.IsLoginAutomatically())
+            {
+                loginWindow.Show();
+            }
+        }
     }
 }

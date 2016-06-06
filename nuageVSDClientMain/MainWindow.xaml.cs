@@ -55,47 +55,18 @@ namespace Nuage.VSDClient.Main
         ListBox _vmFloatingIP;
 
 
-        public MainWindow()
-        {
-            InitializeComponent(); 
-            this.Loaded += new RoutedEventHandler(OnLoaded);
-        }
-
-        public MainWindow(PowerShellContext psConext)
+        public MainWindow(INuageClient rest_client, PowerShellContext psConext)
         {
             InitializeComponent();
             this.Loaded += new RoutedEventHandler(OnLoaded);
             this.psConext = psConext;
+            this.rest_client = rest_client;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs args)
         {
-            try
-            {
-                Style lisboxStyle = FindResource("ListBoxStyle") as Style;
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("FindResource throw exception");
-            }
-            try
-            {
-                rest_client = new NuageClient("csproot", "csproot", "csp", new Uri("https://192.168.239.12:8443/"), "3.2");
-                if (!rest_client.LoginVSD())
-                    MessageBox.Show("Connect to VSD failed, please check the configuration.", "Failed");
-
-            }
-            catch(NuageException ex)
-            {
-                string error = string.Format("Connect to VSD failed with error {0}, please check the configuration.", ex.Message);
-                MessageBox.Show(error, "Failed");
-            }
-
             InitWindowsElement();
             return;
-
-
-
         }
 
         private void InitZonePanel()
@@ -1001,6 +972,7 @@ namespace Nuage.VSDClient.Main
                      rest_client.DeletevPort(vminterface.VPortID);
                  }
                 _CommonElement.Items.RemoveAt(_CommonElement.SelectedIndex);
+                _vmFloatingIP.Items.Clear();
             }
             catch (NuageException)
             {

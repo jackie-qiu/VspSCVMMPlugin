@@ -12,7 +12,7 @@ using Nuage.VSDClient.Main;
 
 namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
 {
-    [AddIn("Nuage VCS Networking")]
+    [AddIn("Nuage VCS Add-in")]
     public class NuageVSPContextual : ActionAddInBase
     {
         public override bool CheckIfEnabledFor(IList<ContextObject> contextObjects)
@@ -30,14 +30,15 @@ namespace Microsoft.VirtualManager.UI.AddIns.NuageVSP
         }
     }
 
-    [AddIn("Nuage VCS Add-in")]
+    [AddIn("Nuage VCS Networking")]
     public class NuageVSPNonContextual : ActionAddInBase
     {
         public override void PerformAction(IList<ContextObject> contextObjects)
         {
-            MainWindow mainWindow = new MainWindow(this.PowerShellContext);
+            Login loginWindow = new Login(this.PowerShellContext);
 
-            mainWindow.Show();
+            if(!loginWindow.IsLoginAutomatically())
+                loginWindow.Show();
         }
     }
 }
