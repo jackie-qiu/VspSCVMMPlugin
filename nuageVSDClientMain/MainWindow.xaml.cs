@@ -394,6 +394,8 @@ namespace Nuage.VSDClient.Main
                 string error = string.Format("Get data from VSD failed with error {0}.", ex.Message);
                 MessageBox.Show(error, "Failed");
             }
+
+            ClearPropertyLayoutAnchorablePane();
         }
         
         private void _DomainAdd_Click(object sender, RoutedEventArgs e)
@@ -498,8 +500,7 @@ namespace Nuage.VSDClient.Main
                     }
                 }
                 /*Add domain layout anchroable*/
-                if (_propertyLayoutAnchorablePane.Children.Contains(_vmFloatingIpLayoutAnchroable))
-                    _propertyLayoutAnchorablePane.Children.Remove(_vmFloatingIpLayoutAnchroable);
+                ClearPropertyLayoutAnchorablePane();
                 if (!_propertyLayoutAnchorablePane.Children.Contains(_domainFloatingIpLayoutAnchroable))
                     _propertyLayoutAnchorablePane.Children.Add(_domainFloatingIpLayoutAnchroable);
 
@@ -557,6 +558,8 @@ namespace Nuage.VSDClient.Main
 
             NuageEnterpriseNetworks macro = (NuageEnterpriseNetworks)this._NetworkMacros.SelectedItem;
             this._propertyGrid.DataContext = macro;
+
+            ClearPropertyLayoutAnchorablePane();
 
         }
         private void _NetworkMacroGroupsAdd_Click(object sender, RoutedEventArgs e)
@@ -712,6 +715,8 @@ namespace Nuage.VSDClient.Main
                 MessageBox.Show(error, "Failed");
             }
 
+            ClearPropertyLayoutAnchorablePane();
+
         }
         private void _ZoneAdd_Click(object sender, RoutedEventArgs e)
         {
@@ -777,6 +782,8 @@ namespace Nuage.VSDClient.Main
                 string error = string.Format("Get subnets from VSD failed with error {0}.", ex.Message);
                 MessageBox.Show(error, "Failed");
             }
+
+            ClearPropertyLayoutAnchorablePane();
         }
         private void _SubnetAdd_Click(object sender, RoutedEventArgs e)
         {
@@ -824,6 +831,8 @@ namespace Nuage.VSDClient.Main
                 string error = string.Format("Get virtualmachine from VSD in subnets {0} failed.", ((NuageSubnet)this._Subnets.SelectedItem).name);
                 MessageBox.Show(error, "Failed");
             }
+
+            ClearPropertyLayoutAnchorablePane();
         }
 
         private void SubnetAdd()
@@ -1113,8 +1122,7 @@ namespace Nuage.VSDClient.Main
                 finally
                 {
                     /*Add vm layout anchroable*/
-                    if (_propertyLayoutAnchorablePane.Children.Contains(_domainFloatingIpLayoutAnchroable))
-                        _propertyLayoutAnchorablePane.Children.Remove(_domainFloatingIpLayoutAnchroable);
+                    ClearPropertyLayoutAnchorablePane();
                     if (!_propertyLayoutAnchorablePane.Children.Contains(_vmFloatingIpLayoutAnchroable))
                         _propertyLayoutAnchorablePane.Children.Add(_vmFloatingIpLayoutAnchroable);
                 }
@@ -1204,6 +1212,8 @@ namespace Nuage.VSDClient.Main
                 string error = string.Format("Get ingress ACL rules from VSD failed with error {0}.", ex.Message);
                 MessageBox.Show(error, "Failed");
             }
+
+            ClearPropertyLayoutAnchorablePane();
         }
         private void _EgressPolicyAdd_Click(object sender, RoutedEventArgs e)
         {
@@ -1269,6 +1279,8 @@ namespace Nuage.VSDClient.Main
                 string error = string.Format("Get ingress ACL rules from VSD failed with error {0}.", ex.Message);
                 MessageBox.Show(error, "Failed");
             }
+
+            ClearPropertyLayoutAnchorablePane();
         }
         private void _PolicyGroupAdd_Click(object sender, RoutedEventArgs e)
         {
@@ -1334,6 +1346,8 @@ namespace Nuage.VSDClient.Main
                 string error = string.Format("Get policy group vports from VSD failed with error {0}.", ex.Message);
                 MessageBox.Show(error, "Failed");
             }
+
+            ClearPropertyLayoutAnchorablePane();
         }
 
         private void _layoutIngressPolicy_IsSelectedChanged(object sender, EventArgs e)
@@ -1612,6 +1626,14 @@ namespace Nuage.VSDClient.Main
                 MessageBox.Show(error, "Failed");
                 return;
             }
+        }
+
+        private void ClearPropertyLayoutAnchorablePane()
+        {
+            if (_propertyLayoutAnchorablePane.Children.Contains(_domainFloatingIpLayoutAnchroable))
+                _propertyLayoutAnchorablePane.Children.Remove(_domainFloatingIpLayoutAnchroable);
+            if (_propertyLayoutAnchorablePane.Children.Contains(_vmFloatingIpLayoutAnchroable))
+                _propertyLayoutAnchorablePane.Children.Remove(_vmFloatingIpLayoutAnchroable);
         }
     }
 
