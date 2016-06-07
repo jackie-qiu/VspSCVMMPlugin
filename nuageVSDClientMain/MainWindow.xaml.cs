@@ -1069,6 +1069,8 @@ namespace Nuage.VSDClient.Main
                 NuageFloatingIP fip;
                 try
                 {
+                    if (_vmFloatingIP.HasItems)
+                        _vmFloatingIP.Items.Clear();
                     if (vm.interfaces != null)
                     {
                         vport = rest_client.GetvPort(vm.interfaces[0].VPortID, null);
@@ -1077,8 +1079,6 @@ namespace Nuage.VSDClient.Main
                             fip = rest_client.GetFloatingIP(vport.associatedFloatingIPID);
                             if (fip != null)
                             {
-                                if(_vmFloatingIP.HasItems)
-                                    _vmFloatingIP.Items.Clear();
                                 _vmFloatingIP.Items.Add(fip);
                             }
                         }
