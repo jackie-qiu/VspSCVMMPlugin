@@ -71,7 +71,7 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="15,10,10,0" Height="20"  HorizontalAlignment="Left" VerticalAlignment="Center">
                 <CheckBox HorizontalAlignment="Left" Margin="0" x:Name="_isAutoLogin" IsChecked="False"/>
-                <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="200"><Run Text="Automatically connect with these settings" MouseDown="Run_MouseDown"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" Width="250"><Run Text="Automatically connect with these settings" MouseDown="Run_MouseDown"/></TextBlock>
             </StackPanel>
         </StackPanel>
         <StackPanel

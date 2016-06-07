@@ -55,6 +55,7 @@ namespace Nuage.VSDClient.Main
                 if (domain != null)
                 {
                     this.parent.Items.Add(domain);
+                    parent.SelectedIndex = parent.Items.Count - 1;
                     this.Close();
                 }
 

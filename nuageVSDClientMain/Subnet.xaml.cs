@@ -79,6 +79,7 @@ namespace Nuage.VSDClient.Main
                 if (subnet != null)
                 {
                     this.parent.Items.Add(subnet);
+                    parent.SelectedIndex = parent.Items.Count - 1;
                     this.Close();
                 }
 

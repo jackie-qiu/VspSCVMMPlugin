@@ -42,7 +42,7 @@
                         <xcad:LayoutAnchorable x:Name="_layoutDomains" ContentId="domain" Title="Domain" CanHide="False" CanClose="False" CanAutoHide="True"
                                                CanFloat="False" AutoHideWidth="240" IsSelectedChanged="_layoutZoneDocument_IsSelectedChanged">
                             <ListBox BorderThickness="0" Name="_Domains" ItemContainerStyle="{StaticResource  ListBoxStyleBold}" 
-                                     SelectionChanged="_Domains_SelectionChanged">
+                                     SelectionChanged="_Domains_SelectionChanged" MouseDown="_Domains_MouseDown" GotFocus="_Domains_GotFocus">
                                 <ListBox.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Add"    Click="_DomainAdd_Click" />
@@ -55,7 +55,7 @@
                         <xcad:LayoutAnchorable x:Name="_layoutNetworkMacros" ContentId="NetwrokMacro" Title="Network Macros" CanHide="False" CanClose="False" CanAutoHide="True"
                                                CanFloat="False" AutoHideWidth="240">
                             <ListBox BorderThickness="0" Name="_NetworkMacros" ItemContainerStyle="{StaticResource ListBoxStyleBold}" SelectionChanged="_NetworkMacros_SelectionChanged"
-                                     MouseDown="_NetworkMacro_MouseDown">
+                                     MouseDown="_NetworkMacro_MouseDown" GotFocus="_NetworkMacros_GotFocus">
                                 <ListBox.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Add"    Click="_NetworkMacroAdd_Click" />
@@ -68,7 +68,7 @@
                         <xcad:LayoutAnchorable x:Name="_layoutNetworkMacroGroups" ContentId="NetworkMacroGroup" Title="Network Macro Groups" CanHide="False" CanClose="False" CanAutoHide="True"
                                                CanFloat="False" AutoHideWidth="240" IsSelectedChanged="_layoutNetworkMacroGroupDocument_IsSelectedChanged">
                             <ListBox BorderThickness="0" Name="_NetworkMacroGroups" ItemContainerStyle="{StaticResource ListBoxStyleBold}" SelectionChanged="_NetworkMacroGroups_SelectionChanged"
-                                     MouseDown="_NetworkMacroGroup_MouseDown">
+                                     MouseDown="_NetworkMacroGroup_MouseDown" GotFocus="_NetworkMacroGroups_GotFocus">
                                 <ListBox.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Add"    Click="_NetworkMacroGroupsAdd_Click" />
@@ -86,7 +86,7 @@
                             <xcad:LayoutDocumentPane x:Name="_layoutCommonElementPane">
                                 <xcad:LayoutDocument x:Name="_layoutCommonElement" ContentId="virtualmachine" Title="Virtual Machine" CanClose="False" CanFloat="False">
                                     <ListBox BorderThickness="0" Name="_CommonElement" ItemContainerStyle="{StaticResource ListBoxStyle}" AllowDrop="True"
-                                             SelectionChanged="_CommonElement_SelectionChanged" MouseDown="_CommonElement_MouseDown">
+                                             SelectionChanged="_CommonElement_SelectionChanged" MouseDown="_CommonElement_MouseDown" GotFocus="_CommonElement_GotFocus">
                                         <ListBox.ContextMenu>
                                             <ContextMenu>
                                                 <MenuItem Header="Add"    Click="_CommonElementAdd_Click" />
@@ -120,7 +120,7 @@
                             <xcad:LayoutAnchorable ContentId="enterprise" Title="Organization" CanHide="False" CanClose="False"
                                             CanFloat="False" AutoHideWidth="240" IsSelectedChanged="_layoutEnterprise_IsSelectedChanged" IsSelected="False">
                                 <ListBox BorderThickness="0" Name="_Enterprises" ItemContainerStyle="{StaticResource ListBoxStyleBold}" 
-                                         SelectionChanged="_Enterprises_SelectionChanged">
+                                         SelectionChanged="_Enterprises_SelectionChanged" MouseDown="_Enterprises_MouseDown" GotFocus="_Enterprises_GotFocus">
                                     <ListBox.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="Add" Click="_EnterpriseAdd_Click" />

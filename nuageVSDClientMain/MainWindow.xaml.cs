@@ -79,6 +79,7 @@ namespace Nuage.VSDClient.Main
                 _Zones = new ListBox { BorderThickness = new Thickness(0), ItemContainerStyle = FindResource("ListBoxStyle") as Style, AllowDrop = true };
                 _Zones.SelectionChanged += new SelectionChangedEventHandler(_Zones_SelectionChanged);
                 _Zones.MouseDown += new MouseButtonEventHandler(_Zones_MouseDown);
+                _Zones.GotFocus += _Common_GotFocus;
                 ContextMenu context_menu = new ContextMenu { };
                 MenuItem add_item = new MenuItem { Header = "Add" };
                 add_item.Click += _ZoneAdd_Click;
@@ -108,6 +109,7 @@ namespace Nuage.VSDClient.Main
                 _Subnets = new ListBox { BorderThickness = new Thickness(0), ItemContainerStyle = FindResource("ListBoxStyle") as Style, AllowDrop = true };
                 _Subnets.SelectionChanged += new SelectionChangedEventHandler(_Subnet_SelectionChanged);
                 _Subnets.MouseDown += new MouseButtonEventHandler(_Subnet_MouseDown);
+                _Subnets.GotFocus += _Common_GotFocus;
                 ContextMenu context_menu = new ContextMenu { };
                 MenuItem add_item = new MenuItem { Header = "Add" };
                 add_item.Click += _SubnetAdd_Click;
@@ -140,6 +142,7 @@ namespace Nuage.VSDClient.Main
                 _PolicyGroup = new ListBox { BorderThickness = new Thickness(0), ItemContainerStyle = FindResource("ListBoxStyle") as Style, AllowDrop = true };
                 _PolicyGroup.SelectionChanged += new SelectionChangedEventHandler(_PolicyGroup_SelectionChanged);
                 _PolicyGroup.MouseDown += new MouseButtonEventHandler(_PolicyGroup_MouseDown);
+                _PolicyGroup.GotFocus += _Common_GotFocus;
                 ContextMenu context_menu = new ContextMenu { };
                 MenuItem add_item = new MenuItem { Header = "Add" };
                 add_item.Click += _PolicyGroupAdd_Click;
@@ -160,6 +163,7 @@ namespace Nuage.VSDClient.Main
                 _IngressPolicy = new ListBox { BorderThickness = new Thickness(0), ItemContainerStyle = FindResource("ListBoxStyle") as Style, AllowDrop = true };
                 _IngressPolicy.SelectionChanged += new SelectionChangedEventHandler(_IngressPolicy_SelectionChanged);
                 _IngressPolicy.MouseDown += new MouseButtonEventHandler(_IngressPolicy_MouseDown);
+                _IngressPolicy.GotFocus += _Common_GotFocus;
                 context_menu = new ContextMenu { };
                 add_item = new MenuItem { Header = "Add" };
                 add_item.Click += _IngressPolicyAdd_Click;
@@ -180,6 +184,7 @@ namespace Nuage.VSDClient.Main
                 _EgressPolicy = new ListBox { BorderThickness = new Thickness(0), ItemContainerStyle = FindResource("ListBoxStyle") as Style, AllowDrop = true };
                 _EgressPolicy.SelectionChanged += new SelectionChangedEventHandler(_EgressPolicy_SelectionChanged);
                 _EgressPolicy.MouseDown += new MouseButtonEventHandler(_EgressPolicy_MouseDown);
+                _EgressPolicy.GotFocus += _Common_GotFocus;
                 context_menu = new ContextMenu { };
                 add_item = new MenuItem { Header = "Add" };
                 add_item.Click += _EgressPolicyAdd_Click;
@@ -366,7 +371,6 @@ namespace Nuage.VSDClient.Main
                 MessageBox.Show(error, "Failed");
             }
 
-            ClearPropertyLayoutAnchorablePane();
         }
         
         private void _DomainAdd_Click(object sender, RoutedEventArgs e)
@@ -418,9 +422,16 @@ namespace Nuage.VSDClient.Main
 
             try
             {
+                this._Zones.Items.Clear();
+                this._Subnets.Items.Clear();
+                this._PolicyGroup.Items.Clear();
+                this._IngressPolicy.Items.Clear();
+                this._EgressPolicy.Items.Clear();
+                this._CommonElement.Items.Clear();
+                if (this._domainFloatingIPs.HasItems)
+                    this._domainFloatingIPs.Items.Clear();
 
                 List<NuageZone> zones = rest_client.GetZonesInDomain(domain.ID);
-                this._Zones.Items.Clear();
                 if (zones != null && zones.Count() > 0)
                 {
                     foreach (NuageZone item in zones)
@@ -430,7 +441,6 @@ namespace Nuage.VSDClient.Main
                 }
 
                 List<NuagePolicyGroup> pg = rest_client.GetPolicyGroupsInDomain(domain.ID);
-                this._PolicyGroup.Items.Clear();
                 if (pg != null && pg.Count() > 0)
                 {
                     foreach (NuagePolicyGroup item in pg)
@@ -440,7 +450,6 @@ namespace Nuage.VSDClient.Main
                 }
 
                 List<NuageInboundACL> inACL = rest_client.GetL3DomainIngressACLTmpltsInDomain(domain.ID);
-                this._IngressPolicy.Items.Clear();
                 if (inACL != null && inACL.Count() > 0)
                 {
                     foreach (NuageInboundACL item in inACL)
@@ -449,8 +458,7 @@ namespace Nuage.VSDClient.Main
                     }
                 }
 
-                List<NuageOutboundACL> outACL = rest_client.GetL3DomainEgressACLTmpltsInDomain(domain.ID);
-                this._EgressPolicy.Items.Clear();
+                List<NuageOutboundACL> outACL = rest_client.GetL3DomainEgressACLTmpltsInDomain(domain.ID); 
                 if (outACL != null && outACL.Count() > 0)
                 {
                     foreach (NuageOutboundACL item in outACL)
@@ -458,9 +466,6 @@ namespace Nuage.VSDClient.Main
                         this._EgressPolicy.Items.Add(item);
                     }
                 }
-
-                if (this._domainFloatingIPs.HasItems)
-                    this._domainFloatingIPs.Items.Clear();
 
                 List<NuageFloatingIP> floatings = rest_client.GetFloatingIPsInDomain(domain.ID);
                 if (floatings != null && floatings.Count() > 0)
@@ -470,10 +475,6 @@ namespace Nuage.VSDClient.Main
                         this._domainFloatingIPs.Items.Add(item);
                     }
                 }
-                /*Add domain layout anchroable*/
-                ClearPropertyLayoutAnchorablePane();
-                if (!_propertyLayoutAnchorablePane.Children.Contains(_domainFloatingIpLayoutAnchroable))
-                    _propertyLayoutAnchorablePane.Children.Add(_domainFloatingIpLayoutAnchroable);
 
             }
             catch (NuageException ex)
@@ -530,7 +531,6 @@ namespace Nuage.VSDClient.Main
             NuageEnterpriseNetworks macro = (NuageEnterpriseNetworks)this._NetworkMacros.SelectedItem;
             this._propertyGrid.DataContext = macro;
 
-            ClearPropertyLayoutAnchorablePane();
 
         }
         private void _NetworkMacroGroupsAdd_Click(object sender, RoutedEventArgs e)
@@ -686,8 +686,6 @@ namespace Nuage.VSDClient.Main
                 MessageBox.Show(error, "Failed");
             }
 
-            ClearPropertyLayoutAnchorablePane();
-
         }
         private void _ZoneAdd_Click(object sender, RoutedEventArgs e)
         {
@@ -754,7 +752,6 @@ namespace Nuage.VSDClient.Main
                 MessageBox.Show(error, "Failed");
             }
 
-            ClearPropertyLayoutAnchorablePane();
         }
         private void _SubnetAdd_Click(object sender, RoutedEventArgs e)
         {
@@ -803,7 +800,6 @@ namespace Nuage.VSDClient.Main
                 MessageBox.Show(error, "Failed");
             }
 
-            ClearPropertyLayoutAnchorablePane();
         }
 
         private void SubnetAdd()
@@ -1093,10 +1089,7 @@ namespace Nuage.VSDClient.Main
                 }
                 finally
                 {
-                    /*Add vm layout anchroable*/
-                    ClearPropertyLayoutAnchorablePane();
-                    if (!_propertyLayoutAnchorablePane.Children.Contains(_vmFloatingIpLayoutAnchroable))
-                        _propertyLayoutAnchorablePane.Children.Add(_vmFloatingIpLayoutAnchroable);
+
                 }
             }
 
@@ -1184,8 +1177,6 @@ namespace Nuage.VSDClient.Main
                 string error = string.Format("Get ingress ACL rules from VSD failed with error {0}.", ex.Message);
                 MessageBox.Show(error, "Failed");
             }
-
-            ClearPropertyLayoutAnchorablePane();
         }
         private void _EgressPolicyAdd_Click(object sender, RoutedEventArgs e)
         {
@@ -1252,7 +1243,6 @@ namespace Nuage.VSDClient.Main
                 MessageBox.Show(error, "Failed");
             }
 
-            ClearPropertyLayoutAnchorablePane();
         }
         private void _PolicyGroupAdd_Click(object sender, RoutedEventArgs e)
         {
@@ -1319,7 +1309,6 @@ namespace Nuage.VSDClient.Main
                 MessageBox.Show(error, "Failed");
             }
 
-            ClearPropertyLayoutAnchorablePane();
         }
 
         private void _layoutIngressPolicy_IsSelectedChanged(object sender, EventArgs e)
@@ -1365,7 +1354,7 @@ namespace Nuage.VSDClient.Main
         
         private void _Domains_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            this._Domains.UnselectAll();
+
         }
 
         private void _Zones_MouseDown(object sender, MouseButtonEventArgs e)
@@ -1381,16 +1370,19 @@ namespace Nuage.VSDClient.Main
         private void _IngressPolicy_MouseDown(object sender, MouseButtonEventArgs e)
         {
             this._IngressPolicy.UnselectAll();
+
         }
 
         private void _EgressPolicy_MouseDown(object sender, MouseButtonEventArgs e)
         {
             this._EgressPolicy.UnselectAll();
+
         }
 
         private void _CommonElement_MouseDown(object sender, MouseButtonEventArgs e)
         {
             this._CommonElement.UnselectAll();
+
         }
 
         private void _NetworkMacro_MouseDown(object sender, MouseButtonEventArgs e)
@@ -1501,6 +1493,7 @@ namespace Nuage.VSDClient.Main
                 {
                     NuageFloatingIP floating_ip = this.rest_client.CreateFloatingIP(((NuageDomain)this._Domains.SelectedItem).ID, selected_shared_network.ID);
                     _domainFloatingIPs.Items.Add(floating_ip);
+                    _domainFloatingIPs.SelectedIndex = _domainFloatingIPs.Items.Count - 1;
                 }
                 catch (NuageException)
                 {
@@ -1607,6 +1600,51 @@ namespace Nuage.VSDClient.Main
             if (_propertyLayoutAnchorablePane.Children.Contains(_vmFloatingIpLayoutAnchroable))
                 _propertyLayoutAnchorablePane.Children.Remove(_vmFloatingIpLayoutAnchroable);
         }
+
+        private void _Enterprises_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            
+        }
+
+        private void _Enterprises_GotFocus(object sender, RoutedEventArgs e)
+        {
+            ClearPropertyLayoutAnchorablePane();
+        }
+
+        private void _Domains_GotFocus(object sender, RoutedEventArgs e)
+        {
+            /*Add domain layout anchroable*/
+            ClearPropertyLayoutAnchorablePane();
+            if (!_propertyLayoutAnchorablePane.Children.Contains(_domainFloatingIpLayoutAnchroable))
+                _propertyLayoutAnchorablePane.Children.Add(_domainFloatingIpLayoutAnchroable);
+        }
+
+        private void _CommonElement_GotFocus(object sender, RoutedEventArgs e)
+        {
+            ClearPropertyLayoutAnchorablePane();
+            /*Add vm layout anchroable*/
+            if (this._layoutCommonElement.Title.Equals("Virtual Machine"))
+            {
+                if (!_propertyLayoutAnchorablePane.Children.Contains(_vmFloatingIpLayoutAnchroable))
+                    _propertyLayoutAnchorablePane.Children.Add(_vmFloatingIpLayoutAnchroable);
+            }
+        }
+
+        private void _NetworkMacros_GotFocus(object sender, RoutedEventArgs e)
+        {
+            ClearPropertyLayoutAnchorablePane();
+        }
+
+        private void _NetworkMacroGroups_GotFocus(object sender, RoutedEventArgs e)
+        {
+            ClearPropertyLayoutAnchorablePane();
+        }
+
+        private void _Common_GotFocus(object sender, RoutedEventArgs e)
+        {
+            ClearPropertyLayoutAnchorablePane();
+        }
+
     }
 
 }

@@ -194,6 +194,7 @@ namespace Nuage.VSDClient.Main
                     if (vm != null)
                     {
                         this.parent.Items.Add(vm);
+                        parent.SelectedIndex = parent.Items.Count - 1;
                     }
 
                     if (_isReboot.IsChecked.Value)

@@ -34,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <VmmAdminConsolePath>e:\Program Files\Microsoft System Center 2012 R2\Virtual Machine Manager\bin</VmmAdminConsolePath>
+    <VmmAdminConsolePath>c:\Program Files\Microsoft System Center 2012 R2\Virtual Machine Manager\bin</VmmAdminConsolePath>
     <StartupObject>
     </StartupObject>
   </PropertyGroup>

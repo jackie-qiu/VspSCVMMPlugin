@@ -96,6 +96,8 @@ namespace Nuage.VSDClient.Main
                     this.parent.Items.Add(item);
                 }
 
+                parent.SelectedIndex = parent.Items.Count - 1;
+
             }
             catch (NuageException)
             {

@@ -47,6 +47,7 @@ namespace Nuage.VSDClient.Main
                 if (zone != null)
                 {
                     this.parent.Items.Add(zone);
+                    parent.SelectedIndex = parent.Items.Count - 1;
                     this.Close();
                 }
 

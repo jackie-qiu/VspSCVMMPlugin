@@ -49,6 +49,7 @@ namespace Nuage.VSDClient.Main
                 if (network_macro_group != null)
                 {
                     this.parent.Items.Add(network_macro_group);
+                    parent.SelectedIndex = parent.Items.Count - 1;
                     this.Close();
                 }
 

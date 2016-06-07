@@ -180,9 +180,13 @@ namespace Nuage.VSDClient.Main
                                              protocol, src_port, dest_port, "", network_type, network_id,
                                              location_type, location_id);
                 }
-
-                parent.Items.Add(acl);
-                this.Close();
+                if (acl != null)
+                {
+                    parent.Items.Add(acl);
+                    parent.SelectedIndex = parent.Items.Count - 1;
+                    this.Close();
+                }
+               
             }
             catch (NuageException)
             {

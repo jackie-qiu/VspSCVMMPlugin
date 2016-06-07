@@ -47,6 +47,7 @@ namespace Nuage.VSDClient.Main
                 if (ent != null)
                 {
                     this.parent.Items.Add(ent);
+                    parent.SelectedIndex = parent.Items.Count - 1;
                     this.Close();
                 }
             }

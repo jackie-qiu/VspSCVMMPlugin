@@ -48,6 +48,7 @@ namespace Nuage.VSDClient.Main
                 if (pg != null)
                 {
                     this.parent.Items.Add(pg);
+                    parent.SelectedIndex = parent.Items.Count - 1;
                     this.Close();
                 }
 
