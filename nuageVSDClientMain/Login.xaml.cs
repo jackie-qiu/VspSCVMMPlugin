@@ -68,6 +68,7 @@ namespace Nuage.VSDClient.Main
                         if (rest_client != null)
                         {
                             MainWindow mainWindow = new MainWindow(rest_client, this.psConext);
+                            mainWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
                             mainWindow.Show();
                             return true;
                         }
@@ -103,11 +104,11 @@ namespace Nuage.VSDClient.Main
                     config.Add(row.Split('=')[0], string.Join("=", row.Split('=').Skip(1).ToArray()));
                 }
             }
-            catch (FileNotFoundException ex)
+            catch (FileNotFoundException)
             {
                 return null;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
@@ -124,7 +125,7 @@ namespace Nuage.VSDClient.Main
                     return null;
 
             }
-            catch (NuageException ex)
+            catch (NuageException)
             {
                 return null;
             }
@@ -162,6 +163,7 @@ namespace Nuage.VSDClient.Main
             }
 
             MainWindow mainWindow = new MainWindow(rest_client, this.psConext);
+            mainWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             mainWindow.Show();
             this.Close();
         }

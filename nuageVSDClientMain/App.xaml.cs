@@ -18,6 +18,7 @@ namespace Nuage.VSDClient.Main
             Login loginWindow = new Login(null);
             if (!loginWindow.IsLoginAutomatically())
             {
+                loginWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
                 loginWindow.Show();
             }
         }

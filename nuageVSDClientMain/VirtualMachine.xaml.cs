@@ -36,6 +36,12 @@ namespace Nuage.VSDClient.Main
         private ObservableCollection<VirtualNetworkAdapter> vNics = new ObservableCollection<VirtualNetworkAdapter>();
         public string IPAddress { set; get; }
 
+
+        public VirtualMachine(PowerShellContext psConext)
+        {
+            this.psConext = psConext;
+            InitializeComponent();
+        }
         public VirtualMachine(INuageClient client, PowerShellContext psConext, NuageSubnet subnet, ListBox parent)
         {
             this.rest_client = client;
@@ -147,12 +153,35 @@ namespace Nuage.VSDClient.Main
             return;
         }
 
-        private void RebootVirtualMachine(Guid vmID)
+        public void RemoveVirtualMachine(Guid vmID, string status)
         {
-            string vNicScript = String.Format("Get-SCVirtualMachine -ID {0} | Reset-SCVirtualMachine", vmID);
+            string vmScript = null;
+
+            if (status.Equals("RUNNING"))
+            {
+                vmScript = String.Format("Get-SCVirtualMachine -ID {0} | Stop-SCVirtualMachine | Remove-SCVirtualMachine", vmID);
+            }
+            else
+            {
+                vmScript = String.Format("Get-SCVirtualMachine -ID {0} | Remove-SCVirtualMachine", vmID);
+            }
 
             psConext.ExecuteScript<VM>(
-                vNicScript.ToString(),
+                vmScript.ToString(),
+                (results, error) =>
+                {
+                    return;
+                });
+
+            return;
+        }
+
+        private void RebootVirtualMachine(Guid vmID)
+        {
+            string vmScript = String.Format("Get-SCVirtualMachine -ID {0} | Reset-SCVirtualMachine", vmID);
+
+            psConext.ExecuteScript<VM>(
+                vmScript.ToString(),
                 (results, error) =>
                 {
                     return;

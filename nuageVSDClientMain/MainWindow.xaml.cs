@@ -967,6 +967,14 @@ namespace Nuage.VSDClient.Main
                  {
                      rest_client.DeletevPort(vminterface.VPortID);
                  }
+
+                 if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+                 {
+                     VirtualMachine vm_win = new VirtualMachine(this.psConext);
+
+                     vm_win.RemoveVirtualMachine(new Guid(vm.UUID), vm.status);
+                     
+                 }
                 _CommonElement.Items.RemoveAt(_CommonElement.SelectedIndex);
                 _vmFloatingIP.Items.Clear();
             }
