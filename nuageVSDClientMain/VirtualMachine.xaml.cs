@@ -35,11 +35,12 @@ namespace Nuage.VSDClient.Main
         private ObservableCollection<VM> vms = new ObservableCollection<VM>();
         private ObservableCollection<VirtualNetworkAdapter> vNics = new ObservableCollection<VirtualNetworkAdapter>();
         public string IPAddress { set; get; }
-
+        HypervManagement hyperv_manager;
 
         public VirtualMachine(PowerShellContext psConext)
         {
             this.psConext = psConext;
+            hyperv_manager = new HypervManagement();
             InitializeComponent();
         }
         public VirtualMachine(INuageClient client, PowerShellContext psConext, NuageSubnet subnet, ListBox parent)
@@ -48,7 +49,7 @@ namespace Nuage.VSDClient.Main
             this.psConext = psConext;
             this.parent = parent;
             this.subnet = subnet;
-
+            hyperv_manager = new HypervManagement();
             InitializeComponent();
             this.Loaded += new RoutedEventHandler(OnLoaded);
 
@@ -190,6 +191,21 @@ namespace Nuage.VSDClient.Main
             return;
         }
 
+        private void StartVirtualMachine(Guid vmID)
+        {
+            string vmScript = String.Format("Get-SCVirtualMachine -ID {0} | Start-SCVirtualMachine", vmID);
+
+            psConext.ExecuteScript<VM>(
+                vmScript.ToString(),
+                (results, error) =>
+                {
+                    return;
+                });
+
+            return;
+        }
+        
+
 
         private void Select_Click(object sender, RoutedEventArgs e)
         {
@@ -226,8 +242,21 @@ namespace Nuage.VSDClient.Main
                         parent.SelectedIndex = parent.Items.Count - 1;
                     }
 
+                    hyperv_manager.SetHyperVOVSPort(selected_vm.Name, selected_vm.VMHost.ComputerName, "administrator", "Aluipr@6");
+                    //hyperv_manager.SetHyperVOVSPort(selected_vm.Name, selected_vm.VMHost.ComputerName, "administrator", "tigris1@");
+
                     if (_isReboot.IsChecked.Value)
-                        RebootVirtualMachine(selected_vm.ID);
+                    {
+                        if (selected_vm.Status == Microsoft.VirtualManager.Utils.VMComputerSystemState.Running)
+                        {
+                            RebootVirtualMachine(selected_vm.ID);
+                        }
+                        else
+                        {
+                            StartVirtualMachine(selected_vm.ID);
+                        }
+                        
+                    }
 
                     this.Close();
                 }

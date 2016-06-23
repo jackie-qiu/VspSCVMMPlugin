@@ -171,6 +171,7 @@
     <Compile Include="EgressACL.xaml.cs">
       <DependentUpon>EgressACL.xaml</DependentUpon>
     </Compile>
+    <Compile Include="HypervManagement.cs" />
     <Compile Include="IngressACL.xaml.cs">
       <DependentUpon>IngressACL.xaml</DependentUpon>
     </Compile>
