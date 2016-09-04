@@ -242,7 +242,8 @@ namespace Nuage.VSDClient.Main
                         parent.SelectedIndex = parent.Items.Count - 1;
                     }
 
-                    hyperv_manager.SetHyperVOVSPort(selected_vm.Name, selected_vm.VMHost.ComputerName, "administrator", "Aluipr@6");
+                    hyperv_manager.SetHyperVOVSPort(selected_vm.Name, selected_vm.VMHost.ComputerName, "administrator", "Alcateldc2");
+                    //hyperv_manager.SetHyperVOVSPort(selected_vm.Name, selected_vm.VMHost.ComputerName, "administrator", "Aluipr@6");
                     //hyperv_manager.SetHyperVOVSPort(selected_vm.Name, selected_vm.VMHost.ComputerName, "administrator", "tigris1@");
 
                     if (_isReboot.IsChecked.Value)
