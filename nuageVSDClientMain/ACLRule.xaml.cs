@@ -33,6 +33,7 @@ namespace Nuage.VSDClient.Main
         List<string> PROTOCOL_TYPE = new List<string>() { "ANY", "TCP - 6", "UDP - 17", "ICMP - 1" };
         private Dictionary<string, string> PROTO_NAME_TO_NUM = new Dictionary<string, string>();
         private Dictionary<string, string> NETWORK_TYPE_MAP = new Dictionary<string, string>();
+        public string addrOverride { set; get; }
         public ACLRule(string direction, INuageClient client, string ent_id, string domain_id, string acl_id, ListBox parent)
         {
             PROTO_NAME_TO_NUM.Add("ANY", "ANY");
@@ -58,6 +59,7 @@ namespace Nuage.VSDClient.Main
             this.domain_id = domain_id;
 
             InitializeComponent();
+            _addressOverride.DataContext = this;
             this.Loaded += new RoutedEventHandler(OnLoaded);
         }
 
@@ -78,6 +80,7 @@ namespace Nuage.VSDClient.Main
             else
             {
                 _ACLRuleWin.Title = "Egress" + _ACLRuleWin.Title;
+                _IpMatch.Text = "Dest IP Match";
                 _DestinationType.ItemsSource = LOCATION_TYPE;
                 _OriginType.ItemsSource = NETWORK_TYPE;
             }
@@ -89,6 +92,7 @@ namespace Nuage.VSDClient.Main
         private void Create_Click(object sender, RoutedEventArgs e)
         {
             string desc = null;
+            string addressOverride = null;
             string ether_type = null;
             string action = "DROP";
             string priority = null;
@@ -103,6 +107,11 @@ namespace Nuage.VSDClient.Main
             if (!string.IsNullOrEmpty(this._description.Text))
             {
                 desc = this._description.Text;
+            }
+
+            if (!string.IsNullOrEmpty(this._addressOverride.Text))
+            {
+                addressOverride = this._addressOverride.Text;
             }
 
             if (!string.IsNullOrEmpty(this._priority.Text))
@@ -169,14 +178,14 @@ namespace Nuage.VSDClient.Main
 
                 if (direction.Equals("ingress"))
                 {
-                     acl = rest_client.CreateACLRule(acl_id, direction, desc, action, priority, ether_type,
+                    acl = rest_client.CreateACLRule(acl_id, direction, desc, addressOverride, action, priority, ether_type,
                                               protocol, src_port, dest_port, "", location_type, location_id,
                                               network_type, network_id);
                 }
                 else
                 {
                     //swap the network and location when direction is egress
-                    acl = rest_client.CreateACLRule(acl_id, direction, desc, action, priority, ether_type,
+                    acl = rest_client.CreateACLRule(acl_id, direction, desc, addressOverride, action, priority, ether_type,
                                              protocol, src_port, dest_port, "", network_type, network_id,
                                              location_type, location_id);
                 }
@@ -411,6 +420,20 @@ namespace Nuage.VSDClient.Main
         private void StatefulTextBlock_MouseDown(object sender, MouseButtonEventArgs e)
         {
             _Stateful.IsChecked = !(_Stateful.IsChecked);
+        }
+
+        private void _addressOverride_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(this._addressOverride.Text))
+            {
+                _Create.IsEnabled = true;
+                return;
+            }
+
+            if (System.Windows.Controls.Validation.GetHasError(_addressOverride) == true)
+                _Create.IsEnabled = false;
+            else
+                _Create.IsEnabled = true;
         }
         
 

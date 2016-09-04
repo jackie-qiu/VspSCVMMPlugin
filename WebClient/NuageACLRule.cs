@@ -153,6 +153,11 @@ namespace Nuage.VSDClient
 
             this.action = create_params["action"];
 
+            if (create_params.ContainsKey("addressOverride"))
+            {
+                this.addressOverride = create_params["addressOverride"];
+            }
+
             return JsonConvert.SerializeObject(this);
         }
 

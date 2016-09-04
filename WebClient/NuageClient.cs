@@ -278,12 +278,12 @@ namespace Nuage.VSDClient
             return l3domain.DeleteL3DomainEgressACLTmplt(id);
         }
 
-        public NuageACLRule CreateACLRule(string acl_id, string direction, string description,
+        public NuageACLRule CreateACLRule(string acl_id, string direction, string description, string addressOverride,
                                          string action, string priority, string ether_type, string protocol,
                                          string src_port, string dest_port, string dscp, string location_type,
                                          string location_id, string network_type, string network_id)
         {
-            return l3domain.CreateACLRule(acl_id, direction, description, action, priority, "0x0800", protocol,
+            return l3domain.CreateACLRule(acl_id, direction, description, addressOverride, action, priority, "0x0800", protocol,
                                           src_port, dest_port, "*", location_type, location_id, network_type, network_id);
         }
 

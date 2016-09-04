@@ -543,7 +543,7 @@ namespace Nuage.VSDClient
             return result.First();
         }
 
-        public NuageACLRule CreateACLRule(string acl_id, string direction, string description,
+        public NuageACLRule CreateACLRule(string acl_id, string direction, string description, string addressOverride,
                                          string action, string priority,string ether_type, string protocol,
                                          string src_port, string dest_port, string dscp, string location_type,
                                          string location_id, string network_type, string network_id)
@@ -570,6 +570,7 @@ namespace Nuage.VSDClient
 
             if (!String.IsNullOrEmpty(description)) create_params["description"] = description;
             if (!String.IsNullOrEmpty(priority)) create_params["priority"] = priority;
+            if (!String.IsNullOrEmpty(addressOverride)) create_params["addressOverride"] = addressOverride;
 
             create_params["etherType"] = ether_type;
             create_params["DSCP"] = dscp;

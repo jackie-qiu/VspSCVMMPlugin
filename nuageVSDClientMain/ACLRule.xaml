@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:Nuage.VSDClient.Main"
-        Title="Security Policy Entry" Height="500" Width="450" ResizeMode="NoResize" Name="_ACLRuleWin" FocusManager.FocusedElement="{Binding ElementName=_description}" KeyDown="_ACLRuleWin_KeyDown">
+        Title="Security Policy Entry" Height="519" Width="450" ResizeMode="NoResize" Name="_ACLRuleWin" FocusManager.FocusedElement="{Binding ElementName=_description}" KeyDown="_ACLRuleWin_KeyDown">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -51,6 +51,19 @@
                                     HorizontalAlignment="Left"  Margin="0,0,0,0" Width="90" Style="{StaticResource TextBoxStyle}">
 
                 </xctk:MaskedTextBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
+                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" Width="140" Name="_IpMatch" FontSize="12" >Source IP Match</TextBlock>
+                <TextBox HorizontalAlignment="Left" Margin="10,5,0,0" Width="250" Height="30" Name="_addressOverride" 
+                         VerticalContentAlignment="Bottom" Style="{StaticResource TextBoxStyle}" TextChanged="_addressOverride_TextChanged">
+                    <TextBox.Text>
+                        <Binding Path="addrOverride" Mode="OneWayToSource" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <local:IpNetworkValidator/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
             </StackPanel>
             <TextBlock Margin="20,10,5,5" FontSize="14" Foreground="#FF1414D9">Traffic Path</TextBlock>
             <StackPanel Orientation="Horizontal" Margin="10,2,0,0">

@@ -6,7 +6,7 @@ namespace Nuage.VSDClient
     public interface INuageClient
     {
         bool AddNetworkMacrosToGroup(string macro_group_id, string network_macro_id);
-        NuageACLRule CreateACLRule(string acl_id, string direction, string description, string action, string priority, string ether_type, string protocol, string src_port, string dest_port, string dscp, string location_type, string location_id, string network_type, string network_id);
+        NuageACLRule CreateACLRule(string acl_id, string direction, string description, string addressOverride, string action, string priority, string ether_type, string protocol, string src_port, string dest_port, string dscp, string location_type, string location_id, string network_type, string network_id);
         NuageDomainTemplate CreateDefaultL3DomainTemplate(string ent_id);
         NuageEnterprise CreateEnterprise(string name, string description);
         NuageFloatingIP CreateFloatingIP(string domain_id, string shared_netid);
