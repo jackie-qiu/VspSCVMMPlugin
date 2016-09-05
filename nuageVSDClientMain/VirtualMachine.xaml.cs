@@ -41,6 +41,7 @@ namespace Nuage.VSDClient.Main
         {
             this.psConext = psConext;
             hyperv_manager = new HypervManagement();
+            hyperv_manager.Init();
             InitializeComponent();
         }
         public VirtualMachine(INuageClient client, PowerShellContext psConext, NuageSubnet subnet, ListBox parent)
@@ -50,6 +51,7 @@ namespace Nuage.VSDClient.Main
             this.parent = parent;
             this.subnet = subnet;
             hyperv_manager = new HypervManagement();
+            hyperv_manager.Init();
             InitializeComponent();
             this.Loaded += new RoutedEventHandler(OnLoaded);
 
@@ -242,7 +244,7 @@ namespace Nuage.VSDClient.Main
                         parent.SelectedIndex = parent.Items.Count - 1;
                     }
 
-                    hyperv_manager.SetHyperVOVSPort(selected_vm.Name, selected_vm.VMHost.ComputerName, "administrator", "Alcateldc2");
+                    hyperv_manager.SetHyperVOVSPort(selected_vm.Name, selected_vm.VMHost.ComputerName);
                     //hyperv_manager.SetHyperVOVSPort(selected_vm.Name, selected_vm.VMHost.ComputerName, "administrator", "Aluipr@6");
                     //hyperv_manager.SetHyperVOVSPort(selected_vm.Name, selected_vm.VMHost.ComputerName, "administrator", "tigris1@");
 
